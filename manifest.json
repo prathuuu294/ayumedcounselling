@@ -1,0 +1,21 @@
+{
+  "name": "AyuMed Counselling",
+  "short_name": "AyuMed",
+  "description": "Expert Medical Admission Guidance",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F8F9FA",
+  "theme_color": "#0D1B2A",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
