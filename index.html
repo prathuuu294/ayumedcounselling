@@ -1074,30 +1074,30 @@
             <h2 class="modal-title" style="text-align: center; margin-bottom: 10px;">Book Consultation</h2>
             <p style="text-align: center; color: var(--navy-600); margin-bottom: 20px; font-size: 0.9rem;">Provide your details below to schedule your personalized counselling session.</p>
             
-            <form action="#" method="POST" class="booking-form">
+                        <form name="Seat Booking Form" method="POST" data-netlify="true" class="booking-form">
                 <div class="form-group">
                     <label>Student's Name</label>
-                    <input type="text" class="form-control" placeholder="Enter full name" required>
+                    <input type="text" name="Student Name" class="form-control" placeholder="Enter full name" required>
                 </div>
                 
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="tel" class="form-control" placeholder="+91" required>
+                    <input type="tel" name="Phone Number" class="form-control" placeholder="+91" required>
                 </div>
 
                 <div class="form-group">
                     <label>NEET Marks</label>
-                    <input type="number" class="form-control" placeholder="E.g. 520" required>
+                    <input type="number" name="NEET Marks" class="form-control" placeholder="E.g. 520" required>
                 </div>
 
                 <div class="form-group">
                     <label>Expected/Actual Rank</label>
-                    <input type="number" class="form-control" placeholder="E.g. 75000" required>
+                    <input type="number" name="Rank" class="form-control" placeholder="E.g. 75000" required>
                 </div>
 
                 <div class="form-group">
                     <label>Preferred Counselling</label>
-                    <select class="form-control" required>
+                    <select name="Region Preference" class="form-control" required>
                         <option value="" disabled selected>Select your region...</option>
                         <option value="Madhya Pradesh">1) Madhya Pradesh</option>
                         <option value="Maharashtra">2) Maharashtra</option>
@@ -1107,6 +1107,7 @@
 
                 <button type="submit" class="btn-submit-modal">Submit Details</button>
             </form>
+
         </div>
     </div>
 
