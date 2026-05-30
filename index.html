@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AyuMed | Premium Medical Consultancy</title>
-    
+        <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0D1B2A">
+    <link rel="apple-touch-icon" href="favicon.png">
     <meta name="description" content="Expert NEET UG Counselling for MBBS, BAMS, BDS, and BHMS admissions across Maharashtra and Madhya Pradesh. Secure your medical seat with AyuMed.">
 <meta name="keywords" content="NEET UG counselling, MBBS admission Maharashtra, BAMS counselling MP, BDS admissions, BHMS cutoffs, medical consultancy">
 
@@ -1348,6 +1350,18 @@
             window.scrollTo({
                 top: 0,
                 behavior: 'smooth'
+            });
+        }
+    </script>
+    <!-- PWA Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js').then(function(registration) {
+                    console.log('App Engine Installed Successfully', registration.scope);
+                }, function(err) {
+                    console.log('App Engine Installation Failed: ', err);
+                });
             });
         }
     </script>
