@@ -760,6 +760,60 @@
             opacity: 1;
             color: var(--gold);
         }
+        /* Booking Modal Form Styles */
+        .booking-form .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .booking-form label {
+            display: block;
+            color: var(--navy-800);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .booking-form .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(13, 27, 42, 0.2);
+            border-radius: 4px;
+            font-size: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s;
+            background: #FFFFFF;
+            color: var(--navy-900);
+        }
+        
+        .booking-form .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+        
+        .booking-form select.form-control {
+            cursor: pointer;
+            appearance: auto;
+        }
+        
+        .btn-submit-modal {
+            width: 100%;
+            background: var(--gold);
+            color: var(--navy-900);
+            padding: 15px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-submit-modal:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-gold);
+        }
     </style>
 </head>
 <body>
@@ -791,9 +845,9 @@
     <section class="hero" id="home">
         <h1 class="reveal">Excellence in Medical Admissions</h1>
         <p class="reveal" style="transition-delay: 0.2s;">Expert NEET UG Counselling for MBBS, BAMS, BDS, and BHMS across Maharashtra and Madhya Pradesh. Navigate your future with our premium guidance.</p>
-        <a href="https://wa.me/917879078367" target="_blank" class="btn-gold btn-large reveal" style="transition-delay: 0.4s; display: inline-block;">
+                <button onclick="openModal('bookingModal')" class="btn-gold btn-large reveal" style="transition-delay: 0.4s; display: inline-block; cursor: pointer;">
             Book Your Seat Now !!
-        </a>
+        </button>
     </section>
 
     <section class="section-container" id="announcements">
@@ -1012,6 +1066,47 @@
                 <li><strong>Informational Purposes:</strong> The content provided on this website is for informational and reference purposes only.</li>
                 <li><strong>Intellectual Property:</strong> AyuMed reserves all rights to the content, design, and intellectual property displayed on this site.</li>
             </ul>
+        </div>
+    </div>
+    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="close-modal" onclick="closeModal('bookingModal')">✖</button>
+            <h2 class="modal-title" style="text-align: center; margin-bottom: 10px;">Book Consultation</h2>
+            <p style="text-align: center; color: var(--navy-600); margin-bottom: 20px; font-size: 0.9rem;">Provide your details below to schedule your personalized counselling session.</p>
+            
+            <form action="#" method="POST" class="booking-form">
+                <div class="form-group">
+                    <label>Student's Name</label>
+                    <input type="text" class="form-control" placeholder="Enter full name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" class="form-control" placeholder="+91" required>
+                </div>
+
+                <div class="form-group">
+                    <label>NEET Marks</label>
+                    <input type="number" class="form-control" placeholder="E.g. 520" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Expected/Actual Rank</label>
+                    <input type="number" class="form-control" placeholder="E.g. 75000" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Counselling</label>
+                    <select class="form-control" required>
+                        <option value="" disabled selected>Select your region...</option>
+                        <option value="Madhya Pradesh">1) Madhya Pradesh</option>
+                        <option value="Maharashtra">2) Maharashtra</option>
+                        <option value="Combined">3) Combined (MP + Mah)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit-modal">Submit Details</button>
+            </form>
         </div>
     </div>
 
