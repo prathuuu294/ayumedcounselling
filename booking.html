@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Consultation | AyuMed Premium Counselling</title>
+    
+    <meta name="description" content="Book your private NEET UG medical counselling session with AyuMed's expert advisors today.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* AyuMed Brand Palette */
+            --navy-900: #0D1B2A; 
+            --navy-800: #1B263B; 
+            --navy-600: #415A77; 
+            --gold: #D4AF37;     
+            --cream: #F7F3E9;    
+            --gold-hover: #E5C354;
+            
+            --shadow-luxury: 0 15px 35px rgba(13, 27, 42, 0.1);
+            --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: var(--cream);
+            color: var(--navy-900);
+            line-height: 1.7;
+        }
+
+        h1, h2, h3, .logo-text {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* Simplified Header for Ad Landing Page */
+        header {
+            background-color: var(--navy-900);
+            padding: 15px 25px;
+            border-bottom: 2px solid var(--gold);
+            text-align: center;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+        }
+
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--cream);
+            letter-spacing: 1px;
+            line-height: 1; 
+        }
+
+        .logo-text span {
+            color: var(--gold);
+            font-style: italic;
+        }
+
+        .logo-quote {
+            font-size: 0.7rem;
+            color: var(--gold);
+            font-weight: 400;
+            letter-spacing: 1px;
+            margin-top: 6px;
+            text-transform: uppercase;
+        }
+
+        /* Landing Page Layout */
+        .landing-container {
+            max-width: 1100px;
+            margin: 60px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        /* Left Side: Value Proposition */
+        .landing-content h1 {
+            font-size: 3.2rem;
+            color: var(--navy-900);
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .landing-content h1 span {
+            color: var(--gold);
+        }
+
+        .landing-content p {
+            font-size: 1.1rem;
+            color: var(--navy-800);
+            margin-bottom: 30px;
+        }
+
+        .trust-points {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .trust-points li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.05rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--navy-900);
+        }
+
+        .trust-points li::before {
+            content: '✦';
+            color: var(--gold);
+            font-size: 1.5rem;
+        }
+
+        .direct-contact {
+            background: #FFFFFF;
+            border-left: 4px solid var(--gold);
+            padding: 20px;
+            box-shadow: var(--shadow-luxury);
+        }
+
+        .direct-contact h4 {
+            color: var(--navy-600);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
+        .direct-contact a {
+            font-size: 1.4rem;
+            color: var(--navy-900);
+            font-weight: 700;
+            text-decoration: none;
+            display: block;
+        }
+
+        /* Right Side: Premium Booking Form */
+        .booking-card {
+            background: var(--navy-900);
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 20px 50px rgba(13, 27, 42, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            position: relative;
+        }
+
+        .booking-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gold);
+        }
+
+        .booking-card h2 {
+            color: var(--gold);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .booking-card p {
+            color: var(--cream);
+            opacity: 0.8;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--cream);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px;
+            background: var(--navy-800);
+            border: 1px solid var(--navy-600);
+            color: var(--cream);
+            font-size: 1rem;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+            background: rgba(27, 38, 59, 0.8);
+        }
+
+        select.form-control {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--gold);
+            color: var(--navy-900);
+            padding: 16px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            background: var(--gold-hover);
+            box-shadow: var(--shadow-gold);
+            transform: translateY(-2px);
+        }
+
+        .return-link {
+            display: block;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--navy-600);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .return-link:hover {
+            color: var(--gold);
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .landing-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                margin: 40px auto;
+            }
+            .landing-content h1 {
+                font-size: 2.5rem;
+            }
+            .booking-card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo-wrapper">
+            <div class="logo-text">Ayu<span>Med</span></div>
+            <div class="logo-quote">Empowering the healers of tomorrow</div>
+        </a>
+    </header>
+
+    <div class="landing-container">
+        
+        <div class="landing-content">
+            <h1>Secure Your Medical Seat with <span>Expert Guidance</span></h1>
+            <p>Don't leave your medical career to chance. Book a private consultation with our elite team for personalized admission strategies in Maharashtra and Madhya Pradesh.</p>
+            
+            <ul class="trust-points">
+                <li>Data-driven Cutoff Analysis & Rank Prediction</li>
+                <li>Strategic Choice Filling for MBBS, BAMS, BDS & BHMS</li>
+                <li>Complete Documentation Verification Support</li>
+                <li>Instant Updates for All Counselling Rounds</li>
+            </ul>
+
+            <div class="direct-contact">
+                <h4>Prefer to call directly?</h4>
+                <a href="tel:+917879078367">📞 +91 78790 78367</a>
+            </div>
+        </div>
+
+        <div class="booking-card">
+            <h2>Book Consultation</h2>
+            <p>Fill out the details below and an AyuMed advisor will contact you shortly.</p>
+
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label>Student's Full Name</label>
+                    <input type="text" class="form-control" placeholder="Enter your name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>WhatsApp Number</label>
+                    <input type="tel" class="form-control" placeholder="+91" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Expected/Actual NEET Score</label>
+                    <input type="number" class="form-control" placeholder="E.g. 520" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Course (Select One)</label>
+                    <select class="form-control" required>
+                        <option value="" disabled selected>Choose your preference...</option>
+                        <option value="MBBS">MBBS (Allopathic)</option>
+                        <option value="BAMS">BAMS (Ayurvedic)</option>
+                        <option value="BDS">BDS (Dental)</option>
+                        <option value="BHMS">BHMS (Homeopathic)</option>
+                        <option value="Not Sure">Undecided / Need Guidance</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">Request Call Back</button>
+            </form>
+        </div>
+
+    </div>
+
+    <a href="index.html" class="return-link">← Return to Main Website</a>
+
+</body>
+</html>
