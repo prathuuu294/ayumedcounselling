@@ -524,6 +524,13 @@
             margin-bottom: 15px;
         }
 
+                .social-buttons-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
         .btn-whatsapp-large {
             display: inline-flex;
             align-items: center;
@@ -536,14 +543,36 @@
             font-size: 1.1rem;
             font-weight: 600;
             text-decoration: none;
-            margin-top: 25px;
             transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
         }
 
         .btn-whatsapp-large:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
         }
+
+        .btn-instagram-large {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white !important;
+            padding: 15px 30px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            width: 100%;
+        }
+
+        .btn-instagram-large:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(220, 39, 67, 0.3);
+        }
+
 
         .contact-list {
             list-style: none;
@@ -640,6 +669,96 @@
                 align-items: flex-start;
                 gap: 5px;
             }
+        }
+        /* Legal Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(13, 27, 42, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: var(--cream);
+            width: 100%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 40px;
+            border-radius: 4px;
+            border-top: 4px solid var(--gold);
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            text-align: left;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            color: var(--navy-600);
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover { color: var(--gold); }
+
+        .modal-title {
+            color: var(--navy-900);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .legal-list {
+            list-style: none;
+        }
+
+        .legal-list li {
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            color: var(--navy-800);
+            display: flex;
+            gap: 15px;
+        }
+
+        .legal-list li::before {
+            content: '✦';
+            color: var(--gold);
+            font-size: 1.2rem;
+        }
+        
+        .footer-links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .footer-links button {
+            background: none;
+            border: none;
+            color: var(--cream);
+            opacity: 0.7;
+            cursor: pointer;
+            font-size: 0.85rem;
+            text-decoration: underline;
+            transition: all 0.3s;
+            font-family: 'Montserrat', sans-serif;
+            letter-spacing: 0.5px;
+        }
+
+        .footer-links button:hover {
+            opacity: 1;
+            color: var(--gold);
         }
     </style>
 </head>
@@ -799,13 +918,21 @@
         <h2 class="section-title reveal">Contact Us</h2>
         <div class="contact-wrapper">
             
-            <div class="contact-card reveal" style="transition-delay: 0.1s;">
-                <h3>Join Our Community</h3>
-                <p style="color: var(--navy-600); font-size: 0.95rem;">Connect with hundreds of aspirants, get real-time counselling updates, and download essential cut-off documents directly.</p>
-                <a href="https://chat.whatsapp.com/JXCOTL9AbJa4AlLvwweIDH" target="_blank" class="btn-whatsapp-large">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.663-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
-                    Join WhatsApp Group To Get Latest Updates
-                </a>
+                        <div class="contact-card reveal" style="transition-delay: 0.1s;">
+                <h3>Connect With Us</h3>
+                <p style="color: var(--navy-600); font-size: 0.95rem;">Join our community for real-time counselling updates, and follow us on Instagram for daily admission tips and cut-off insights.</p>
+                
+                <div class="social-buttons-wrapper">
+                    <a href="https://chat.whatsapp.com/JXCOTL9AbJa4AlLvwweIDH" target="_blank" class="btn-whatsapp-large">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.888-.788-1.487-1.761-1.663-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></svg>
+                        Join WhatsApp Group
+                    </a>
+
+                    <a href="https://www.instagram.com/medicalcounselling_mp.mh?igsh=MTM3MzJka25xbmZ4Zg==" target="_blank" class="btn-instagram-large">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                        Follow us on Instagram
+                    </a>
+                </div>
             </div>
 
             <div class="contact-card reveal" style="transition-delay: 0.2s;">
@@ -846,13 +973,47 @@
         </div>
     </section>
 
-    <footer>
+        <footer>
         <div class="footer-logo reveal">AyuMed</div>
         <div class="footer-text reveal" style="transition-delay: 0.1s;">Guiding your medical aspirations in Maharashtra & Madhya Pradesh</div>
         <div class="copyright reveal" style="transition-delay: 0.2s;">
             © 2026 AyuMed Medical Counselling Group. All Rights Reserved.
         </div>
+        <div class="footer-links reveal" style="transition-delay: 0.3s;">
+            <button onclick="openModal('privacyModal')">Privacy Policy</button>
+            <button onclick="openModal('termsModal')">Terms & Conditions</button>
+        </div>
     </footer>
+
+    <div class="modal-overlay" id="privacyModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('privacyModal')">✖</button>
+            <h2 class="modal-title">Privacy Policy</h2>
+            <ul class="legal-list">
+                <li><strong>Data Collection:</strong> We collect essential details, including Name, Mobile Number, Email Address, NEET Score, and Course Preference, voluntarily provided by users via our inquiry forms.</li>
+                <li><strong>Purpose of Use:</strong> All gathered information is strictly utilized for educational counselling, personalized admission guidance, and relevant communication.</li>
+                <li><strong>Data Protection:</strong> We maintain strict confidentiality. Your personal data is securely stored and will never be sold, rented, or shared with unauthorized third parties.</li>
+                <li><strong>Communication:</strong> By providing your details, you consent to receive crucial updates regarding counselling rounds, deadlines, and admission procedures.</li>
+                <li><strong>External Links:</strong> Our platform may contain links to third-party resources which are not governed by this Privacy Policy.</li>
+                <li><strong>Consent:</strong> Continued use of the AyuMed website constitutes your acknowledgment and acceptance of these privacy terms.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="termsModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('termsModal')">✖</button>
+            <h2 class="modal-title">Terms & Conditions</h2>
+            <ul class="legal-list">
+                <li><strong>Scope of Service:</strong> AyuMed Counselling Group operates solely as an educational advisory service, providing strategic guidance for medical admissions.</li>
+                <li><strong>Admission Contingency:</strong> All admissions are strictly subject to the candidate's NEET merit rank, institutional eligibility criteria, seat availability, and the official regulations of the respective counselling authorities.</li>
+                <li><strong>No Guarantee Clause:</strong> While we provide expert strategic support, we do not guarantee seat allotment or admission into any specific medical institution or course.</li>
+                <li><strong>User Responsibility:</strong> Clients are required to provide accurate, authentic, and up-to-date documentation and scores for effective counselling.</li>
+                <li><strong>Informational Purposes:</strong> The content provided on this website is for informational and reference purposes only.</li>
+                <li><strong>Intellectual Property:</strong> AyuMed reserves all rights to the content, design, and intellectual property displayed on this site.</li>
+            </ul>
+        </div>
+    </div>
 
     <script>
         function toggleMenu() {
@@ -882,6 +1043,24 @@
 
         window.addEventListener("scroll", revealElements);
         window.onload = revealElements;
+        // Modal Logic
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevents background scrolling
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restores background scrolling
+        }
+
+        // Close modal when clicking outside the box
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
     </script>
 </body>
 </html>
