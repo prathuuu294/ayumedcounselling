@@ -1074,30 +1074,30 @@
             <h2 class="modal-title" style="text-align: center; margin-bottom: 10px;">Book Consultation</h2>
             <p style="text-align: center; color: var(--navy-600); margin-bottom: 20px; font-size: 0.9rem;">Provide your details below to schedule your personalized counselling session.</p>
             
-                        <form name="Seat Booking Form" method="POST" data-netlify="true" class="booking-form">
+                                    <form id="whatsappForm" class="booking-form">
                 <div class="form-group">
                     <label>Student's Name</label>
-                    <input type="text" name="Student Name" class="form-control" placeholder="Enter full name" required>
+                    <input type="text" id="waName" class="form-control" placeholder="Enter full name" required>
                 </div>
                 
                 <div class="form-group">
                     <label>Phone Number</label>
-                    <input type="tel" name="Phone Number" class="form-control" placeholder="+91" required>
+                    <input type="tel" id="waPhone" class="form-control" placeholder="+91" required>
                 </div>
 
                 <div class="form-group">
                     <label>NEET Marks</label>
-                    <input type="number" name="NEET Marks" class="form-control" placeholder="E.g. 520" required>
+                    <input type="number" id="waMarks" class="form-control" placeholder="E.g. 520" required>
                 </div>
 
                 <div class="form-group">
                     <label>Expected/Actual Rank</label>
-                    <input type="number" name="Rank" class="form-control" placeholder="E.g. 75000" required>
+                    <input type="number" id="waRank" class="form-control" placeholder="E.g. 75000" required>
                 </div>
 
                 <div class="form-group">
                     <label>Preferred Counselling</label>
-                    <select name="Region Preference" class="form-control" required>
+                    <select id="waRegion" class="form-control" required>
                         <option value="" disabled selected>Select your region...</option>
                         <option value="Madhya Pradesh">1) Madhya Pradesh</option>
                         <option value="Maharashtra">2) Maharashtra</option>
@@ -1105,7 +1105,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn-submit-modal">Submit Details</button>
+                <button type="submit" class="btn-submit-modal">Submit via WhatsApp</button>
             </form>
 
         </div>
@@ -1158,6 +1158,35 @@
                 document.body.style.overflow = 'auto';
             }
         }
+        // WhatsApp Form Submission Logic
+        document.getElementById('whatsappForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevents the page from refreshing
+
+            // Fetch the details the student typed
+            var name = document.getElementById('waName').value;
+            var phone = document.getElementById('waPhone').value;
+            var marks = document.getElementById('waMarks').value;
+            var rank = document.getElementById('waRank').value;
+            var region = document.getElementById('waRegion').value;
+
+            // Format the message perfectly for WhatsApp
+            var whatsappMessage = "*New Consultation Request!* 🎓%0A%0A" + 
+                                  "*Name:* " + name + "%0A" +
+                                  "*Phone Number:* " + phone + "%0A" +
+                                  "*NEET Marks:* " + marks + "%0A" +
+                                  "*Rank:* " + rank + "%0A" +
+                                  "*Region Preference:* " + region + "%0A%0A" +
+                                  "Hello AyuMed, please guide me regarding the admission process.";
+
+            // Create the official WhatsApp link with your number
+            var whatsappLink = "https://wa.me/917879078367?text=" + whatsappMessage;
+
+            // Open WhatsApp in a new tab/app
+            window.open(whatsappLink, '_blank');
+
+            // Close the popup form automatically
+            closeModal('bookingModal');
+        });
     </script>
 </body>
 </html>
