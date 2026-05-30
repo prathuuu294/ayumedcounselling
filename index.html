@@ -1015,7 +1015,7 @@
         </div>
     </div>
 
-    <script>
+        <script>
         function toggleMenu() {
             const navLinks = document.getElementById('navLinks');
             navLinks.classList.toggle('active');
@@ -1043,15 +1043,16 @@
 
         window.addEventListener("scroll", revealElements);
         window.onload = revealElements;
+
         // Modal Logic
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'flex';
-            document.body.style.overflow = 'hidden'; // Prevents background scrolling
+            document.body.style.overflow = 'hidden'; 
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restores background scrolling
+            document.body.style.overflow = 'auto'; 
         }
 
         // Close modal when clicking outside the box
