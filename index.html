@@ -1197,13 +1197,13 @@
             </ul>
         </div>
     </div>
-    <div class="modal-overlay" id="bookingModal">
+        <div class="modal-overlay" id="bookingModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="close-modal" onclick="closeModal('bookingModal')">✖</button>
             <h2 class="modal-title" style="text-align: center; margin-bottom: 10px;">Book Consultation</h2>
             <p style="text-align: center; color: var(--navy-600); margin-bottom: 20px; font-size: 0.9rem;">Provide your details below to schedule your personalized counselling session.</p>
             
-                                    <form id="whatsappForm" class="booking-form">
+            <form id="whatsappForm" class="booking-form">
                 <div class="form-group">
                     <label>Student's Name</label>
                     <input type="text" id="waName" class="form-control" placeholder="Enter full name" required>
@@ -1225,6 +1225,30 @@
                 </div>
 
                 <div class="form-group">
+                    <label>Category</label>
+                    <select id="waCategory" class="form-control" required>
+                        <option value="" disabled selected>Select your category...</option>
+                        <option value="UR / General">UR / General</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                        <option value="EWS">EWS</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Target Course</label>
+                    <select id="waCourse" class="form-control" required>
+                        <option value="" disabled selected>Select target course...</option>
+                        <option value="MBBS">MBBS</option>
+                        <option value="BDS">BDS</option>
+                        <option value="BAMS">BAMS</option>
+                        <option value="BHMS">BHMS</option>
+                        <option value="NURSING">NURSING</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label>Preferred Counselling</label>
                     <select id="waRegion" class="form-control" required>
                         <option value="" disabled selected>Select your region...</option>
@@ -1236,7 +1260,6 @@
 
                 <button type="submit" class="btn-submit-modal">Submit via WhatsApp</button>
             </form>
-
         </div>
     </div>
     <button id="backToTop" onclick="scrollToTop()">↑</button>
@@ -1292,7 +1315,7 @@
                 document.body.style.overflow = 'auto';
             }
         }
-        // WhatsApp Form Submission Logic
+                // WhatsApp Form Submission Logic
         document.getElementById('whatsappForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevents the page from refreshing
 
@@ -1301,6 +1324,8 @@
             var phone = document.getElementById('waPhone').value;
             var marks = document.getElementById('waMarks').value;
             var rank = document.getElementById('waRank').value;
+            var category = document.getElementById('waCategory').value;
+            var course = document.getElementById('waCourse').value;
             var region = document.getElementById('waRegion').value;
 
             // Format the message perfectly for WhatsApp
@@ -1309,6 +1334,8 @@
                                   "*Phone Number:* " + phone + "%0A" +
                                   "*NEET Marks:* " + marks + "%0A" +
                                   "*Rank:* " + rank + "%0A" +
+                                  "*Category:* " + category + "%0A" +
+                                  "*Target Course:* " + course + "%0A" +
                                   "*Region Preference:* " + region + "%0A%0A" +
                                   "Hello AyuMed, please guide me regarding the admission process.";
 
