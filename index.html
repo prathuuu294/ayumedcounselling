@@ -941,7 +941,7 @@
             <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
 
                         <ul class="nav-links" id="navLinks">
-                <li><a href="#announcements" onclick="closeMenu()">Announcements</a></li>
+                <li><a href="announcements.html" onclick="closeMenu()">Announcements</a></li>
                 <li><a href="#about" onclick="closeMenu()">About</a></li>
                 <li><a href="#services" onclick="closeMenu()">Services</a></li>
                 <li><a href="#team" onclick="closeMenu()">Team</a></li>
@@ -1483,7 +1483,7 @@
                 if (!container) return; // Safety check
                 container.innerHTML = ''; 
 
-                const categories = ['General', 'MBBS', 'BDS', 'BAMS', 'BHMS', 'NURSING'];
+                const categories = ['General'];
                 
                 categories.forEach(category => {
                     const categoryAnns = announcements.filter(a => a.category === category);
