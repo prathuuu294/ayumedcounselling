@@ -1315,11 +1315,11 @@
                 document.body.style.overflow = 'auto';
             }
         }
-                // WhatsApp Form Submission Logic
-        document.getElementById('whatsappForm').addEventListener('submit', function(event) {
+                        // API & WhatsApp Form Submission Logic
+        document.getElementById('whatsappForm').addEventListener('submit', async function(event) {
             event.preventDefault(); // Prevents the page from refreshing
 
-            // Fetch the details the student typed
+            // 1. Fetch the details the student typed
             var name = document.getElementById('waName').value;
             var phone = document.getElementById('waPhone').value;
             var marks = document.getElementById('waMarks').value;
@@ -1328,7 +1328,41 @@
             var course = document.getElementById('waCourse').value;
             var region = document.getElementById('waRegion').value;
 
-            // Format the message perfectly for WhatsApp
+            // 2. Prepare the data payload for the Python Backend
+            const studentData = {
+                name: name,
+                phone: phone,
+                marks: parseInt(marks), // Ensure marks are sent as a number
+                rank: parseInt(rank),   // Ensure rank is sent as a number
+                category: category,
+                course: course,
+                region: region
+            };
+
+            // 3. Send the data silently to your PythonAnywhere Server
+            // IMPORTANT: Replace 'prathuuu294' with your actual PythonAnywhere username if different
+            const apiEndpoint = "https://prathuuu294.pythonanywhere.com/api/submit"; 
+
+            try {
+                // We use the Fetch API to make a POST request to our server.
+                const response = await fetch(apiEndpoint, {
+                    method: "POST", // Specify the request method as POST.
+                    headers: {
+                        "Content-Type": "application/json", // Tell the server we are sending JSON data.
+                    },
+                    body: JSON.stringify(studentData), // Convert our JavaScript object into a JSON string.
+                });
+                
+                if (!response.ok) {
+                    console.error("Backend Error:", await response.text());
+                } else {
+                    console.log("Data successfully saved to Admin Portal!");
+                }
+            } catch (error) {
+                console.error("Network Error:", error); // Log any network errors if the fetch fails.
+            }
+
+            // 4. Format the message perfectly for WhatsApp
             var whatsappMessage = "*New Consultation Request!* 🎓%0A%0A" + 
                                   "*Name:* " + name + "%0A" +
                                   "*Phone Number:* " + phone + "%0A" +
@@ -1339,27 +1373,15 @@
                                   "*Region Preference:* " + region + "%0A%0A" +
                                   "Hello AyuMed, please guide me regarding the admission process.";
 
-            // Create the official WhatsApp link with your number
+            // 5. Create the official WhatsApp link with your number
             var whatsappLink = "https://wa.me/917879078367?text=" + whatsappMessage;
 
-            // Open WhatsApp in a new tab/app
+            // 6. Open WhatsApp in a new tab/app
             window.open(whatsappLink, '_blank');
 
-            // Close the popup form automatically
+            // 7. Close the popup form automatically
             closeModal('bookingModal');
         });
-        // FAQ Accordion Logic
-        var acc = document.getElementsByClassName("accordion");
-        for (var i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.maxHeight) {
-                    panel.style.maxHeight = null;
-                } else {
-                    panel.style.maxHeight = panel.scrollHeight + "px";
-                }
-            });
         }
 
         // Back to Top Button Logic
