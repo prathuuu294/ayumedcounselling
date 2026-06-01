@@ -965,14 +965,41 @@
     </section>
 
     <section class="section-container" id="announcements">
-        <h2 class="section-title reveal">Live Announcements</h2>
-        
-                <div class="notice-board-container reveal" style="transition-delay: 0.2s;">
-            <div class="notice-scroll" id="notice-scroll-container">
-                <div class="notice-item" style="text-align: center; color: var(--navy-600); border-left: none;">
-                    <div class="notice-title">Fetching live announcements...</div>
-                </div>
-            </div>
+                <!-- Organized Announcements Container -->
+        <style>
+            .cat-details {
+                background: rgba(255, 255, 255, 0.8);
+                border: 1px solid rgba(212, 175, 55, 0.3);
+                border-radius: 8px;
+                margin-bottom: 15px;
+                overflow: hidden;
+            }
+            .cat-summary {
+                background: var(--navy-900);
+                color: var(--cream);
+                padding: 15px 20px;
+                font-weight: 600;
+                cursor: pointer;
+                list-style: none;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                transition: color 0.3s;
+            }
+            .cat-summary::-webkit-details-marker { display: none; }
+            .cat-summary:hover { color: var(--gold); }
+            .cat-badge {
+                background: var(--gold);
+                color: var(--navy-900);
+                padding: 4px 12px;
+                border-radius: 20px;
+                font-size: 0.85rem;
+                font-weight: 700;
+            }
+        </style>
+        <div id="announcements-container" class="reveal" style="max-width: 900px; margin: 0 auto; transition-delay: 0.2s;">
+            <div style="text-align: center; color: var(--navy-600); padding: 30px;">Fetching categorized announcements...</div>
+        </div>
         </div>
     </section>
 
