@@ -967,7 +967,7 @@
     <section class="section-container" id="announcements">
                         <!-- Organized Announcements Container -->
         <style>
-                    <style>
+                            <style>
             /* The Main Master Box */
             .master-board {
                 background: white;
@@ -977,11 +977,15 @@
                 overflow: hidden;
             }
             
-            /* The Individual Rows Inside */
+            /* The Individual Rows */
             .cat-details {
                 border-bottom: 1px solid rgba(13, 27, 42, 0.15);
                 margin: 0; 
-                background: transparent;
+                background: white;
+                
+                /* CRITICAL: This is the physical wall that stops the overlapping */
+                position: relative; 
+                overflow: hidden !important; 
             }
             .cat-details:last-child {
                 border-bottom: none;
@@ -998,13 +1002,14 @@
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                transition: all 0.3s ease;
                 font-size: 1.05rem;
+                
+                /* CRITICAL: Keeps the header above the sliding text */
+                position: relative; 
+                z-index: 10; 
+                border-bottom: 1px solid rgba(13, 27, 42, 0.1);
             }
             .cat-summary::-webkit-details-marker { display: none; }
-            .cat-summary:hover {
-                background: rgba(212, 175, 55, 0.15);
-            }
             
             /* When a tab is clicked open */
             .cat-details[open] .cat-summary {
@@ -1021,31 +1026,54 @@
                 border-radius: 20px;
                 font-size: 0.85rem;
                 font-weight: 700;
-                transition: all 0.3s ease;
             }
             
-            /* Badge colors invert when tab is open */
             .cat-details[open] .cat-summary .cat-badge {
                 background: var(--gold);
                 color: var(--navy-900);
             }
 
-            /* FIX FOR OVERLAPPING TEXT: Forces scrolling inside the box */
-            .cat-details .notice-scroll {
-                max-height: 250px !important;
-                overflow-y: auto !important; 
-                overflow-x: hidden;
-                background: white;
-                padding: 15px 25px !important;
+            /* --- THE NEW CONTAINED TICKER ANIMATION --- */
+            
+            .master-board .notice-scroll {
+                position: relative !important;
+                z-index: 1; /* Forces the text to slide UNDER the header */
+                display: block !important;
+                min-height: 200px; /* Gives the scrolling window a consistent height */
+                padding: 0 25px !important;
+                
+                /* The Ticker Animation */
+                animation: smoothTicker 15s linear infinite !important;
+            }
+
+            /* PAUSE ON HOVER: Stops the scroll so students can click easily */
+            .master-board .cat-details:hover .notice-scroll {
+                animation-play-state: paused !important;
+            }
+
+            /* Stripping away your old buggy floating animation */
+            .master-board .notice-item {
+                position: relative !important;
+                display: block !important;
+                padding: 15px 0 !important;
+                margin: 0 !important;
+                border-left: none !important;
+                border-bottom: 1px solid rgba(13, 27, 42, 0.1);
+                
+                /* Force items to stop floating globally */
+                animation: none !important;
+                transform: none !important;
+                top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
             }
             
-            /* Makes the new scrollbar look premium and thin */
-            .cat-details .notice-scroll::-webkit-scrollbar {
-                width: 6px;
+            .master-board .notice-item:last-child {
+                border-bottom: none;
             }
-            .cat-details .notice-scroll::-webkit-scrollbar-thumb {
-                background: var(--gold);
-                border-radius: 4px;
+
+            /* The Engine that drives the scroll */
+            @keyframes smoothTicker {
+                0% { transform: translateY(100%); }
+                100% { transform: translateY(-100%); }
             }
         </style>
         
