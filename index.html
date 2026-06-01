@@ -967,6 +967,7 @@
     <section class="section-container" id="announcements">
                         <!-- Organized Announcements Container -->
         <style>
+                    <style>
             /* The Main Master Box */
             .master-board {
                 background: white;
@@ -1027,6 +1028,24 @@
             .cat-details[open] .cat-summary .cat-badge {
                 background: var(--gold);
                 color: var(--navy-900);
+            }
+
+            /* FIX FOR OVERLAPPING TEXT: Forces scrolling inside the box */
+            .cat-details .notice-scroll {
+                max-height: 250px !important;
+                overflow-y: auto !important; 
+                overflow-x: hidden;
+                background: white;
+                padding: 15px 25px !important;
+            }
+            
+            /* Makes the new scrollbar look premium and thin */
+            .cat-details .notice-scroll::-webkit-scrollbar {
+                width: 6px;
+            }
+            .cat-details .notice-scroll::-webkit-scrollbar-thumb {
+                background: var(--gold);
+                border-radius: 4px;
             }
         </style>
         
