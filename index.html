@@ -1135,121 +1135,227 @@
         </div>
     </div>
 
-    <section class="section-container" id="why-us">
-        <h2 class="section-title reveal">Why Choose AyuMed</h2>
-        <div class="features-grid">
-            <div class="feature-item reveal" style="transition-delay: 0.1s;"><span class="feature-icon">✦</span> Personalized Counselling Support</div>
-            <div class="feature-item reveal" style="transition-delay: 0.2s;"><span class="feature-icon">✦</span> Choice Filling Guidance</div>
-            <div class="feature-item reveal" style="transition-delay: 0.3s;"><span class="feature-icon">✦</span> College Prediction Support</div>
-            <div class="feature-item reveal" style="transition-delay: 0.4s;"><span class="feature-icon">✦</span> Documentation Assistance</div>
-            <div class="feature-item reveal" style="transition-delay: 0.5s;"><span class="feature-icon">✦</span> MP & Maharashtra Guidance</div>
-            <div class="feature-item reveal" style="transition-delay: 0.6s;"><span class="feature-icon">✦</span> MBBS & AYUSH Expert Team</div>
-            <div class="feature-item reveal" style="transition-delay: 0.7s;"><span class="feature-icon">✦</span> Quick Updates & Genuine Guidance</div>
-        </div>
-    </section>
 <style>
-    .custom-stat-container {
-        max-width: 900px;
-        margin: 4rem auto 2rem;
-        padding: 0 20px;
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        align-items: start; /* Prevents closed boxes from stretching to match open ones */
+    }
+
+    .feature-details {
+        background: #FFFFFF;
+        border-left: 3px solid var(--gold);
+        box-shadow: var(--shadow-luxury);
+        transition: all 0.3s ease;
+        border-radius: 4px;
+        overflow: hidden;
     }
     
-    .custom-stat-box {
-        background-color: #ffffff;
-        border-top: 5px solid var(--gold);
-        border-radius: 12px;
-        box-shadow: var(--shadow-luxury); 
-        padding: 3rem 1rem 2.5rem; 
-        transition: transform 0.4s ease, box-shadow 0.4s ease;
-    }
-    
-    .custom-stat-box:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 45px rgba(13, 27, 42, 0.12);
+    .feature-details:hover {
+        transform: translateX(8px);
+        box-shadow: 0 15px 30px rgba(13, 27, 42, 0.1);
     }
 
-    .stat-top-row {
-        display: flex;
-        justify-content: center;
-        align-items: stretch; /* Allows the center line to fill the vertical space */
-        margin-bottom: 1rem;
-    }
-
-    .stat-item {
-        flex: 1;
-        text-align: center;
-        padding: 1rem;
-    }
-
-    .stat-center-line {
-        width: 2px;
-        background-color: rgba(13, 27, 42, 0.15); /* The top middle | line */
-        margin: 1.5rem 0; 
-    }
-
-    .stat-bottom-row {
-        margin: 0 auto;
-        text-align: center;
-        padding: 1.5rem 1rem;
-        /* The left and right | lines forming the bracket */
-        border-left: 2px solid rgba(13, 27, 42, 0.15);
-        border-right: 2px solid rgba(13, 27, 42, 0.15);
-        width: 50%; /* This perfectly aligns the borders under the top text! */
-    }
-
-    .stat-number-wrap {
+    .feature-summary {
         display: flex;
         align-items: center;
-        justify-content: center;
-        margin-bottom: 0.25rem;
-    }
-    
-    .c-stat-num {
-        color: var(--navy-900);
-        font-size: 2.8rem; /* Scaled down perfectly */
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-        line-height: 1;
-        margin: 0;
-    }
-    
-    .c-stat-sym {
-        color: var(--gold);
-        font-size: 2.2rem;
-        font-family: 'Playfair Display', serif;
-        font-weight: 700;
-        margin-left: 4px;
-    }
-    
-    .c-stat-text {
-        color: var(--navy-600);
-        font-size: 1.05rem;
+        gap: 15px;
+        padding: 20px;
         font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin: 0;
-        font-family: 'Montserrat', sans-serif;
+        color: var(--navy-900);
+        cursor: pointer;
+        list-style: none;
+        position: relative;
+        font-size: 1.05rem;
     }
 
-    /* Mobile Adjustments so the lines stack nicely on phones */
-    @media (max-width: 650px) {
-        .stat-top-row {
-            flex-direction: column;
-        }
-        .stat-center-line {
-            width: 80px;
-            height: 2px;
-            margin: 1rem auto;
-        }
-        .stat-bottom-row {
-            width: 85%;
-            border-left: none;
-            border-right: none;
-            border-top: 2px solid rgba(13, 27, 42, 0.15);
-            border-bottom: 2px solid rgba(13, 27, 42, 0.15);
-            margin-top: 0.5rem;
-        }
+    /* Hide the default HTML5 arrow */
+    .feature-summary::-webkit-details-marker {
+        display: none;
     }
+
+    /* Custom plus/minus icon */
+    .feature-summary::after {
+        content: '+';
+        position: absolute;
+        right: 20px;
+        color: var(--gold);
+        font-size: 1.8rem;
+        font-weight: 300;
+        line-height: 1;
+        transition: transform 0.3s;
+    }
+
+    .feature-details[open] .feature-summary {
+        background-color: rgba(212, 175, 55, 0.05);
+    }
+
+    .feature-details[open] .feature-summary::after {
+        content: '−'; /* minus sign */
+        transform: rotate(180deg);
+    }
+
+    .feature-icon {
+        font-size: 1.3rem;
+    }
+
+    .feature-dropdown {
+        padding: 0 20px 20px 55px; /* Aligned neatly under the text */
+        color: var(--navy-800);
+        animation: fadeInDown 0.3s ease-out forwards;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .feature-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .feature-list li {
+        position: relative;
+        padding-left: 18px;
+        margin-bottom: 10px;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    .feature-list li:last-child {
+        margin-bottom: 0;
+    }
+
+    .feature-list li::before {
+        content: '•';
+        color: var(--gold);
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: bold;
+        font-size: 1.2rem;
+        line-height: 1.2;
+    }
+</style>
+
+<section class="section-container" id="why-us">
+    <h2 class="section-title reveal">Why Choose AyuMed</h2>
+    <div class="features-grid">
+        
+        <!-- Item 1 -->
+        <details class="feature-details reveal" style="transition-delay: 0.1s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> Personalized Counselling Support
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>NEET Score Analysis</li>
+                    <li>Career Guidance</li>
+                    <li>One-to-One Counselling</li>
+                    <li>Admission Strategy Planning</li>
+                    <li>Doubt Resolution Support</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 2 -->
+        <details class="feature-details reveal" style="transition-delay: 0.2s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> Choice Filling Guidance
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>Smart College Selection</li>
+                    <li>State Quota Guidance</li>
+                    <li>AIQ Choice Filling Support</li>
+                    <li>Seat Matrix Analysis</li>
+                    <li>Preference Order Planning</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 3 -->
+        <details class="feature-details reveal" style="transition-delay: 0.3s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> College Prediction Support
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>Score Based Prediction</li>
+                    <li>Category Wise Analysis</li>
+                    <li>Government College Chances</li>
+                    <li>Private College Options</li>
+                    <li>Previous Cutoff Comparison</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 4 -->
+        <details class="feature-details reveal" style="transition-delay: 0.4s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> Documentation Assistance
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>Document Verification Support</li>
+                    <li>Required Documents Checklist</li>
+                    <li>Upload & Submission Guidance</li>
+                    <li>Gap Certificate Guidance</li>
+                    <li>Affidavit & Format Assistance</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 5 -->
+        <details class="feature-details reveal" style="transition-delay: 0.5s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> MP & Maharashtra Guidance
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>MP State Counselling Support</li>
+                    <li>Maharashtra Counselling Support</li>
+                    <li>State Rules & Eligibility</li>
+                    <li>Reservation Benefits Guidance</li>
+                    <li>College-wise Admission Process</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 6 -->
+        <details class="feature-details reveal" style="transition-delay: 0.6s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> MBBS & AYUSH Expert Team
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>MBBS Admission Experts</li>
+                    <li>BAMS Admission Experts</li>
+                    <li>BHMS Admission Experts</li>
+                    <li>BUMS Admission Experts</li>
+                    <li>Experienced Counselling Team</li>
+                </ul>
+            </div>
+        </details>
+
+        <!-- Item 7 -->
+        <details class="feature-details reveal" style="transition-delay: 0.7s;">
+            <summary class="feature-summary">
+                <span class="feature-icon">✨</span> Quick Updates & Genuine Guidance
+            </summary>
+            <div class="feature-dropdown">
+                <ul class="feature-list">
+                    <li>Counselling Schedule Update</li>
+                </ul>
+            </div>
+        </details>
+
+    </div>
+</section>
 </style>
 
 <div class="custom-stat-container reveal" id="animated-stats-section">
