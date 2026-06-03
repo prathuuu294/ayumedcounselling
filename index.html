@@ -1147,7 +1147,137 @@
             <div class="feature-item reveal" style="transition-delay: 0.7s;"><span class="feature-icon">✦</span> Quick Updates & Genuine Guidance</div>
         </div>
     </section>
+<style>
+    .stats-premium-container {
+        display: flex;
+        justify-content: center;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+        margin: 3rem auto;
+        max-width: 1100px;
+        padding: 0 1rem;
+    }
+    .stat-premium-box {
+        background-color: #ffffff;
+        border-top: 5px solid var(--gold);
+        border-radius: 12px;
+        box-shadow: 0 15px 35px rgba(13, 27, 42, 0.08); /* Soft navy shadow */
+        padding: 3rem 2rem;
+        text-align: center;
+        flex: 1;
+        min-width: 250px;
+        max-width: 320px;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .stat-premium-box:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 45px rgba(13, 27, 42, 0.12);
+    }
+    .stat-premium-number-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+    .stat-number {
+        color: var(--navy-900);
+        font-size: 4.5rem;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        line-height: 1;
+        margin: 0;
+    }
+    .stat-symbol {
+        color: var(--gold);
+        font-size: 3.5rem;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        margin-left: 5px;
+    }
+    .stat-premium-title {
+        color: var(--navy-600);
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 0;
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
 
+<div class="stats-premium-container" id="animated-stats-section">
+    
+    <!-- Box 1 -->
+    <div class="stat-premium-box">
+        <div class="stat-premium-number-wrapper">
+            <h3 class="stat-number" data-target="600">0</h3>
+            <span class="stat-symbol">+</span>
+        </div>
+        <p class="stat-premium-title">Students Mentored</p>
+    </div>
+
+    <!-- Box 2 -->
+    <div class="stat-premium-box">
+        <div class="stat-premium-number-wrapper">
+            <h3 class="stat-number" data-target="500">0</h3>
+            <span class="stat-symbol">+</span>
+        </div>
+        <p class="stat-premium-title">Successful Admissions</p>
+    </div>
+
+    <!-- Box 3 -->
+    <div class="stat-premium-box">
+        <div class="stat-premium-number-wrapper">
+            <h3 class="stat-number" data-target="100">0</h3>
+            <span class="stat-symbol">%</span>
+        </div>
+        <p class="stat-premium-title">Personalized Guidance</p>
+    </div>
+
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const counters = document.querySelectorAll('.stat-number');
+        const statsSection = document.getElementById('animated-stats-section');
+        let animated = false;
+
+        const animateCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    
+                    // Lower number = faster animation. Set to 30 for smooth counting.
+                    const speed = 40; 
+                    const increment = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + increment);
+                        setTimeout(updateCount, 30);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCount();
+            });
+        };
+
+        // This ensures the animation only triggers when the user scrolls down to see it
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !animated) {
+                    animateCounters();
+                    animated = true; // Prevents it from animating over and over
+                }
+            });
+        }, { threshold: 0.5 });
+
+        if (statsSection) {
+            observer.observe(statsSection);
+        }
+    });
+</script>
     <section class="section-container" id="team">
         <h2 class="section-title reveal">Our Esteemed Advisors</h2>
         <div class="team-grid">
