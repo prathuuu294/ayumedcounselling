@@ -1357,6 +1357,109 @@
     </div>
 </section>
 </style>
+
+<style>
+    .custom-stat-container {
+        max-width: 900px;
+        margin: 4rem auto 2rem;
+        padding: 0 20px;
+    }
+    
+    .custom-stat-box {
+        background-color: #ffffff;
+        border-top: 5px solid var(--gold);
+        border-radius: 12px;
+        box-shadow: var(--shadow-luxury); 
+        padding: 3rem 1rem 2.5rem; 
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    
+    .custom-stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 45px rgba(13, 27, 42, 0.12);
+    }
+
+    .stat-top-row {
+        display: flex;
+        justify-content: center;
+        align-items: stretch;
+        margin-bottom: 1rem;
+    }
+
+    .stat-item {
+        flex: 1;
+        text-align: center;
+        padding: 1rem;
+    }
+
+    .stat-center-line {
+        width: 2px;
+        background-color: rgba(13, 27, 42, 0.15);
+        margin: 1.5rem 0; 
+    }
+
+    .stat-bottom-row {
+        margin: 0 auto;
+        text-align: center;
+        padding: 1.5rem 1rem;
+        border-left: 2px solid rgba(13, 27, 42, 0.15);
+        border-right: 2px solid rgba(13, 27, 42, 0.15);
+        width: 50%; 
+    }
+
+    .stat-number-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.25rem;
+    }
+    
+    .c-stat-num {
+        color: var(--navy-900);
+        font-size: 2.8rem; 
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        line-height: 1;
+        margin: 0;
+    }
+    
+    .c-stat-sym {
+        color: var(--gold);
+        font-size: 2.2rem;
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        margin-left: 4px;
+    }
+    
+    .c-stat-text {
+        color: var(--navy-600);
+        font-size: 1.05rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    @media (max-width: 650px) {
+        .stat-top-row {
+            flex-direction: column;
+        }
+        .stat-center-line {
+            width: 80px;
+            height: 2px;
+            margin: 1rem auto;
+        }
+        .stat-bottom-row {
+            width: 85%;
+            border-left: none;
+            border-right: none;
+            border-top: 2px solid rgba(13, 27, 42, 0.15);
+            border-bottom: 2px solid rgba(13, 27, 42, 0.15);
+            margin-top: 0.5rem;
+        }
+    }
+</style>
 <div class="custom-stat-container reveal" id="animated-stats-section">
     <div class="custom-stat-box">
         
