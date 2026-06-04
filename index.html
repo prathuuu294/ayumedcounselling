@@ -1084,10 +1084,10 @@
                 border-bottom: none;
             }
 
-            /* The Engine that drives the scroll */
+                        /* The Engine that drives the scroll */
             @keyframes smoothTicker {
-                0% { transform: translateY(100%); }
-                100% { transform: translateY(-100%); }
+                0% { transform: translateY(280px); } /* Starts right below the header line */
+                100% { transform: translateY(-100%); } /* Scrolls all the way until the bottom clears */
             }
         </style>
         
@@ -1931,14 +1931,20 @@
                     
                     if (category === 'General') { details.open = true; }
 
-                    const summary = document.createElement('summary');
+                                        const summary = document.createElement('summary');
                     summary.className = 'cat-summary';
                     summary.innerHTML = `${category} Announcements <span class="cat-badge">${categoryAnns.length} Updates</span>`;
                     
+                    // Creates a stationary window to mask the scrolling
+                    const tickerWindow = document.createElement('div');
+                    tickerWindow.style.height = '280px';
+                    tickerWindow.style.overflow = 'hidden';
+                    tickerWindow.style.position = 'relative';
+                    tickerWindow.style.backgroundColor = 'var(--cream)';
+
                     const scrollContainer = document.createElement('div');
                     scrollContainer.className = 'notice-scroll';
-                    scrollContainer.style.maxHeight = '250px';
-                    scrollContainer.style.padding = '15px 0';
+                    // max-height has been removed here so your text is no longer chopped!
 
                     if (categoryAnns.length === 0) {
                         scrollContainer.innerHTML = '<div class="notice-item" style="border-left: none; text-align: center;">No new announcements at this time.</div>';
@@ -1956,7 +1962,7 @@
                         });
                     }
 
-                    details.appendChild(summary);
+                                        details.appendChild(summary);
                     details.appendChild(scrollContainer);
                     container.appendChild(details);
                 });
