@@ -1068,6 +1068,37 @@
                 /* Moving exactly 50% up allows the duplicated content to loop invisibly */
                 100% { transform: translateY(-50%); } 
             }
+
+            /* Premium Dynamic "New" Badge */
+            .badge-new {
+                background-color: var(--gold);
+                color: var(--navy-900);
+                font-size: 0.65rem;
+                font-weight: 800;
+                padding: 3px 8px;
+                border-radius: 12px;
+                margin-left: 8px;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+                vertical-align: text-bottom;
+                display: inline-block;
+                animation: pulseGold 2s infinite;
+            }
+
+            @keyframes pulseGold {
+                0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.6); }
+                70% { box-shadow: 0 0 0 6px rgba(212, 175, 55, 0); }
+                100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+            }
+
+            /* Semi-Solid Shadow Separator for the Loop */
+            .loop-divider {
+                border-bottom: 2px solid rgba(13, 27, 42, 0.15) !important;
+                box-shadow: 0 12px 15px -5px rgba(13, 27, 42, 0.15) !important;
+                position: relative;
+                z-index: 5;
+            }
         </style>
         
         <div id="announcements-container" class="reveal master-board" style="max-width: 900px; margin: 0 auto; transition-delay: 0.2s;">
@@ -1924,24 +1955,41 @@
                     const scrollContainer = document.createElement('div');
                     scrollContainer.className = 'notice-scroll';
 
-                    if (categoryAnns.length === 0) {
+                                        if (categoryAnns.length === 0) {
                         scrollContainer.innerHTML = '<div class="notice-item" style="border-left: none; text-align: center;">No new announcements at this time.</div>';
                     } else {
+                        // 1. Find the newest DATE across all announcements (ignoring the exact time of day)
+                        const normalizedDates = categoryAnns.map(a => {
+                            const d = new Date(a.date);
+                            d.setHours(0, 0, 0, 0);
+                            return d.getTime();
+                        });
+                        const latestDate = Math.max(...normalizedDates);
+
                         let itemsHTML = '';
-                        categoryAnns.forEach(a => {
+                        categoryAnns.forEach((a, index) => {
                             const dateObj = new Date(a.date);
                             const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
                             
+                            // 2. Check if this specific announcement falls on the latest date
+                            const d = new Date(a.date);
+                            d.setHours(0, 0, 0, 0);
+                            const isNew = d.getTime() === latestDate;
+                            const newBadge = isNew ? '<span class="badge-new">New</span>' : '';
+                            
+                            // 3. Add the shadow separator to the very last item in your list
+                            const isLast = index === categoryAnns.length - 1;
+                            const extraClass = isLast ? ' loop-divider' : '';
+                            
                             itemsHTML += `
-                                <a href="${a.link}" target="_blank" class="notice-item">
-                                    <span class="notice-date">${formattedDate}</span>
+                                <a href="${a.link}" target="_blank" class="notice-item${extraClass}">
+                                    <span class="notice-date">${formattedDate} ${newBadge}</span>
                                     <div class="notice-title">${a.title}</div>
                                 </a>
                             `;
                         });
                         
-                        // THE MAGIC TRICK: Duplicate the HTML string so it repeats exactly once. 
-                        // This allows the -50% CSS animation to create a seamless infinite loop!
+                        // 4. Duplicate the HTML string so it repeats seamlessly
                         scrollContainer.innerHTML = itemsHTML + itemsHTML;
                     }
 
