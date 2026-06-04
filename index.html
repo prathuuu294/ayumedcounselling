@@ -457,18 +457,113 @@
             gap: 40px;
         }
 
-        .team-card {
+                /* Premium 3D Flip Team Cards */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 40px;
+        }
+
+        .team-card-wrapper {
+            perspective: 1000px; /* Creates the 3D depth */
+            cursor: pointer;
+        }
+
+        .team-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Premium bouncy flip */
+            transform-style: preserve-3d;
+        }
+
+        /* Desktop Hover & Mobile Swipe (.flipped) Trigger */
+        .team-card-wrapper:hover .team-card-inner,
+        .team-card-wrapper.flipped .team-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .team-card-front {
+            position: relative; /* Dictates the natural height of the card */
+            width: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari support */
             background: #FFFFFF;
             padding: 40px 25px;
             text-align: center;
             box-shadow: var(--shadow-luxury);
             border: 1px solid rgba(13, 27, 42, 0.05);
-            transition: all 0.5s ease;
+            border-radius: 8px;
         }
 
-        .team-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 20px 40px rgba(13, 27, 42, 0.12);
+        .team-card-back {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform: rotateY(180deg);
+            background: var(--navy-900);
+            border: 2px solid var(--gold);
+            border-radius: 8px;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 15px 35px rgba(13, 27, 42, 0.3);
+        }
+
+        .back-contact-title {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .back-contact-number {
+            color: var(--cream);
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 20px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .back-buttons {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .btn-back-call {
+            flex: 1;
+            padding: 12px 0;
+            background: var(--gold);
+            color: var(--navy-900);
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .btn-back-wa {
+            flex: 1;
+            padding: 12px 0;
+            background: #25D366;
+            color: #FFFFFF;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-back-call:hover, .btn-back-wa:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
 
         .team-photo-container, .team-icon {
@@ -1573,44 +1668,105 @@
 </script>
     <section class="section-container" id="team">
         <h2 class="section-title reveal">Our Esteemed Advisors</h2>
-        <div class="team-grid">
+                <div class="team-grid">
             
-            <div class="team-card reveal" style="transition-delay: 0.1s;">
-                <div class="team-photo-container">
-                    <img src="https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg" alt="Aditya Patel (BAMS)" class="team-photo">
+            <!-- Aditya Patel -->
+            <div class="team-card-wrapper reveal" style="transition-delay: 0.1s;">
+                <div class="team-card-inner">
+                    <div class="team-card-front">
+                        <div class="team-photo-container">
+                            <img src="https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg" alt="Aditya Patel" class="team-photo">
+                        </div>
+                        <h3 class="team-name">Aditya Patel (BAMS)</h3>
+                        <div class="team-role">Founder & Lead Counsellor</div>
+                        <div class="team-desc">Expert in BAMS Admissions and Strategic Career Planning.</div>
+                    </div>
+                    <div class="team-card-back">
+                        <div class="back-contact-title">Aditya Patel</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">Lead Counsellor</div>
+                        <div class="back-contact-number">+91 78790 78367</div>
+                        <div class="back-buttons">
+                            <a href="tel:+917879078367" class="btn-back-call">Call Now</a>
+                            <a href="https://wa.me/917879078367" target="_blank" class="btn-back-wa">WhatsApp</a>
+                        </div>
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: var(--gold); opacity: 0.7; font-style: italic;">Swipe or hover to flip back</div>
+                    </div>
                 </div>
-                <h3 class="team-name">Aditya Patel (BAMS)</h3>
-                <div class="team-role">Founder & Lead Counsellor</div>
-                <div class="team-desc">Expert in BAMS Admissions and Strategic Career Planning.</div>
             </div>
 
-            <div class="team-card reveal" style="transition-delay: 0.2s;">
-                <div class="team-photo-container">
-                    <img src="https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png" alt="Mahesh Wankhade(BAMS)" class="team-photo"></div>
-                <h3 class="team-name">Mahesh Wankhade (BAMS)</h3>
-                <div class="team-role">BAMS Counsellor</div>
-                <div class="team-desc">Specialized Guidance for Top Ayurvedic Institutions.</div>
-            </div>
-
-            <div class="team-card reveal" style="transition-delay: 0.3s;">
-                <div class="team-photo-container">
-                    <img src="https://i.postimg.cc/mrzCCL0y/yatharth.jpg" alt="Yatharth Gobade (BAMS)" class="team-photo"> 
+            <!-- Mahesh Wankhade -->
+            <div class="team-card-wrapper reveal" style="transition-delay: 0.2s;">
+                <div class="team-card-inner">
+                    <div class="team-card-front">
+                        <div class="team-photo-container">
+                            <img src="https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png" alt="Mahesh Wankhade" class="team-photo">
+                        </div>
+                        <h3 class="team-name">Mahesh Wankhade (BAMS)</h3>
+                        <div class="team-role">BAMS Counsellor</div>
+                        <div class="team-desc">Specialized Guidance for Top Ayurvedic Institutions.</div>
+                    </div>
+                    <div class="team-card-back">
+                        <div class="back-contact-title">Mahesh Wankhade</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">BAMS Counsellor</div>
+                        <div class="back-contact-number">+91 97301 20277</div>
+                        <div class="back-buttons">
+                            <a href="tel:+919730120277" class="btn-back-call">Call Now</a>
+                            <a href="https://wa.me/919730120277" target="_blank" class="btn-back-wa">WhatsApp</a>
+                        </div>
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: var(--gold); opacity: 0.7; font-style: italic;">Swipe or hover to flip back</div>
+                    </div>
                 </div>
-                <h3 class="team-name">Yatharth Gobade (BAMS)</h3>
-                <div class="team-role">BAMS & Cut-off Analyst</div>
-                <div class="team-desc">Data-driven Rank Prediction and State Quota Strategies.</div>
             </div>
 
-            <div class="team-card reveal" style="transition-delay: 0.4s;">
-                <div class="team-photo-container">
-                    <img src="https://i.postimg.cc/FHvBTq9X/1000627881.jpg" alt="Prathamesh Salunke (BDS)" class="team-photo">
+            <!-- Yatharth Gobade -->
+            <div class="team-card-wrapper reveal" style="transition-delay: 0.3s;">
+                <div class="team-card-inner">
+                    <div class="team-card-front">
+                        <div class="team-photo-container">
+                            <img src="https://i.postimg.cc/mrzCCL0y/yatharth.jpg" alt="Yatharth Gobade" class="team-photo"> 
+                        </div>
+                        <h3 class="team-name">Yatharth Gobade (BAMS)</h3>
+                        <div class="team-role">BAMS & Cut-off Analyst</div>
+                        <div class="team-desc">Data-driven Rank Prediction and State Quota Strategies.</div>
+                    </div>
+                    <div class="team-card-back">
+                        <div class="back-contact-title">Yatharth Gobade</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">Cut-off Analyst</div>
+                        <div class="back-contact-number">+91 77961 26149</div>
+                        <div class="back-buttons">
+                            <a href="tel:+917796126149" class="btn-back-call">Call Now</a>
+                            <a href="https://wa.me/917796126149" target="_blank" class="btn-back-wa">WhatsApp</a>
+                        </div>
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: var(--gold); opacity: 0.7; font-style: italic;">Swipe or hover to flip back</div>
+                    </div>
                 </div>
-                <h3 class="team-name">Prathamesh Salunke (BDS)</h3>
-                <div class="team-role">MBBS & BDS Guidance</div>
-                <div class="team-desc">Nair Hospital Mumbai Alumni Offering Top-tier Allopathic Consultation.</div>
             </div>
 
-        </div> 
+            <!-- Prathamesh Salunke -->
+            <div class="team-card-wrapper reveal" style="transition-delay: 0.4s;">
+                <div class="team-card-inner">
+                    <div class="team-card-front">
+                        <div class="team-photo-container">
+                            <img src="https://i.postimg.cc/FHvBTq9X/1000627881.jpg" alt="Prathamesh Salunke" class="team-photo">
+                        </div>
+                        <h3 class="team-name">Prathamesh Salunke (BDS)</h3>
+                        <div class="team-role">MBBS & BDS Guidance</div>
+                        <div class="team-desc">Nair Hospital Mumbai Alumni Offering Top-tier Allopathic Consultation.</div>
+                    </div>
+                    <div class="team-card-back">
+                        <div class="back-contact-title">Prathamesh Salunke</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">MBBS & BDS Guidance</div>
+                        <div class="back-contact-number">+91 80800 26270</div>
+                        <div class="back-buttons">
+                            <a href="tel:+918080026270" class="btn-back-call">Call Now</a>
+                            <a href="https://wa.me/918080026270" target="_blank" class="btn-back-wa">WhatsApp</a>
+                        </div>
+                        <div style="margin-top: 25px; font-size: 0.75rem; color: var(--gold); opacity: 0.7; font-style: italic;">Swipe or hover to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>  
     </section>
     <section class="faq-section" id="faq">
         <div class="faq-container reveal">
@@ -2040,6 +2196,30 @@
                 behavior: 'smooth'
             });
         }
+        // Mobile Swipe-to-Flip Logic for Advisor Cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const teamCards = document.querySelectorAll('.team-card-wrapper');
+            
+            teamCards.forEach(card => {
+                let touchstartX = 0;
+                let touchendX = 0;
+                
+                // Track where the finger lands
+                card.addEventListener('touchstart', e => {
+                    touchstartX = e.changedTouches[0].screenX;
+                }, {passive: true});
+                
+                // Track where the finger lifts off
+                card.addEventListener('touchend', e => {
+                    touchendX = e.changedTouches[0].screenX;
+                    
+                    // If the finger swiped more than 40 pixels left or right, trigger the flip!
+                    if (Math.abs(touchendX - touchstartX) > 40) {
+                        card.classList.toggle('flipped');
+                    }
+                }, {passive: true});
+            });
+        });
     </script>
 </body>
 </html>
