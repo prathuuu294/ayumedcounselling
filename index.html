@@ -1045,49 +1045,28 @@
                 color: var(--navy-900);
             }
 
-            /* --- THE NEW CONTAINED TICKER ANIMATION --- */
-
-.master-board .notice-scroll {
-    position: relative !important;
-    z-index: 1; 
-    display: block !important;
-    min-height: 200px; 
-    padding: 0 !important; /* Removed side padding to fix the white gaps */
-    background-color: var(--cream); /* Fills the empty background space */
-    
-    /* The Ticker Animation */
-    animation: smoothTicker 15s linear infinite !important;
-}
-
-/* PAUSE ON HOVER: Stops the scroll so students can click easily */
-.master-board .cat-details:hover .notice-scroll {
-    animation-play-state: paused !important;
-}
-
-/* Stripping away your old buggy floating animation */
-.master-board .notice-item {
-    position: relative !important;
-    display: block !important;
-    padding: 15px 25px !important; /* Added side padding to the items directly */
-    margin: 0 !important;
-    border-left: none !important;
-    border-bottom: 1px solid rgba(13, 27, 42, 0.1);
-    background: var(--cream) !important; /* Ensures the item background spans full width */
-    
-    /* Force items to stop floating globally */
-    animation: none !important;
-    transform: none !important;
-    top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
-}
-            
-            .master-board .notice-item:last-child {
-                border-bottom: none;
+                        /* --- THE NEW SEAMLESS TICKER ANIMATION --- */
+            .master-board .notice-scroll {
+                position: relative !important;
+                z-index: 1; 
+                display: block !important;
+                padding: 0 !important; 
+                background-color: var(--cream); 
+                
+                /* The Ticker Animation */
+                animation: seamlessTicker 20s linear infinite !important;
             }
 
-                        /* The Engine that drives the scroll */
-            @keyframes smoothTicker {
-                0% { transform: translateY(280px); } /* Starts right below the header line */
-                100% { transform: translateY(-100%); } /* Scrolls all the way until the bottom clears */
+            /* PAUSE ON HOVER */
+            .master-board .cat-details:hover .notice-scroll {
+                animation-play-state: paused !important;
+            }
+
+            /* The Engine that drives the seamless scroll */
+            @keyframes seamlessTicker {
+                0% { transform: translateY(0); }
+                /* Moving exactly 50% up allows the duplicated content to loop invisibly */
+                100% { transform: translateY(-50%); } 
             }
         </style>
         
@@ -1935,35 +1914,40 @@
                     summary.className = 'cat-summary';
                     summary.innerHTML = `${category} Announcements <span class="cat-badge">${categoryAnns.length} Updates</span>`;
                     
-                    // Creates a stationary window to mask the scrolling
+                                        // Creates a stationary window to mask the scrolling (Sized for exactly ~3 announcements)
                     const tickerWindow = document.createElement('div');
-                    tickerWindow.style.height = '280px';
+                    tickerWindow.style.height = '250px'; 
                     tickerWindow.style.overflow = 'hidden';
                     tickerWindow.style.position = 'relative';
                     tickerWindow.style.backgroundColor = 'var(--cream)';
 
                     const scrollContainer = document.createElement('div');
                     scrollContainer.className = 'notice-scroll';
-                    // max-height has been removed here so your text is no longer chopped!
 
                     if (categoryAnns.length === 0) {
                         scrollContainer.innerHTML = '<div class="notice-item" style="border-left: none; text-align: center;">No new announcements at this time.</div>';
                     } else {
+                        let itemsHTML = '';
                         categoryAnns.forEach(a => {
                             const dateObj = new Date(a.date);
                             const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
                             
-                            scrollContainer.innerHTML += `
+                            itemsHTML += `
                                 <a href="${a.link}" target="_blank" class="notice-item">
                                     <span class="notice-date">${formattedDate}</span>
                                     <div class="notice-title">${a.title}</div>
                                 </a>
                             `;
                         });
+                        
+                        // THE MAGIC TRICK: Duplicate the HTML string so it repeats exactly once. 
+                        // This allows the -50% CSS animation to create a seamless infinite loop!
+                        scrollContainer.innerHTML = itemsHTML + itemsHTML;
                     }
 
-                                        details.appendChild(summary);
-                    details.appendChild(scrollContainer);
+                    details.appendChild(summary);
+                    tickerWindow.appendChild(scrollContainer);
+                    details.appendChild(tickerWindow);
                     container.appendChild(details);
                 });
 
