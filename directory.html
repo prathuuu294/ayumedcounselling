@@ -236,11 +236,14 @@
                 // Formatting the WhatsApp Message dynamically
                 const waMessage = encodeURIComponent(`Hello AyuMed, I am interested in admission guidance for ${col.name} (${col.course}). My expected score is around ${col.cutoff}.`);
                 
-                grid.innerHTML += `
+                                grid.innerHTML += `
                     <div class="college-card">
                         <div class="card-header">
                             <div class="course-badge">${col.course}</div>
                             <h3>${col.name}</h3>
+                            <div style="margin-top: 10px; font-size: 0.85rem; font-weight: 600; color: rgba(255,255,255,0.8);">
+                                Counselling Code: <span style="color: var(--gold); font-weight: 700; font-size: 1rem; letter-spacing: 1px;">${col.code || 'TBD'}</span>
+                            </div>
                         </div>
                         <div class="card-body">
                             <div class="data-row"><span class="data-label">State</span><span class="data-value">${col.state}</span></div>
