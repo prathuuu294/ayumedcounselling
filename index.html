@@ -1123,8 +1123,101 @@
                 <button onclick="openModal('bookingModal')" class="btn-gold btn-large reveal" style="transition-delay: 0.4s; display: inline-block; cursor: pointer;">
             Book Your Seat Now !!
         </button>
-    </section>
+        </section>
 
+    <style>
+        .glowing-booking-container {
+            text-align: center;
+            margin: 50px auto 10px auto;
+            padding: 0 20px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-glowing-book {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #D4AF37; /* AyuMed Gold */
+            color: #0D1B2A; /* AyuMed Deep Navy text */
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 18px 50px;
+            border-radius: 8px;
+            border: 2px solid #D4AF37;
+            cursor: pointer;
+            overflow: hidden; /* Keeps the shining beam clipped inside the button boundaries */
+            z-index: 1;
+            transition: all 0.3s ease;
+            
+            /* Continuous Pulsing Ambient Glow Animation */
+            animation: rhythmic-gold-glow 2.5s infinite ease-in-out;
+        }
+
+        /* Pulsing Glow Effect Keyframes */
+        @keyframes rhythmic-gold-glow {
+            0% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7), 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+            70% {
+                box-shadow: 0 0 25px 15px rgba(212, 175, 55, 0), 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(212, 175, 55, 0), 0 4px 10px rgba(0, 0, 0, 0.15);
+            }
+        }
+
+        /* Slanted Shimmering Shiner Light Ray Beam Overlay */
+        .btn-glowing-book::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 60%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: skewX(-25deg); /* Clean angular professional highlight streak */
+            z-index: 2;
+            
+            /* Continuous Shiner Sweep Loop Animation */
+            animation: shiner-beam-sweep 3.5s infinite ease-in-out;
+        }
+
+        /* Shiner Sweep Pass Keyframes */
+        @keyframes shiner-beam-sweep {
+            0% {
+                left: -150%;
+            }
+            40% {
+                left: 150%;
+            }
+            100% {
+                left: 150%;
+            }
+        }
+
+        /* Premium Hover Lift State */
+        .btn-glowing-book:hover {
+            background-color: #e5c354;
+            border-color: #e5c354;
+            transform: translateY(-3px);
+        }
+    </style>
+
+    <div class="glowing-booking-container class-reveal">
+        <button onclick="openModal('bookingModal')" class="btn-glowing-book">
+            Book Your Seat Now!!
+        </button>
+    </div>
     <section class="section-container" id="announcements">
                         <!-- Organized Announcements Container -->
         <style>
