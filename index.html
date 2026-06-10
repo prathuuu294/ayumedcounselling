@@ -1255,7 +1255,47 @@
         </div>
         </div>
     </section>
+<style>
+    .btn-explore {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #0D1B2A; 
+        color: #D4AF37; 
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-decoration: none;
+        padding: 16px 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(13, 27, 42, 0.15);
+        transition: all 0.3s ease;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        border: 2px solid #0D1B2A;
+    }
+    .btn-explore:hover {
+        background-color: #D4AF37;
+        color: #0D1B2A;
+        border-color: #D4AF37;
+        box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+        transform: translateY(-3px);
+    }
+    .btn-explore span {
+        margin-left: 10px;
+        font-size: 1.2rem;
+        transition: transform 0.3s ease;
+    }
+    .btn-explore:hover span {
+        transform: translateX(6px);
+    }
+</style>
 
+<div style="text-align: center; margin: 40px auto 60px auto; padding: 0 20px; width: 100%;">
+    <a href="directory.html" class="btn-explore">
+        Explore College Directory <span>&rarr;</span>
+    </a>
+</div>
     <section class="section-container" id="about">
         <h2 class="section-title reveal">Our Heritage</h2>
         <div class="about-content reveal" style="transition-delay: 0.2s;">
