@@ -18,6 +18,36 @@
         .blog-content { line-height: 1.8; font-size: 1.05rem; color: #333; }
         .blog-content p { margin-bottom: 15px; }
         .blog-content blockquote { border-left: 3px solid var(--gold); padding-left: 15px; font-style: italic; margin: 20px 0; color: #555; }
+.author-bio {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #FFFFFF;
+    padding: 25px;
+    border-radius: 8px;
+    margin-top: 40px;
+    border-top: 4px solid var(--gold);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+.author-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+}
+.author-details h4 {
+    margin: 0 0 5px 0;
+    font-family: 'Playfair Display', serif;
+    color: var(--navy);
+    font-size: 1.2rem;
+}
+.author-details p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.5;
+}
     </style>
 </head>
 <body>
@@ -53,6 +83,13 @@
                             <div class="blog-date">${cleanDate}</div>
                             <h2 class="blog-title">${post.title}</h2>
                             <div class="blog-content">${post.content}</div>
+<div class="author-bio">
+    <img src="https://i.postimg.cc/FHvBTq9X/1000627881.jpg" alt="Prathamesh Sanjay Salunke" class="author-avatar">
+    <div class="author-details">
+        <h4>Prathamesh Sanjay Salunke</h4>
+        <p>Lead Advisor at AyuMed. 2nd Year BDS Student at Nair Hospital Dental College, Mumbai. Dedicated to guiding the next generation of medical and dental professionals.</p>
+    </div>
+</div>
                         </article>
                     `;
                 });
