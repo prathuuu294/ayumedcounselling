@@ -1465,16 +1465,16 @@
         }
 
                 .dock-center-btn svg {
-            width: 30px; 
-            height: 30px;
-            fill: none; /* Changed to none so the new stroke icon shows up perfectly */
-            stroke: #FFFFFF;
+            width: 32px; 
+            height: 32px;
+            fill: #FFFFFF; /* Solid white for the headset person */
+            stroke: none;
         }
 
         /* --- CONTACT POP-UP MENU --- */
         .contact-menu {
             position: absolute;
-            bottom: 75px; /* Floats exactly above the main green button */
+            bottom: 75px;
             left: 50%;
             transform: translateX(-50%) translateY(20px) scale(0.5);
             display: flex;
@@ -1483,7 +1483,7 @@
             visibility: hidden;
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 10000;
-            background: rgba(13, 27, 42, 0.85); /* Semi-transparent pill background */
+            background: rgba(13, 27, 42, 0.85);
             padding: 8px 12px;
             border-radius: 30px;
             border: 1px solid rgba(212, 175, 55, 0.3);
@@ -2540,7 +2540,6 @@
 
     <!-- Premium Bottom Dock -->
     <nav class="bottom-dock">
-        <!-- Home -->
         <a href="#home" class="dock-item">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
@@ -2549,7 +2548,6 @@
             <span>Home</span>
         </a>
 
-        <!-- Colleges -->
         <a href="directory.html" class="dock-item">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
@@ -2563,8 +2561,7 @@
             <span>Colleges</span>
         </a>
         
-        <!-- Center WhatsApp Support Button -->
-        <a        <div class="dock-item dock-center" onclick="toggleContactMenu(event)" style="cursor: pointer;">
+        <div class="dock-item dock-center" onclick="toggleContactMenu(event)" style="cursor: pointer;">
             
             <div class="contact-menu" id="contactMenu">
                 <a href="tel:+917879078367" class="menu-btn call-btn" title="Call Us">
@@ -2580,15 +2577,13 @@
             </div>
             
             <div class="dock-center-btn" id="mainContactBtn">
-                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                <svg viewBox="0 0 512 512">
+                    <path d="M192 208c0-17.67-14.33-32-32-32h-16c-35.35 0-64 28.65-64 64v48c0 35.35 28.65 64 64 64h16c17.67 0 32-14.33 32-32V208zm176 144c35.35 0 64-28.65 64-64v-48c0-35.35-28.65-64-64-64h-16c-17.67 0-32 14.33-32 32v112c0 17.67 14.33 32 32 32h16zM256 0C113.18 0 4.58 118.83 0 256v16c0 8.84 7.16 16 16 16h16c8.84 0 16-7.16 16-16v-16c3.37-113.38 94.61-208 208-208s204.63 94.62 208 208v16c0 8.84 7.16 16 16 16h16c8.84 0 16-7.16 16-16v-16C507.42 118.83 398.82 0 256 0zM432 448h-16v-64h-64v-64h112v80c0 26.51-21.49 48-48 48zM189.6 422.3l49.9 83c11.6 19.3 40.5 19.3 52 0l49.9-83c9.9-16.5-2.1-38.3-21.4-38.3h-109c-19.3 0-31.3 21.8-21.4 38.3z"/>
                 </svg>
             </div>
             <span>Support</span>
         </div>
 
-        <!-- Updates -->
         <a href="announcements.html" class="dock-item">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
@@ -2597,7 +2592,6 @@
             <span>Updates</span>
         </a>
 
-        <!-- Services -->
         <a href="#services" class="dock-item">
             <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -2870,9 +2864,12 @@
         });
         // Floating Contact Menu Toggle
         function toggleContactMenu(event) {
-            event.stopPropagation(); // Stops the click from immediately hiding the menu
+            event.preventDefault(); 
+            event.stopPropagation(); 
             const menu = document.getElementById('contactMenu');
-            menu.classList.toggle('active');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
         }
 
         // Close the contact menu if the user clicks anywhere else on the page
@@ -2881,8 +2878,7 @@
             const dockCenter = document.querySelector('.dock-center');
             
             if (menu && menu.classList.contains('active')) {
-                // If the click happened outside the main center button, close the menu
-                if (!dockCenter.contains(event.target)) {
+                if (dockCenter && !dockCenter.contains(event.target)) {
                     menu.classList.remove('active');
                 }
             }
