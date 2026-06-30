@@ -1446,17 +1446,17 @@
             letter-spacing: 0.5px;
         }
 
-        /* Prominent Center Support Button */
+                /* Prominent Center Support Button */
         .dock-center {
             opacity: 1 !important;
             position: relative;
-            transform: none; /* Removed the old lift so text aligns with other icons */
+            transform: none !important; /* Forces the text to stay perfectly grounded with the others */
         }
 
-                        .dock-center-btn {
+        .dock-center-btn {
             background: var(--gold);
-            width: 55px;
-            height: 55px;
+            width: 64px;  /* Increased size */
+            height: 64px; /* Increased size */
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -1464,15 +1464,16 @@
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
             border: 4px solid var(--navy-900);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: -17px; /* Exactly 30% outside the upper boundary */
-            margin-bottom: 4px; 
-            flex-shrink: 0; /* Prevents the circle from squishing into an oval */
-        /* Space between the gold circle and "Support" text */
+            
+            /* ~30% of 64px is 19px outside the bar, 70% deep inside */
+            margin-top: -19px; 
+            margin-bottom: 0px; /* Removed extra margin so the standard gap aligns the text */
+            flex-shrink: 0;
         }
 
         .dock-center-btn svg {
-            width: 28px;
-            height: 28px;
+            width: 32px; /* Scaled up slightly for the larger circle */
+            height: 32px;
             fill: var(--navy-900);
             stroke: none;
         }
@@ -1503,10 +1504,10 @@
                 background: rgba(13, 27, 42, 0.95);
             }
             
-                    .dock-center {
-            transform: translateY(-20px);
-        }
-            
+            .dock-center {
+                transform: none !important; /* Prevents any double-lifting on phones */
+            }
+           
             /* Push the Back-to-Top button even higher on mobile to avoid the raised dock */
             #backToTop {
                 bottom: 140px !important;
