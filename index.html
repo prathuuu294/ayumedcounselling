@@ -1382,24 +1382,38 @@
     }
 
                 /* --- PREMIUM FLOATING BOTTOM DOCK --- */
+                /* --- PREMIUM FLOATING BOTTOM DOCK --- */
         .bottom-dock {
             position: fixed;
             bottom: 20px;
             left: 50%;
-            transform: translateX(-50%);
+            /* Start it hidden and pushed down */
+            transform: translate(-50%, 120px);
+            opacity: 0;
+            visibility: hidden;
+            
             background: rgba(13, 27, 42, 0.90);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             display: flex;
             justify-content: space-between;
-            align-items: flex-end; /* Keeps text grounded to the bottom */
-            padding: 8px 30px 10px; /* Reduced vertical padding for a thinner bar */
+            align-items: flex-end;
+            padding: 8px 30px 10px;
             border-radius: 40px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(212, 175, 55, 0.3);
             z-index: 9999;
             width: max-content;
             gap: 40px;
+            /* Smooth slide-up animation */
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        /* The class added by JavaScript to reveal the dock */
+        .bottom-dock.show-dock {
+            transform: translate(-50%, 0);
+            opacity: 1;
+            visibility: visible;
         }
 
         .dock-item {
@@ -2745,13 +2759,31 @@
             });
         }
                 // Click-to-Flip Logic for Advisor Cards
-        function toggleFlip(buttonElement) {
+                        function toggleFlip(buttonElement) {
             // Finds the main wrapper for the specific card you clicked and toggles it
             const cardWrapper = buttonElement.closest('.team-card-wrapper');
             if (cardWrapper) {
                 cardWrapper.classList.toggle('flipped');
             }
         }
+
+        // Bottom Dock Visibility on Scroll
+        const bottomDock = document.querySelector('.bottom-dock');
+        const heroSection = document.getElementById('home');
+
+        window.addEventListener('scroll', function() {
+            if (bottomDock && heroSection) {
+                // Get the bottom boundary of the hero section relative to the viewport
+                const heroBottom = heroSection.getBoundingClientRect().bottom;
+                
+                // Reveal the dock when the user scrolls past the main part of the hero section
+                if (heroBottom < window.innerHeight / 1.5) {
+                    bottomDock.classList.add('show-dock');
+                } else {
+                    bottomDock.classList.remove('show-dock');
+                }
+            }
+        });
     </script>
 </body>
 </html>
