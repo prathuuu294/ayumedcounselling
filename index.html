@@ -1380,7 +1380,7 @@
         transform: translateX(6px);
     }
 
-                                /* --- PREMIUM FLOATING BOTTOM DOCK --- */
+                                        /* --- PREMIUM FLOATING BOTTOM DOCK --- */
         .bottom-dock {
             position: fixed;
             bottom: 20px;
@@ -1395,13 +1395,13 @@
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
-            padding: 4px 24px 6px; /* Tighter vertical padding */
+            padding: 4px 24px 6px; /* Shaved down vertical padding for a slim look */
             border-radius: 40px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(212, 175, 55, 0.3);
             z-index: 9999;
             width: max-content;
-            gap: 25px; /* Closer items */
+            gap: 25px;
             transition: transform 0.4s ease-out, opacity 0.4s ease-out, visibility 0.4s ease-out;
         }
 
@@ -1411,15 +1411,15 @@
             visibility: visible;
         }
 
-                .dock-item {
+        .dock-item {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: var(--gold); /* Changed from cream to gold */
-            opacity: 0.75; /* Increased opacity slightly so the gold pops nicely */
+            color: var(--gold);
+            opacity: 0.75; 
             transition: all 0.3s ease;
-            gap: 2px;
+            gap: 2px; /* Tighter gap reduces overall bar height */
         }
 
         .dock-item:hover {
@@ -1428,14 +1428,14 @@
         }
 
         .dock-item svg {
-            width: 18px; /* Scaled down standard icons */
+            width: 18px; 
             height: 18px;
             stroke: currentColor;
             fill: none;
         }
 
         .dock-item span {
-            font-size: 0.6rem; /* Scaled down text */
+            font-size: 0.6rem; 
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -1448,26 +1448,26 @@
             transform: none !important; 
         }
 
-                .dock-center-btn {
-            background: #25D366; /* Official WhatsApp Green */
-            width: 64px;  
-            height: 64px; 
+        .dock-center-btn {
+            background: #25D366; 
+            width: 56px;  /* Scaled down slightly to match the slimmer bar */
+            height: 56px; 
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); /* Green shadow glow */
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); 
             border: 4px solid var(--navy-900);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: -19px; 
+            margin-top: -18px; /* Adjusted to keep the perfect 30% overhang */
             margin-bottom: 0px; 
             flex-shrink: 0;
         }
 
-                .dock-center-btn svg {
-            width: 32px; 
-            height: 32px;
-            fill: #FFFFFF; /* Solid white for the headset person */
+        .dock-center-btn svg {
+            width: 28px; /* Scaled down to fit perfectly */
+            height: 28px;
+            fill: #FFFFFF; 
             stroke: none;
         }
 
@@ -1612,26 +1612,29 @@
             bottom: 110px !important;
         }
 
-                                /* Mobile Adaptation - Floating Pill */
+                                        /* Mobile Adaptation - Floating Pill */
         @media (max-width: 768px) {
             .bottom-dock {
-                bottom: 35px; /* Increased from 50px to fully clear the Trustindex badge */
-                width: 92%; /* Detaches from the edges to create a floating effect */
-                border-radius: 40px; /* Fully rounded pill shape */
-                padding: 6px 10px 8px; 
+                bottom: 35px; /* Properly lifted to clear the Trustindex badge */
+                width: 92%; 
+                border-radius: 40px; 
+                padding: 4px 10px 6px; /* Ultra-slim mobile padding */
                 gap: 0;
                 justify-content: space-around;
-                border: 1px solid rgba(212, 175, 55, 0.3); /* Restores the premium gold border */
+                border: 1px solid rgba(212, 175, 55, 0.3); 
                 background: rgba(13, 27, 42, 0.95);
             }
             
             .dock-center {
-                transform: none !important; /* Prevents any double-lifting on phones */
+                transform: none !important; 
             }
            
-            /* Push the Back-to-Top button even higher on mobile to avoid the raised dock */
+            /* Push the Back-to-Top button even higher on mobile */
             #backToTop {
-                bottom: 130px !important; /* Raised further to stay above the new dock position */
+                bottom: 130px !important; 
+            }
+        }
+ Raised further to stay above the new dock position */
             }
         }
 
