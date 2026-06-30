@@ -1453,7 +1453,7 @@
             transform: none; /* Removed the old lift so text aligns with other icons */
         }
 
-                .dock-center-btn {
+                        .dock-center-btn {
             background: var(--gold);
             width: 55px;
             height: 55px;
@@ -1464,8 +1464,10 @@
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
             border: 4px solid var(--navy-900);
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-top: -27px; /* Adjusted to sit exactly on the boundary */
-            margin-bottom: 4px; /* Space between the gold circle and "Support" text */
+            margin-top: -17px; /* Exactly 30% outside the upper boundary */
+            margin-bottom: 4px; 
+            flex-shrink: 0; /* Prevents the circle from squishing into an oval */
+        /* Space between the gold circle and "Support" text */
         }
 
         .dock-center-btn svg {
@@ -1501,9 +1503,9 @@
                 background: rgba(13, 27, 42, 0.95);
             }
             
-            .dock-center {
-                transform: translateY(-20px);
-            }
+                    .dock-center {
+            transform: translateY(-20px);
+        }
             
             /* Push the Back-to-Top button even higher on mobile to avoid the raised dock */
             #backToTop {
@@ -2767,17 +2769,26 @@
             }
         }
 
-        // Bottom Dock Visibility on Scroll
+                // Bottom Dock Visibility on Scroll
         const bottomDock = document.querySelector('.bottom-dock');
         const heroSection = document.getElementById('home');
+        const footerSection = document.querySelector('footer'); // Targets your dark navy footer
 
         window.addEventListener('scroll', function() {
-            if (bottomDock && heroSection) {
-                // Get the bottom boundary of the hero section relative to the viewport
+            if (bottomDock && heroSection && footerSection) {
                 const heroBottom = heroSection.getBoundingClientRect().bottom;
+                const footerTop = footerSection.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
                 
-                // Reveal the dock when the user scrolls past the main part of the hero section
-                if (heroBottom < window.innerHeight / 1.5) {
+                // Condition 1: User has scrolled past the hero section
+                const isPastHero = heroBottom < windowHeight / 1.5;
+                
+                // Condition 2: User hasn't reached the footer yet 
+                // (Using a small offset so it tucks away right as the golden line appears)
+                const isBeforeFooter = footerTop > windowHeight - 20; 
+                
+                // The dock will ONLY show if in the middle of the site
+                if (isPastHero && isBeforeFooter) {
                     bottomDock.classList.add('show-dock');
                 } else {
                     bottomDock.classList.remove('show-dock');
