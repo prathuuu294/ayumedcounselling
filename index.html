@@ -1474,7 +1474,7 @@
         /* --- CONTACT POP-UP MENU --- */
         .contact-menu {
             position: absolute;
-            bottom: 75px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%) translateY(20px) scale(0.5);
             display: flex;
@@ -1537,7 +1537,7 @@
 /* --- CONTACT POP-UP MENU --- */
         .contact-menu {
             position: absolute;
-            bottom: 75px;
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%) translateY(20px) scale(0.5);
             display: flex;
@@ -2928,7 +2928,12 @@
         });
         // Floating Contact Menu Toggle
         function toggleContactMenu(event) {
-            event.preventDefault(); 
+            // If the user clicked the Call or WhatsApp button, let the link work normally!
+            if (event.target.closest('.menu-btn')) {
+                return; 
+            }
+
+            // Otherwise, just open/close the menu
             event.stopPropagation(); 
             const menu = document.getElementById('contactMenu');
             if (menu) {
