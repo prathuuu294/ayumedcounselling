@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuMed | Student Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-900: #0D1B2A; 
+            --navy-800: #1B263B;
+            --navy-600: #415A77;
+            --gold: #D4AF37;     
+            --cream: #F7F3E9;    
+            --success: #25D366;
+            --warning: #f09433;
+            --shadow-card: 0 10px 25px rgba(13, 27, 42, 0.08);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--navy-900);
+        }
+
+        /* Top Navigation */
+        .dash-nav {
+            background: var(--navy-900);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--gold);
+        }
+        .dash-logo {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .logout-btn {
+            background: transparent;
+            color: var(--cream);
+            border: 1px solid var(--gold);
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .logout-btn:hover {
+            background: var(--gold);
+            color: var(--navy-900);
+        }
+
+        /* Main Dashboard Layout */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .welcome-header {
+            margin-bottom: 30px;
+        }
+        .welcome-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--navy-900);
+        }
+        .welcome-header p {
+            color: var(--navy-600);
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        /* Grid System */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+        
+        @media(max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--shadow-card);
+            margin-bottom: 30px;
+            border-top: 4px solid var(--gold);
+        }
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Pipeline Status Bar */
+        .status-badge {
+            display: inline-block;
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--navy-900);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid var(--gold);
+        }
+
+        /* Document Vault */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .doc-slot {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        .doc-slot:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+        .doc-name {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .doc-status {
+            font-size: 0.8rem;
+            color: var(--warning);
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .upload-btn {
+            background: var(--navy-900);
+            color: var(--gold);
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            width: 100%;
+        }
+        
+        /* Hidden File Input */
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Counsellor Profile */
+        .counsellor-info {
+            text-align: center;
+        }
+        .counsellor-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--navy-900);
+            color: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-family: 'Playfair Display', serif;
+            margin: 0 auto 15px;
+        }
+        .contact-btn {
+            display: block;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="dash-nav">
+        <a href="#" class="dash-logo">AyuMed</a>
+        <button class="logout-btn" onclick="logout()">Log Out</button>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-header">
+            <h1 id="studentName">Welcome, Student</h1>
+            <p>Your secure medical counselling portal.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            
+            <div class="main-column">
+                
+                <div class="card">
+                    <h2 class="card-title">Admission Pipeline Status</h2>
+                    <p style="margin-bottom: 15px; color: var(--navy-600);">Current Stage:</p>
+                    <div class="status-badge" id="leadStage">1) New Lead</div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Secure Document Vault</h2>
+                    <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies of the required documents for verification.</p>
+                    
+                    <div class="doc-grid">
+                        
+                        <div class="doc-slot">
+                            <div class="doc-name">NEET Scorecard</div>
+                            <div class="doc-status">Pending</div>
+                            <label class="upload-btn">
+                                Select File
+                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                            </label>
+                        </div>
+
+                        <div class="doc-slot">
+                            <div class="doc-name">NEET Admit Card</div>
+                            <div class="doc-status">Pending</div>
+                            <label class="upload-btn">
+                                Select File
+                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                            </label>
+                        </div>
+
+                        <div class="doc-slot">
+                            <div class="doc-name">Domicile Certificate</div>
+                            <div class="doc-status">Pending</div>
+                            <label class="upload-btn">
+                                Select File
+                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                            </label>
+                        </div>
+
+                        <div class="doc-slot">
+                            <div class="doc-name">Caste Certificate</div>
+                            <div class="doc-status">Pending</div>
+                            <label class="upload-btn">
+                                Select File
+                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                            </label>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="sidebar">
+                
+                <div class="card counsellor-info">
+                    <h2 class="card-title">Your Counsellor</h2>
+                    <div class="counsellor-avatar">?</div>
+                    <h3 style="color: var(--navy-900); margin-bottom: 5px;" id="counsellorName">Unassigned</h3>
+                    <p style="font-size: 0.85rem; color: var(--navy-600);">Your dedicated advisor will be assigned shortly.</p>
+                    <a href="#" class="contact-btn" id="counsellorContact" style="display: none;">Message on WhatsApp</a>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Fee Status</h2>
+                    <div style="text-align: center; color: var(--navy-600); font-size: 0.9rem;">
+                        No pending invoices.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple Logout Function
+        async function logout() {
+            try {
+                await fetch('https://prathuuu294.pythonanywhere.com/api/logout', { method: 'POST' });
+            } catch(e) {}
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
