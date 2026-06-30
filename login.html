@@ -157,8 +157,10 @@
 
                 const result = await response.json();
 
-                if (response.ok) {
-                    // Success! Redirect to the dashboard
+                                if (response.ok) {
+                    // Save the user's email securely in the browser
+                    localStorage.setItem('studentEmail', document.getElementById('loginEmail').value);
+                    // Redirect to dashboard
                     window.location.href = 'dashboard.html';
                 } else {
                     errorMsg.innerText = result.message || 'Invalid credentials.';
