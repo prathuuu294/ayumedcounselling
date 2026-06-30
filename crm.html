@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AyuMed | CRM Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --navy-900: #0D1B2A; 
+            --gold: #D4AF37;     
+            --cream: #F7F3E9;    
+            --success: #25D366;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f4f7f6; color: var(--navy-900); padding-bottom: 50px; }
+        
+        .crm-header {
+            background: var(--navy-900);
+            padding: 20px 40px;
+            color: var(--gold);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--gold);
+        }
+        .crm-header h1 { font-family: 'Playfair Display', serif; }
+        
+        .container { max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+        
+        .lead-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--gold);
+            display: grid;
+            grid-template-columns: 2fr 1.5fr 2fr 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        .lead-info h3 { font-size: 1.2rem; margin-bottom: 5px; color: var(--navy-900); }
+        .lead-info p { font-size: 0.85rem; color: #555; margin-bottom: 3px; }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        textarea.form-control { resize: vertical; min-height: 80px; }
+        
+        .btn-update {
+            background: var(--navy-900);
+            color: var(--gold);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: 0.3s;
+        }
+        .btn-update:hover { background: var(--gold); color: var(--navy-900); }
+        
+        .btn-wa {
+            display: inline-block;
+            background: var(--success);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .doc-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            text-decoration: none;
+        }
+        .doc-yes { background: rgba(37, 211, 102, 0.15); color: #1da851; border: 1px solid #1da851; }
+        .doc-no { background: #eee; color: #999; border: 1px solid #ddd; pointer-events: none; }
+        
+        .doc-yes:hover { background: #1da851; color: white; }
+
+        @media(max-width: 900px) {
+            .lead-card { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="crm-header">
+        <h1>AyuMed CRM Master</h1>
+        <div>Enterprise Admin Portal</div>
+    </div>
+
+    <div class="container" id="leadsContainer">
+        <h2 style="text-align: center; color: #666; margin-top: 50px;">Loading student data...</h2>
+    </div>
+
+    <script>
+        const STAGES = [
+            "1) New Lead", "2) Called", "3) Interested", 
+            "4) Documents Pending", "5) Payment Pending", 
+            "6) Counselling Done", "7) Seat Allotted", 
+            "8) Admission Confirmed", "9) Closed"
+        ];
+        
+        const COUNSELLORS = ["Unassigned", "Aditya", "Mahesh", "Yatharth", "Prathamesh"];
+
+        async function loadLeads() {
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/leads');
+                const data = await response.json();
+                
+                const container = document.getElementById('leadsContainer');
+                container.innerHTML = ''; // Clear loading text
+
+                if(data.leads.length === 0) {
+                    container.innerHTML = '<h3 style="text-align:center;">No registered students yet.</h3>';
+                    return;
+                }
+
+                data.leads.forEach(lead => {
+                    const card = document.createElement('div');
+                    card.className = 'lead-card';
+
+                    // Formatting documents
+                    const docs = lead.documents;
+                    const docHtml = `
+                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=neet_scorecard" target="_blank" class="doc-badge ${docs.neet_scorecard ? 'doc-yes' : 'doc-no'}">Scorecard</a>
+                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=neet_admit_card" target="_blank" class="doc-badge ${docs.neet_admit_card ? 'doc-yes' : 'doc-no'}">Admit Card</a>
+                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=domicile_certificate" target="_blank" class="doc-badge ${docs.domicile_certificate ? 'doc-yes' : 'doc-no'}">Domicile</a>
+                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=caste_certificate" target="_blank" class="doc-badge ${docs.caste_certificate ? 'doc-yes' : 'doc-no'}">Caste Cert</a>
+                    `;
+
+                    // Generate Stage Options
+                    let stageOptions = '';
+                    STAGES.forEach(s => {
+                        stageOptions += `<option value="${s}" ${lead.lead_stage === s ? 'selected' : ''}>${s}</option>`;
+                    });
+
+                    // Generate Counsellor Options
+                    let counsellorOptions = '';
+                    COUNSELLORS.forEach(c => {
+                        counsellorOptions += `<option value="${c}" ${lead.assigned_counsellor === c ? 'selected' : ''}>${c}</option>`;
+                    });
+
+                    // Pre-filled WhatsApp message
+                    const waMessage = encodeURIComponent(`Hello ${lead.full_name.split(' ')[0]}, this is AyuMed Counselling. We are checking in on your admission process!`);
+
+                    card.innerHTML = `
+                        <div class="lead-info">
+                            <h3>${lead.full_name}</h3>
+                            <p><strong>Email:</strong> ${lead.email}</p>
+                            <p><strong>Phone:</strong> ${lead.phone}</p>
+                            <p><strong>Registered:</strong> ${new Date(lead.created_at).toLocaleDateString()}</p>
+                            <a href="https://wa.me/91${lead.phone.replace(/\D/g,'')}?text=${waMessage}" target="_blank" class="btn-wa">Chat on WhatsApp</a>
+                            
+                            <div style="margin-top: 15px;">
+                                <p style="font-weight:600; margin-bottom:5px;">Uploaded Documents:</p>
+                                ${docHtml}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600;">Pipeline Stage:</label>
+                            <select class="form-control" id="stage_${lead.id}">${stageOptions}</select>
+                            
+                            <label style="font-size: 0.8rem; font-weight: 600;">Assigned To:</label>
+                            <select class="form-control" id="counsellor_${lead.id}">${counsellorOptions}</select>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.8rem; font-weight: 600;">Internal Notes:</label>
+                            <textarea class="form-control" id="notes_${lead.id}" placeholder="E.g. Father wants Maharashtra. Call after 6 PM.">${lead.counsellor_notes || ''}</textarea>
+                        </div>
+
+                        <div>
+                            <button class="btn-update" onclick="updateLead('${lead.email}', ${lead.id})">Save Changes</button>
+                            <p id="status_${lead.id}" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: var(--success); display: none;">Saved!</p>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error loading leads:", error);
+            }
+        }
+
+        async function updateLead(email, id) {
+            const stage = document.getElementById(`stage_${id}`).value;
+            const counsellor = document.getElementById(`counsellor_${id}`).value;
+            const notes = document.getElementById(`notes_${id}`).value;
+            
+            const btn = document.querySelector(`#status_${id}`).previousElementSibling;
+            btn.innerText = "Saving...";
+
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/update_lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, stage, notes, counsellor })
+                });
+
+                if(response.ok) {
+                    btn.innerText = "Save Changes";
+                    const statusMsg = document.getElementById(`status_${id}`);
+                    statusMsg.style.display = "block";
+                    setTimeout(() => { statusMsg.style.display = "none"; }, 2000);
+                }
+            } catch (error) {
+                alert("Error saving data!");
+                btn.innerText = "Save Changes";
+            }
+        }
+
+        // Initialize
+        loadLeads();
+    </script>
+</body>
+</html>
