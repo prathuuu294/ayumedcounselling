@@ -1473,25 +1473,29 @@
             bottom: 110px !important;
         }
 
-        /* Mobile Adaptation - Snaps to full width */
+                /* Mobile Adaptation - Floating Pill */
         @media (max-width: 768px) {
             .bottom-dock {
-                bottom: 0;
-                width: 100%;
-                border-radius: 20px 20px 0 0;
-                padding: 10px 15px 15px; /* Extra padding for bottom screen edge */
+                bottom: 50px; /* Shifted up to clear the Trustindex badge */
+                width: 94%; /* Detaches from the edges to create a floating effect */
+                border-radius: 40px; /* Fully rounded pill shape */
+                padding: 10px 10px 10px; 
                 gap: 0;
                 justify-content: space-around;
-                border-bottom: none;
-                border-left: none;
-                border-right: none;
-                background: rgba(13, 27, 42, 0.98);
+                border: 1px solid rgba(212, 175, 55, 0.3); /* Restores the premium gold border */
+                background: rgba(13, 27, 42, 0.95);
             }
             
             .dock-center {
                 transform: translateY(-20px);
             }
+            
+            /* Push the Back-to-Top button even higher on mobile to avoid the raised dock */
+            #backToTop {
+                bottom: 140px !important;
+            }
         }
+
 
 </style>
 
