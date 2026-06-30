@@ -1381,7 +1381,7 @@
         transform: translateX(6px);
     }
 
-        /* --- PREMIUM FLOATING BOTTOM DOCK --- */
+                /* --- PREMIUM FLOATING BOTTOM DOCK --- */
         .bottom-dock {
             position: fixed;
             bottom: 20px;
@@ -1392,8 +1392,8 @@
             -webkit-backdrop-filter: blur(15px);
             display: flex;
             justify-content: space-between;
-            align-items: flex-end; /* Aligns items to the bottom */
-            padding: 10px 30px 12px;
+            align-items: flex-end; /* Keeps text grounded to the bottom */
+            padding: 8px 30px 10px; /* Reduced vertical padding for a thinner bar */
             border-radius: 40px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
             border: 1px solid rgba(212, 175, 55, 0.3);
@@ -1410,7 +1410,7 @@
             color: var(--cream);
             opacity: 0.6;
             transition: all 0.3s ease;
-            gap: 6px;
+            gap: 4px; /* Reduced gap to shrink overall height */
         }
 
         .dock-item:hover {
@@ -1435,8 +1435,8 @@
         /* Prominent Center Support Button */
         .dock-center {
             opacity: 1 !important;
-            transform: translateY(-15px); /* Pops it out of the bar */
             position: relative;
+            transform: none; /* Removed the old lift so text aligns with other icons */
         }
 
         .dock-center-btn {
@@ -1450,7 +1450,8 @@
             box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
             border: 4px solid var(--navy-900); /* Creates a cutout effect */
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-bottom: 6px;
+            margin-top: -32px; /* Pulls the button exactly half outside the bar */
+            margin-bottom: 4px; /* Space between the gold circle and "Support" text */
         }
 
         .dock-center-btn svg {
