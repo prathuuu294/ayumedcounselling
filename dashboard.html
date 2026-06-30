@@ -284,14 +284,92 @@
         </div>
     </div>
 
-    <script>
-        // Simple Logout Function
-        async function logout() {
-            try {
-                await fetch('https://prathuuu294.pythonanywhere.com/api/logout', { method: 'POST' });
-            } catch(e) {}
+        <script>
+        // 1. Authentication Check
+        const studentEmail = localStorage.getItem('studentEmail');
+        if (!studentEmail) {
+            // If they aren't logged in, kick them back to the login page
             window.location.href = 'login.html';
         }
+
+        // 2. Fetch User Data
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Inject database data into the HTML
+                    document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
+                    document.getElementById('leadStage').innerText = data.stage;
+                    document.getElementById('counsellorName').innerText = data.counsellor;
+                    
+                    if(data.counsellor !== "Unassigned") {
+                        document.getElementById('counsellorContact').style.display = "block";
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to load dashboard data:", error);
+            }
+        }
+
+        // 3. Document Upload Engine
+        function setupUploads() {
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            
+            fileInputs.forEach(input => {
+                input.addEventListener('change', async function() {
+                    if (this.files.length === 0) return;
+
+                    const file = this.files[0];
+                    // Find the name of the document slot (e.g., "NEET Scorecard")
+                    const docName = this.closest('.doc-slot').querySelector('.doc-name').innerText;
+                    const statusText = this.closest('.doc-slot').querySelector('.doc-status');
+                    
+                    statusText.innerText = "UPLOADING...";
+                    statusText.style.color = "var(--warning)";
+
+                    // Package the file securely
+                    const formData = new FormData();
+                    formData.append('email', studentEmail);
+                    formData.append('doc_type', docName.replace(/ /g, "_").toLowerCase());
+                    formData.append('file', file);
+
+                    try {
+                        const response = await fetch('https://prathuuu294.pythonanywhere.com/api/upload', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            statusText.innerText = "UPLOADED ✓";
+                            statusText.style.color = "var(--success)";
+                            this.parentElement.style.background = "rgba(37, 211, 102, 0.1)";
+                        } else {
+                            alert("Upload failed: " + result.message);
+                            statusText.innerText = "FAILED";
+                            statusText.style.color = "red";
+                        }
+                    } catch (error) {
+                        alert("Network error during upload.");
+                        statusText.innerText = "PENDING";
+                    }
+                });
+            });
+        }
+
+        // 4. Secure Logout
+        function logout() {
+            localStorage.removeItem('studentEmail');
+            window.location.href = 'login.html';
+        }
+
+        // Initialize Everything
+        loadDashboard();
+        setupUploads();
     </script>
+
 </body>
 </html>
