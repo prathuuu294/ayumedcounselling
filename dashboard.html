@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AyuMed | Student Dashboard</title>
+    <title>AyuMed | Student Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --navy-900: #0D1B2A; 
@@ -15,181 +16,81 @@
             --success: #25D366;
             --warning: #f09433;
             --shadow-card: 0 10px 25px rgba(13, 27, 42, 0.08);
+            --gradient: linear-gradient(135deg, #D4AF37, #b58d1e);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body {
-            background-color: #f4f7f6;
-            font-family: 'Montserrat', sans-serif;
-            color: var(--navy-900);
-        }
+        body { background-color: #f4f7f6; font-family: 'Montserrat', sans-serif; color: var(--navy-900); }
 
         /* Top Navigation */
-        .dash-nav {
-            background: var(--navy-900);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 3px solid var(--gold);
-        }
-        .dash-logo {
-            color: var(--gold);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            text-decoration: none;
-        }
-        .logout-btn {
-            background: transparent;
-            color: var(--cream);
-            border: 1px solid var(--gold);
-            padding: 8px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 600;
-        }
-        .logout-btn:hover {
-            background: var(--gold);
-            color: var(--navy-900);
-        }
+        .dash-nav { background: var(--navy-900); padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--gold); }
+        .dash-logo { color: var(--gold); font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; text-decoration: none; }
+        .logout-btn { background: transparent; color: var(--cream); border: 1px solid var(--gold); padding: 8px 20px; border-radius: 4px; cursor: pointer; transition: all 0.3s; font-weight: 600; }
+        .logout-btn:hover { background: var(--gold); color: var(--navy-900); }
 
-        /* Main Dashboard Layout */
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
         
-        .welcome-header {
-            margin-bottom: 30px;
-        }
-        .welcome-header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            color: var(--navy-900);
-        }
-        .welcome-header p {
-            color: var(--navy-600);
-            font-weight: 500;
-            font-size: 1.1rem;
-        }
+        .welcome-header { text-align: center; margin-bottom: 40px; }
+        .welcome-header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--navy-900); margin-bottom: 10px; }
+        .welcome-header p { color: var(--navy-600); font-weight: 500; }
+        .status-badge { display: inline-block; background: rgba(212, 175, 55, 0.15); color: var(--navy-900); padding: 5px 15px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; border: 1px solid var(--gold); margin-top: 10px;}
 
-        /* Grid System */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 30px;
-        }
+        /* --- INFOGRAPHIC TIMELINE --- */
+        .timeline-wrapper { position: relative; margin: 50px 0; padding: 0 20px; }
+        .timeline { display: flex; justify-content: space-between; position: relative; z-index: 2; }
         
-        @media(max-width: 900px) {
-            .dashboard-grid { grid-template-columns: 1fr; }
-        }
+        /* The connecting chain line */
+        .timeline::before { content: ''; position: absolute; top: 35px; left: 5%; right: 5%; height: 4px; background: #e0e0e0; z-index: -1; }
+        .timeline-progress { position: absolute; top: 35px; left: 5%; height: 4px; background: var(--gold); z-index: -1; width: 0%; transition: 0.5s ease; }
 
-        /* Cards */
-        .card {
-            background: #fff;
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: var(--shadow-card);
-            margin-bottom: 30px;
-            border-top: 4px solid var(--gold);
-        }
-        .card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-
-        /* Pipeline Status Bar */
-        .status-badge {
-            display: inline-block;
-            background: rgba(212, 175, 55, 0.15);
-            color: var(--navy-900);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            border: 1px solid var(--gold);
-        }
-
-        /* Document Vault */
-        .doc-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-        .doc-slot {
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            transition: all 0.3s;
-            background: #fafafa;
-        }
-        .doc-slot:hover {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-        }
-        .doc-name {
-            font-weight: 600;
-            margin-bottom: 10px;
-            font-size: 0.95rem;
-        }
-        .doc-status {
-            font-size: 0.8rem;
-            color: var(--warning);
-            font-weight: 700;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-        }
-        .upload-btn {
-            background: var(--navy-900);
-            color: var(--gold);
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 600;
-            width: 100%;
-        }
+        .step { text-align: center; flex: 1; cursor: pointer; position: relative; transition: 0.3s; }
         
-        /* Hidden File Input */
-        input[type="file"] {
-            display: none;
-        }
+        .step-icon { width: 70px; height: 70px; margin: 0 auto 15px auto; border-radius: 50%; background: #fff; border: 4px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #a0a0a0; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        
+        .step-label { font-weight: 700; font-size: 0.9rem; color: #888; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.3s; }
+        .step-desc { font-size: 0.75rem; color: #aaa; margin-top: 5px; display: none; }
 
-        /* Counsellor Profile */
-        .counsellor-info {
-            text-align: center;
-        }
-        .counsellor-avatar {
-            width: 80px;
-            height: 80px;
-            background: var(--navy-900);
-            color: var(--gold);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            font-family: 'Playfair Display', serif;
-            margin: 0 auto 15px;
-        }
-        .contact-btn {
-            display: block;
-            background: #25D366;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            border-radius: 4px;
-            font-weight: 600;
-            margin-top: 15px;
+        /* Interactive States */
+        .step:hover .step-icon { border-color: #b0b0b0; transform: translateY(-3px); }
+        
+        .step.completed .step-icon { border-color: var(--success); background: var(--success); color: white; }
+        .step.completed .step-label { color: var(--success); }
+        
+        .step.active .step-icon { border-color: var(--gold); background: var(--navy-900); color: var(--gold); transform: scale(1.1); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
+        .step.active .step-label { color: var(--navy-900); }
+        .step.active .step-desc { display: block; color: var(--navy-600); }
+
+        /* --- INTERACTIVE DROPDOWN PANELS --- */
+        .panel-container { background: #fff; border-radius: 12px; box-shadow: var(--shadow-card); padding: 40px; border-top: 5px solid var(--gold); min-height: 300px;}
+        .panel { display: none; animation: fadeIn 0.4s ease forwards; }
+        .panel.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 20px; color: var(--navy-900); border-bottom: 1px solid #eee; padding-bottom: 15px;}
+
+        /* Document Vault Layout */
+        .doc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+        .doc-slot { border: 2px dashed #ccc; border-radius: 8px; padding: 25px 20px; text-align: center; transition: all 0.3s; background: #fafafa; }
+        .doc-slot:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .doc-name { font-weight: 600; margin-bottom: 10px; font-size: 1rem; }
+        .doc-status { font-size: 0.85rem; color: var(--warning); font-weight: 700; margin-bottom: 15px; text-transform: uppercase; }
+        .upload-btn { background: var(--navy-900); color: var(--gold); padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; width: 100%; display: block;}
+        input[type="file"] { display: none; }
+
+        /* General Info Panel */
+        .info-box { background: rgba(13, 27, 42, 0.03); border-radius: 8px; padding: 20px; margin-bottom: 20px; border-left: 4px solid var(--gold); }
+        
+        .contact-counsellor { display: inline-block; background: var(--success); color: white; text-decoration: none; padding: 12px 25px; border-radius: 4px; font-weight: 700; margin-top: 15px; transition: 0.3s; }
+        .contact-counsellor:hover { background: #1da851; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
+
+        @media(max-width: 768px) {
+            .timeline::before, .timeline-progress { display: none; }
+            .timeline { flex-direction: column; gap: 15px; }
+            .step { display: flex; align-items: center; text-align: left; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 3px solid #eee;}
+            .step-icon { width: 45px; height: 45px; font-size: 1rem; margin: 0 15px 0 0; border-width: 2px;}
+            .step.active { border-left-color: var(--gold); }
         }
     </style>
 </head>
@@ -201,121 +102,217 @@
     </nav>
 
     <div class="container">
+        
         <div class="welcome-header">
-            <h1 id="studentName">Welcome, Student</h1>
-            <p>Your secure medical counselling portal.</p>
+            <h1 id="studentName">Welcome back</h1>
+            <p>Your secure medical admission portal.</p>
+            <div class="status-badge" id="leadStage">Loading stage...</div>
         </div>
 
-        <div class="dashboard-grid">
+        <!-- INFOGRAPHIC TIMELINE CHAIN -->
+        <div class="timeline-wrapper">
+            <div class="timeline-progress" id="timelineProgress"></div>
+            <div class="timeline">
+                
+                <!-- Step 1 -->
+                <div class="step active" id="nav-profile" onclick="switchPanel('profile')">
+                    <div class="step-icon"><i class="fas fa-user-check"></i></div>
+                    <div class="step-label">Profile</div>
+                    <div class="step-desc">Registration Complete</div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step" id="nav-documents" onclick="switchPanel('documents')">
+                    <div class="step-icon"><i class="fas fa-file-upload"></i></div>
+                    <div class="step-label">Documents</div>
+                    <div class="step-desc">Upload Required Files</div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step" id="nav-payment" onclick="switchPanel('payment')">
+                    <div class="step-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div class="step-label">Fees</div>
+                    <div class="step-desc">Payment Status</div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step" id="nav-counselling" onclick="switchPanel('counselling')">
+                    <div class="step-icon"><i class="fas fa-comments"></i></div>
+                    <div class="step-label">Counselling</div>
+                    <div class="step-desc">Expert Guidance</div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step" id="nav-allotment" onclick="switchPanel('allotment')">
+                    <div class="step-icon"><i class="fas fa-university"></i></div>
+                    <div class="step-label">Allotment</div>
+                    <div class="step-desc">Seat Confirmation</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- INTERACTIVE PANELS -->
+        <div class="panel-container">
             
-            <div class="main-column">
-                
-                <div class="card">
-                    <h2 class="card-title">Admission Status</h2>
-                    <p style="margin-bottom: 15px; color: var(--navy-600);">Current Stage:</p>
-                    <div class="status-badge" id="leadStage">1) New Lead</div>
+            <!-- PANEL 1: Profile -->
+            <div class="panel active" id="panel-profile">
+                <h2 class="panel-title">Your Profile Profile</h2>
+                <div class="info-box">
+                    <p style="margin-bottom: 10px; color: var(--navy-600);">Your AyuMed account is successfully registered and secured. Please proceed to the <b>Documents</b> tab to upload your mandatory verification files.</p>
                 </div>
-
-                <div class="card">
-                    <h2 class="card-title">Secure Document Vault</h2>
-                    <p style="margin-bottom: 20px; font-size: 0.9rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies of the required documents for verification.</p>
-                    
-                    <div class="doc-grid">
-                        
-                        <div class="doc-slot">
-                            <div class="doc-name">NEET Scorecard</div>
-                            <div class="doc-status">Pending</div>
-                            <label class="upload-btn">
-                                Select File
-                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                            </label>
-                        </div>
-
-                        <div class="doc-slot">
-                            <div class="doc-name">NEET Admit Card</div>
-                            <div class="doc-status">Pending</div>
-                            <label class="upload-btn">
-                                Select File
-                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                            </label>
-                        </div>
-
-                        <div class="doc-slot">
-                            <div class="doc-name">Domicile Certificate</div>
-                            <div class="doc-status">Pending</div>
-                            <label class="upload-btn">
-                                Select File
-                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                            </label>
-                        </div>
-
-                        <div class="doc-slot">
-                            <div class="doc-name">Caste Certificate</div>
-                            <div class="doc-status">Pending</div>
-                            <label class="upload-btn">
-                                Select File
-                                <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                            </label>
-                        </div>
-
-                    </div>
+                <h3 style="margin-top: 30px; margin-bottom: 15px; font-family: 'Playfair Display', serif;">Your Dedicated Counsellor</h3>
+                <div id="counsellorSection">
+                    <p id="counsellorName" style="font-weight: 700; font-size: 1.2rem; color: var(--navy-900);">Unassigned</p>
+                    <p style="color: var(--navy-600); font-size: 0.9rem;">Your advisor will be assigned shortly.</p>
+                    <a href="#" class="contact-counsellor" id="counsellorContact" style="display: none;"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
                 </div>
-
             </div>
 
-            <div class="sidebar">
+            <!-- PANEL 2: Document Vault -->
+            <div class="panel" id="panel-documents">
+                <h2 class="panel-title">Secure Document Vault</h2>
+                <p style="margin-bottom: 25px; font-size: 0.95rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies. Once uploaded, files are securely locked and sent directly to our verification team.</p>
                 
-                <div class="card counsellor-info">
-                    <h2 class="card-title">Your Counsellor</h2>
-                    <div class="counsellor-avatar">?</div>
-                    <h3 style="color: var(--navy-900); margin-bottom: 5px;" id="counsellorName">Unassigned</h3>
-                    <p style="font-size: 0.85rem; color: var(--navy-600);">Your dedicated advisor will be assigned shortly.</p>
-                    <a href="#" class="contact-btn" id="counsellorContact" style="display: none;">Message on WhatsApp</a>
-                </div>
-
-                <div class="card">
-                    <h2 class="card-title">Fee Status</h2>
-                    <div style="text-align: center; color: var(--navy-600); font-size: 0.9rem;">
-                        No pending invoices.
+                <div class="doc-grid">
+                    <div class="doc-slot">
+                        <div class="doc-name">NEET Scorecard</div>
+                        <div class="doc-status">Pending</div>
+                        <label class="upload-btn">
+                            Select File
+                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                        </label>
+                    </div>
+                    <div class="doc-slot">
+                        <div class="doc-name">NEET Admit Card</div>
+                        <div class="doc-status">Pending</div>
+                        <label class="upload-btn">
+                            Select File
+                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                        </label>
+                    </div>
+                    <div class="doc-slot">
+                        <div class="doc-name">Domicile Certificate</div>
+                        <div class="doc-status">Pending</div>
+                        <label class="upload-btn">
+                            Select File
+                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                        </label>
+                    </div>
+                    <div class="doc-slot">
+                        <div class="doc-name">Caste Certificate</div>
+                        <div class="doc-status">Pending</div>
+                        <label class="upload-btn">
+                            Select File
+                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                        </label>
                     </div>
                 </div>
-
             </div>
+
+            <!-- PANEL 3: Payment -->
+            <div class="panel" id="panel-payment">
+                <h2 class="panel-title">Fee Status</h2>
+                <div class="info-box" style="text-align: center; padding: 40px 20px;">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--navy-900); margin-bottom: 5px;">No Pending Invoices</h3>
+                    <p style="color: var(--navy-600);">Your fee schedule is currently up to date.</p>
+                </div>
+            </div>
+
+            <!-- PANEL 4: Counselling -->
+            <div class="panel" id="panel-counselling">
+                <h2 class="panel-title">Counselling & Preferences</h2>
+                <div class="info-box">
+                    <h3 style="margin-bottom: 10px; color: var(--navy-900);">Preference List Output</h3>
+                    <p style="color: var(--navy-600); line-height: 1.6;">Once your documents are verified and your profile is analyzed, your personalized college choice-filling list will be generated and available for download here.</p>
+                </div>
+            </div>
+
+            <!-- PANEL 5: Allotment -->
+            <div class="panel" id="panel-allotment">
+                <h2 class="panel-title">Seat Allotment Status</h2>
+                <div class="info-box" style="text-align: center; padding: 40px 20px;">
+                    <i class="fas fa-hourglass-half" style="font-size: 3rem; color: var(--gold); margin-bottom: 15px;"></i>
+                    <h3 style="color: var(--navy-900); margin-bottom: 5px;">Awaiting Results</h3>
+                    <p style="color: var(--navy-600);">Seat allotment details will appear here once the authority publishes the official rounds.</p>
+                </div>
+            </div>
+
         </div>
     </div>
 
-        <script>
+    <script>
         // 1. Authentication Check
         const studentEmail = localStorage.getItem('studentEmail');
-        if (!studentEmail) {
-            // If they aren't logged in, kick them back to the login page
-            window.location.href = 'login.html';
+        if (!studentEmail) window.location.href = 'login.html';
+
+        // 2. Interactive Panel Switcher
+        function switchPanel(panelName) {
+            // Hide all panels & deactivate all nav nodes
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            
+            // Show selected panel & activate node
+            document.getElementById(`panel-${panelName}`).classList.add('active');
+            document.getElementById(`nav-${panelName}`).classList.add('active');
         }
 
-                // 2. Fetch User Data (With Memory)
+        // 3. Update Timeline Progress Bar visually
+        function setTimelineProgress(stageString) {
+            const progressLine = document.getElementById('timelineProgress');
+            const navDocs = document.getElementById('nav-documents');
+            const navPay = document.getElementById('nav-payment');
+            const navCounselling = document.getElementById('nav-counselling');
+            const navAllotment = document.getElementById('nav-allotment');
+
+            // Default
+            document.getElementById('nav-profile').classList.add('completed');
+            progressLine.style.width = '12.5%'; 
+
+            if(stageString.includes("4)") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+                navDocs.classList.add('completed');
+                progressLine.style.width = '37.5%';
+            }
+            if(stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+                navPay.classList.add('completed');
+                progressLine.style.width = '62.5%';
+            }
+            if(stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+                navCounselling.classList.add('completed');
+                progressLine.style.width = '87.5%';
+            }
+            if(stageString.includes("7)") || stageString.includes("8)")) {
+                navAllotment.classList.add('completed');
+                progressLine.style.width = '100%';
+            }
+        }
+
+        // 4. Fetch User Data from DB
         async function loadDashboard() {
             try {
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Inject database data into the HTML
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
-                    document.getElementById('leadStage').innerText = data.stage;
+                    document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
                     document.getElementById('counsellorName').innerText = data.counsellor;
                     
                     if(data.counsellor !== "Unassigned") {
-                        document.getElementById('counsellorContact').style.display = "block";
+                        document.getElementById('counsellorContact').style.display = "inline-block";
                     }
 
-                    // NEW: Lock uploaded document slots
+                    // Map the UI progress bar to their DB stage
+                    setTimelineProgress(data.stage);
+
+                    // Lock uploaded documents
                     if (data.documents) {
                         const slots = document.querySelectorAll('.doc-slot');
                         slots.forEach(slot => {
                             const docName = slot.querySelector('.doc-name').innerText;
                             const docKey = docName.replace(/ /g, "_").toLowerCase();
                             
-                            // If the server says this file exists...
                             if (data.documents[docKey] === true) {
                                 const statusText = slot.querySelector('.doc-status');
                                 statusText.innerText = "UPLOADED ✓";
@@ -323,35 +320,29 @@
                                 slot.style.background = "rgba(37, 211, 102, 0.1)";
                                 slot.style.borderColor = "var(--success)";
                                 
-                                // Hide the upload button to prevent double-uploads
                                 const uploadBtn = slot.querySelector('.upload-btn');
                                 if(uploadBtn) uploadBtn.style.display = "none";
                             }
                         });
                     }
                 }
-            } catch (error) {
-                console.error("Failed to load dashboard data:", error);
-            }
+            } catch (error) { console.error(error); }
         }
 
-        // 3. Document Upload Engine
+        // 5. Document Upload Engine
         function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
-            
             fileInputs.forEach(input => {
                 input.addEventListener('change', async function() {
                     if (this.files.length === 0) return;
 
                     const file = this.files[0];
-                    // Find the name of the document slot (e.g., "NEET Scorecard")
                     const docName = this.closest('.doc-slot').querySelector('.doc-name').innerText;
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
                     
                     statusText.innerText = "UPLOADING...";
                     statusText.style.color = "var(--warning)";
 
-                    // Package the file securely
                     const formData = new FormData();
                     formData.append('email', studentEmail);
                     formData.append('doc_type', docName.replace(/ /g, "_").toLowerCase());
@@ -362,36 +353,38 @@
                             method: 'POST',
                             body: formData
                         });
-                        
                         const result = await response.json();
                         
                         if (response.ok) {
                             statusText.innerText = "UPLOADED ✓";
                             statusText.style.color = "var(--success)";
-                            this.parentElement.style.background = "rgba(37, 211, 102, 0.1)";
+                            this.parentElement.style.display = "none"; // Hide button after upload
+                            this.closest('.doc-slot').style.background = "rgba(37, 211, 102, 0.1)";
+                            this.closest('.doc-slot').style.borderColor = "var(--success)";
+                            
+                            // Refresh data silently to update timeline status
+                            setTimeout(loadDashboard, 500); 
                         } else {
                             alert("Upload failed: " + result.message);
                             statusText.innerText = "FAILED";
                             statusText.style.color = "red";
                         }
                     } catch (error) {
-                        alert("Network error during upload.");
+                        alert("Network error.");
                         statusText.innerText = "PENDING";
                     }
                 });
             });
         }
 
-        // 4. Secure Logout
         function logout() {
             localStorage.removeItem('studentEmail');
             window.location.href = 'login.html';
         }
 
-        // Initialize Everything
+        // Boot up
         loadDashboard();
         setupUploads();
     </script>
-
 </body>
 </html>
