@@ -6,6 +6,7 @@
     <title>AyuMed | Student Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         :root {
             --navy-900: #0D1B2A; 
@@ -328,17 +329,17 @@
 
                     // NEW: Display the Invoice if fee is set!
                     if (data.fee_amount > 0) {
-                        document.getElementById('panel-payment').innerHTML = `
+                                                document.getElementById('panel-payment').innerHTML = `
                             <h2 class="panel-title">Pending Invoice</h2>
                             <div class="info-box" style="text-align: center; padding: 40px 20px; border-left-color: var(--warning);">
                                 <h3 style="color: var(--navy-900); margin-bottom: 10px;">Premium Counselling Fee</h3>
                                 <p style="font-size: 2.5rem; font-weight: 700; color: var(--navy-900); margin-bottom: 5px;">₹${data.fee_amount}</p>
                                 <p style="color: var(--navy-600); font-weight: 600; margin-bottom: 25px;">Please complete your payment to unlock the choice-filling stage.</p>
                                 
-                                <div style="background: #fff; padding: 25px; border-radius: 12px; display: inline-block; box-shadow: var(--shadow-card); border: 2px dashed #ccc;">
-                                    <p style="font-weight:700; color:#aaa; margin-bottom: 10px;">[ OFFICIAL QR CODE WILL APPEAR HERE ]</p>
-                                    <i class="fas fa-qrcode" style="font-size: 4rem; color: #eee;"></i>
-                                </div>
+                                <button onclick="startPayment()" style="background: var(--navy-900); color: var(--gold); padding: 15px 40px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 10px 20px rgba(13,27,42,0.15);">
+                                    <i class="fas fa-lock"></i> Pay Securely via Razorpay
+                                </button>
+                                <p style="font-size:0.75rem; color:#888; margin-top:15px;"><i class="fas fa-shield-alt"></i> 100% Encrypted & Secure</p>
                             </div>
                         `;
                     }
@@ -392,6 +393,58 @@
                     }
                 });
             });
+        }
+        async function startPayment() {
+            try {
+                // 1. Ask Python server to generate an Order ID
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/create_order', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: studentEmail })
+                });
+                const orderData = await response.json();
+
+                if (orderData.status === "success") {
+                    // 2. Launch Razorpay UI
+                    var options = {
+                        "key": orderData.key,
+                        "amount": orderData.amount,
+                        "currency": "INR",
+                        "name": "AyuMed Counselling",
+                        "description": "Premium Admission Services",
+                        "image": "https://i.postimg.cc/zXZtfMHn/1000627648.jpg", // Your AyuMed Logo
+                        "order_id": orderData.order_id,
+                        "handler": async function (response) {
+                            // 3. Verify Payment silently in background
+                            const verifyRes = await fetch('https://prathuuu294.pythonanywhere.com/api/verify_payment', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    email: studentEmail,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+                            const verifyData = await verifyRes.json();
+                            if (verifyData.status === "success") {
+                                alert("Payment Successful! Your dashboard will now upgrade.");
+                                window.location.reload();
+                            } else {
+                                alert("Payment verification failed.");
+                            }
+                        },
+                        "prefill": { "email": studentEmail },
+                        "theme": { "color": "#0D1B2A" } // Matches your Navy Blue theme!
+                    };
+                    
+                    var rzp = new Razorpay(options);
+                    rzp.on('payment.failed', function (response){
+                        alert("Payment Failed: " + response.error.description);
+                    });
+                    rzp.open();
+                } else { alert("Server Error: Could not generate order."); }
+            } catch (error) { alert("Network Error: Could not connect to payment gateway."); }
         }
 
         function logout() {
