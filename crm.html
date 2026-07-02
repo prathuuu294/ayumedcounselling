@@ -186,9 +186,13 @@
                         </div>
 
                         <div>
-                            <label style="font-size: 0.8rem; font-weight: 600;">Internal Notes:</label>
-                            <textarea class="form-control" id="notes_${lead.id}" placeholder="E.g. Father wants Maharashtra. Call after 6 PM.">${lead.counsellor_notes || ''}</textarea>
-                        </div>
+    <label style="font-size: 0.8rem; font-weight: 600;">Internal Notes:</label>
+    <textarea class="crm-form-control" id="notes_${lead.id}" placeholder="E.g. Wants Maharashtra. Call after 6 PM.">${lead.counsellor_notes || ''}</textarea>
+    
+    <label style="font-size: 0.8rem; font-weight: 600; margin-top:10px; display:block;">Pending Fee (₹):</label>
+    <input type="number" class="crm-form-control" id="fee_${lead.id}" value="${lead.fee_amount || 0}" placeholder="e.g. 5000">
+</div>
+
 
                         <div>
                             <button class="btn-update" onclick="updateLead('${lead.email}', ${lead.id})">Save Changes</button>
@@ -207,6 +211,7 @@
             const stage = document.getElementById(`stage_${id}`).value;
             const counsellor = document.getElementById(`counsellor_${id}`).value;
             const notes = document.getElementById(`notes_${id}`).value;
+const fee = document.getElementById(`fee_${id}`).value;
             
             const btn = document.querySelector(`#status_${id}`).previousElementSibling;
             btn.innerText = "Saving...";
@@ -215,7 +220,7 @@
                 const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/update_lead', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, stage, notes, counsellor })
+                    body: JSON.stringify({ email, stage, notes, counsellor, fee })
                 });
 
                 if(response.ok) {
