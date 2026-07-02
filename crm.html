@@ -207,11 +207,12 @@
             }
         }
 
-        async function updateLead(email, id) {
+                async function updateLead(email, id) {
             const stage = document.getElementById(`stage_${id}`).value;
             const counsellor = document.getElementById(`counsellor_${id}`).value;
             const notes = document.getElementById(`notes_${id}`).value;
-const fee = document.getElementById(`fee_${id}`).value;
+            // Grab the fee from the text box!
+            const fee = document.getElementById(`fee_${id}`).value || 0; 
             
             const btn = document.querySelector(`#status_${id}`).previousElementSibling;
             btn.innerText = "Saving...";
@@ -220,7 +221,8 @@ const fee = document.getElementById(`fee_${id}`).value;
                 const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/update_lead', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, stage, notes, counsellor, fee })
+                    // Send the fee inside the payload!
+                    body: JSON.stringify({ email, stage, notes, counsellor, fee }) 
                 });
 
                 if(response.ok) {
@@ -228,9 +230,11 @@ const fee = document.getElementById(`fee_${id}`).value;
                     const statusMsg = document.getElementById(`status_${id}`);
                     statusMsg.style.display = "block";
                     setTimeout(() => { statusMsg.style.display = "none"; }, 2000);
+                } else {
+                    throw new Error("Server rejected save");
                 }
             } catch (error) {
-                alert("Error saving data!");
+                alert("Error saving data! Check server logs.");
                 btn.innerText = "Save Changes";
             }
         }
