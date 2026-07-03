@@ -309,35 +309,40 @@
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
-                    // 1. YOUR TEAM DIRECTORY (Fill in your exact image URLs and WhatsApp numbers here)
+                    // 1. YOUR TEAM DIRECTORY (Spelling must match CRM exactly!)
 const teamDirectory = {
     "Aditya Patel": {
-        phone: "917879078367", // e.g., 919876543210 (Country code + Number, no + sign)
-        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", // Paste the same image link from index.html
-        title: "Senior Consellor & BAMS Admissions Expert"
+        phone: "917879078367",
+        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg",
+        title: "Senior Counsellor & BAMS Admissions Expert"
     },
-    "Mahesh Wankhade": {  // Replace with the actual name of your brother/other team member
+    "Mahesh Wankhade": {
         phone: "919604408949",
         image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
-        title: "Expert BAMS Counsellor and Cut-off Anaylst"
+        title: "Expert BAMS Counsellor and Cut-off Analyst"
     },
-    "Prathamesh Salunke": {  // Replace with the actual name of your brother/other team member
+    "Prathamesh": { // Failsafe for if CRM just outputs first name
         phone: "918080026270",
         image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
-        title: "Expertise Medical and Dental Admission"
+        title: "Medical and Dental Admissions Expert"
     },
-    "Yatharth Gobade": {  // Replace with the actual name of your brother/other team member
+    "Prathamesh Salunke": { // Failsafe for if CRM outputs full name
+        phone: "918080026270",
+        image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
+        title: "Medical and Dental Admissions Expert"
+    },
+    "Yatharth Gobade": {
         phone: "917796126149",
         image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg",
         title: "Expert BAMS Counsellor and Social Media Handler"
-    },
+    }
 };
 
-// 2. THE UI UPDATER (Runs when data loads)
+// 2. THE UI UPDATER
 if (data.counsellor && data.counsellor !== "Unassigned") {
     document.getElementById('counsellorName').innerText = data.counsellor;
     
-    // Check if the assigned name matches someone in your team directory
+    // Check if the assigned name matches someone in your directory
     if (teamDirectory[data.counsellor]) {
         const advisor = teamDirectory[data.counsellor];
         
@@ -346,15 +351,15 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
         document.getElementById('counsellorImage').style.display = "block";
         document.getElementById('counsellorSubtitle').innerText = advisor.title;
         
-        // Create an automated, pre-filled WhatsApp greeting!
+        // Create an automated, pre-filled WhatsApp greeting
         const waMessage = encodeURIComponent(`Hello ${data.counsellor}, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and need your assistance.`);
         
         // Setup WhatsApp Button
         const waBtn = document.getElementById('counsellorContact');
         waBtn.href = `https://wa.me/${advisor.phone}?text=${waMessage}`;
-        waBtn.style.display = "inline-flex"; // Show the button safely
+        waBtn.style.display = "inline-flex"; 
     } else {
-        // Fallback just in case a name is assigned but not found in the directory
+        // Fallback
         document.getElementById('counsellorSubtitle').innerText = "Assigned Premium Advisor";
         document.getElementById('counsellorContact').style.display = "inline-flex";
     }
