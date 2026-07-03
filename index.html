@@ -3034,10 +3034,21 @@ html, body {
     const carousel = document.getElementById('reviewCarousel');
     let scrollIndex = 0;
 
+    // 1. Detect manual scrolling to keep the index in sync
+    carousel.addEventListener('scroll', () => {
+        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
+        // Calculate the current index based on how far the user scrolled
+        scrollIndex = Math.round(carousel.scrollLeft / cardWidth);
+    });
+
+    // 2. Auto-swipe function that now uses the updated scrollIndex
     function autoSlide() {
-        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15; // 15 is the gap
+        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
+        
+        // Move to the next index
         scrollIndex++;
         
+        // Reset to 0 only if we reach the end
         if (scrollIndex >= carousel.children.length) {
             scrollIndex = 0;
         }
