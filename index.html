@@ -1110,13 +1110,18 @@ html, body {
 @media (max-width: 768px) {
     .review-grid-wrapper {
         display: flex;
-        overflow: hidden; /* Prevent native scrollbars */
-        width: 100%;
+        overflow-x: auto; /* Allows manual swiping */
+        scroll-snap-type: x mandatory;
         gap: 15px;
+        scrollbar-width: none;
+        padding-bottom: 20px;
+        -webkit-overflow-scrolling: touch; /* Smooth touch swiping */
     }
+    
     .review-card {
         flex: 0 0 90%;
-        transition: transform 0.5s ease-in-out;
+        scroll-snap-align: center;
+        transition: transform 0.5s ease-in-out; /* Crucial for animation */
     }
 }
 
@@ -3043,18 +3048,18 @@ html, body {
 
     <script>
     const carousel = document.getElementById('reviewCarousel');
-    
+
     function autoSlide() {
-        const firstCard = carousel.firstElementChild;
-        
-        // 1. Trigger the sliding animation by adding a class or inline style
-        firstCard.style.marginLeft = `-${firstCard.offsetWidth + 15}px`;
-        
-        // 2. Wait for the animation to finish (e.g., 500ms), then move the card
-        setTimeout(() => {
-            firstCard.style.marginLeft = '0px';
-            carousel.appendChild(firstCard); // Move first card to the END
-        }, 500); 
+        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
+        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+
+        // If we are at the end, jump back to start
+        if (carousel.scrollLeft >= maxScroll - 10) {
+            carousel.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+            // Otherwise, scroll to the next card
+            carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });
+        }
     }
 
     // Run every 5 seconds
