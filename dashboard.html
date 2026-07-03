@@ -386,6 +386,18 @@
             try {
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
                 const data = await response.json();
+            // NEW: Auto-Logout if Admin deleted the account
+            if (response.status === 404 || data.error === "User not found") {
+                alert("🚨 Your Account has been Deleted by the Admin.");
+                
+                // Completely wipe the student's local session data
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Kick them back to the login page
+                window.location.href = 'login.html';
+                return;
+            }
 
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
