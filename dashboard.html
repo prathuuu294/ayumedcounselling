@@ -399,6 +399,12 @@
                 return;
             }
 
+// NEW: Professional Status Masking
+            // This changes what the student sees without breaking your CRM!
+            if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) {
+                data.stage = "Profile Registered";
+            }
+
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
