@@ -1106,6 +1106,24 @@ html, body {
         }
     }
 
+/* Mobile Carousel Styles */
+@media (max-width: 768px) {
+    .review-grid-wrapper {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        gap: 15px;
+        scrollbar-width: none; /* Hide scrollbar */
+        padding-bottom: 20px;
+    }
+    .review-grid-wrapper::-webkit-scrollbar { display: none; }
+    
+    .review-card {
+        flex: 0 0 90%; /* Each card takes up 90% of screen width */
+        scroll-snap-align: center;
+    }
+}
+
     </style>
 
 <!-- Trustindex Review Certificate Widget -->
@@ -2180,15 +2198,14 @@ html, body {
         }
     });
 </script>
-    <section class="section-container reveal" id="reviews">
+        <section class="section-container reveal" id="reviews">
         <h2 class="section-title">Success Stories</h2>
         <p style="text-align: center; color: var(--navy-600); margin-bottom: 40px; font-size: 1.05rem;">
             See what our students and parents have to say about their AyuMed counselling experience.
         </p>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+        <div class="review-grid-wrapper" id="reviewCarousel">
             
-            <!-- Review 1: Vivek Patel -->
             <div class="review-card">
                 <div class="review-header">
                     <div class="review-avatar-text">V</div> 
@@ -2203,7 +2220,6 @@ html, body {
                 </div>
             </div>
 
-            <!-- Review 2: Dhairya Patel -->
             <div class="review-card">
                 <div class="review-header">
                     <div class="review-avatar-text">D</div>
@@ -2218,7 +2234,6 @@ html, body {
                 </div>
             </div>
             
-            <!-- Review 3: Ankit -->
             <div class="review-card">
                 <div class="review-header">
                     <div class="review-avatar-text">A</div>
@@ -2233,7 +2248,6 @@ html, body {
                 </div>
             </div>
 
-            <!-- Review 4: Ayush Kumar Gupta -->
             <div class="review-card">
                 <div class="review-header">
                     <div class="review-avatar-text">A</div>
@@ -2248,7 +2262,6 @@ html, body {
                 </div>
             </div>
 
-            <!-- Review 5: Student from Akola -->
             <div class="review-card">
                 <div class="review-header">
                     <div class="review-avatar-text">S</div>
@@ -2262,10 +2275,8 @@ html, body {
                     "Thank you, sir. You helped me a lot during my admission, saving me from the fraudulent counselor system. Today I have a safe and secure college with the right budget."
                 </div>
             </div>
-
         </div>
 
-        <!-- Link to all your Google Reviews -->
         <div style="text-align: center; margin-top: 50px;">
             <a href="https://maps.app.goo.gl/FhrHbUnx4dYJF5QD7?g_st=ac" target="_blank" class="btn-gold" style="display: inline-block; padding: 14px 35px;">
                 Read all reviews on Google
@@ -3018,5 +3029,28 @@ html, body {
             }
         });
     </script>
+
+    <script>
+    const carousel = document.getElementById('reviewCarousel');
+    let scrollIndex = 0;
+
+    function autoSlide() {
+        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15; // 15 is the gap
+        scrollIndex++;
+        
+        if (scrollIndex >= carousel.children.length) {
+            scrollIndex = 0;
+        }
+        
+        carousel.scrollTo({
+            left: scrollIndex * cardWidth,
+            behavior: 'smooth'
+        });
+    }
+
+    // Slide every 5 seconds
+    setInterval(autoSlide, 5000);
+</script>
+
 </body>
 </html>
