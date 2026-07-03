@@ -86,12 +86,30 @@
         .contact-counsellor { display: inline-block; background: var(--success); color: white; text-decoration: none; padding: 12px 25px; border-radius: 4px; font-weight: 700; margin-top: 15px; transition: 0.3s; }
         .contact-counsellor:hover { background: #1da851; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
 
-        @media(max-width: 768px) {
+                @media(max-width: 768px) {
             .timeline::before, .timeline-progress { display: none; }
             .timeline { flex-direction: column; gap: 15px; }
-            .step { display: flex; align-items: center; text-align: left; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 3px solid #eee;}
+            .step { display: flex; align-items: center; text-align: left; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 3px solid #eee; z-index: 2; position: relative;}
             .step-icon { width: 45px; height: 45px; font-size: 1rem; margin: 0 15px 0 0; border-width: 2px;}
-            .step.active { border-left-color: var(--gold); }
+            
+            /* Accordion Active Button Style (Snaps seamlessly to the panel) */
+            .step.active { border-left-color: var(--gold); border-bottom-left-radius: 0; border-bottom-right-radius: 0; box-shadow: none; border-bottom: 1px dashed #eee; margin-bottom: -15px; }
+            
+            /* Hide the empty master panel box on mobile */
+            .panel-container { display: none; } 
+            
+            /* The Content Box sliding out from under the button */
+            .mobile-accordion-panel {
+                background: #fff;
+                border-radius: 0 0 8px 8px;
+                padding: 25px 15px;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+                border-top: none;
+                margin-bottom: 10px;
+                border-left: 3px solid var(--gold);
+                animation: slideDown 0.3s ease-out forwards;
+            }
+            @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         }
     </style>
 </head>
@@ -259,16 +277,39 @@
         const studentEmail = localStorage.getItem('studentEmail');
         if (!studentEmail) window.location.href = 'login.html';
 
-        // 2. Interactive Panel Switcher
+                // 2. Interactive Panel Switcher (With Mobile Accordion Engine)
         function switchPanel(panelName) {
             // Hide all panels & deactivate all nav nodes
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
             
+            const selectedPanel = document.getElementById(`panel-${panelName}`);
+            const selectedStep = document.getElementById(`nav-${panelName}`);
+            
             // Show selected panel & activate node
-            document.getElementById(`panel-${panelName}`).classList.add('active');
-            document.getElementById(`nav-${panelName}`).classList.add('active');
+            selectedPanel.classList.add('active');
+            selectedStep.classList.add('active');
+
+            // Accordion Logic: Move the panel under the button if on Mobile
+            if (window.innerWidth <= 768) {
+                selectedStep.parentNode.insertBefore(selectedPanel, selectedStep.nextSibling);
+                selectedPanel.classList.add('mobile-accordion-panel');
+            } else {
+                // Desktop: Keep it safely inside the master container
+                document.querySelector('.panel-container').appendChild(selectedPanel);
+                selectedPanel.classList.remove('mobile-accordion-panel');
+            }
         }
+
+        // Re-adjust layout automatically if a user rotates their iPad/phone
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                document.querySelectorAll('.panel').forEach(panel => {
+                    document.querySelector('.panel-container').appendChild(panel);
+                    panel.classList.remove('mobile-accordion-panel');
+                });
+            }
+        });
 
         // 3. Update Timeline Progress Bar visually
         function setTimelineProgress(stageString) {
@@ -543,6 +584,9 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
         // Boot up
         loadDashboard();
         setupUploads();
+
+// Auto-run the layout engine on load to dock the Profile tab on mobile!
+        switchPanel('profile');
 
     </script>
 </body>
