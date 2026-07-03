@@ -312,30 +312,31 @@
         });
 
         // 3. Update Timeline Progress Bar visually
-        function setTimelineProgress(stageString) {
+                function setTimelineProgress(stageString) {
             const progressLine = document.getElementById('timelineProgress');
             const navDocs = document.getElementById('nav-documents');
             const navPay = document.getElementById('nav-payment');
             const navCounselling = document.getElementById('nav-counselling');
             const navAllotment = document.getElementById('nav-allotment');
 
-            // Default
+            // Default: Profile is always active
             document.getElementById('nav-profile').classList.add('completed');
             progressLine.style.width = '12.5%'; 
 
-            if(stageString.includes("4)") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+            // Only trigger "Completed" when we hit the specific Verified/Confirmed stages
+            if(stageString.includes("4) Documents Verified") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
                 navDocs.classList.add('completed');
                 progressLine.style.width = '37.5%';
             }
-            if(stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+            if(stageString.includes("5) Payment Confirmed") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
                 navPay.classList.add('completed');
                 progressLine.style.width = '62.5%';
             }
-            if(stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+            if(stageString.includes("6) Preference List Ready") || stageString.includes("7)") || stageString.includes("8)")) {
                 navCounselling.classList.add('completed');
                 progressLine.style.width = '87.5%';
             }
-            if(stageString.includes("7)") || stageString.includes("8)")) {
+            if(stageString.includes("7) Seat Allotted") || stageString.includes("8) Admission Complete")) {
                 navAllotment.classList.add('completed');
                 progressLine.style.width = '100%';
             }
