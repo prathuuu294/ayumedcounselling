@@ -374,7 +374,7 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
         document.getElementById('counsellorSubtitle').innerText = advisor.title;
         
         // Create an automated, pre-filled WhatsApp greeting
-        const waMessage = encodeURIComponent(`Hello ${data.counsellor}, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and need your assistance.`);
+        const waMessage = encodeURIComponent(`Hello ${data.counsellor} sir, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and assigned under you for my counselling process.`);
         
         // Setup WhatsApp Button
         const waBtn = document.getElementById('counsellorContact');
