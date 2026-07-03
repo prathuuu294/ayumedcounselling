@@ -243,16 +243,33 @@
                                                     <p id="status_${lead.id}" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: var(--success); display: none;">Saved!</p>
                     </div>
 
+                                                <!-- NEW: Smart Preference List Uploader -->
                         <div style="grid-column: 1 / -1; background: #fafafa; border: 1px solid #ddd; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
                             <div>
                                 <h4 style="margin-bottom: 5px; color: var(--navy-900);"><i class="fas fa-file-pdf" style="color: #dc3545;"></i> Deliver Preference List</h4>
                                 <p style="font-size: 0.8rem; color: #666;">Securely push the custom PDF to the student's dashboard and auto-unlock their Counselling tab.</p>
                             </div>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="file" id="pref_file_${lead.id}" accept=".pdf" style="font-size: 0.85rem; max-width: 200px;">
-                                <button class="btn-action btn-success-alt" onclick="uploadPreferenceList('${lead.email}', ${lead.id})" id="pref_btn_${lead.id}">
-                                    <i class="fas fa-cloud-upload-alt"></i> Upload & Deliver
-                                </button>
+                                ${lead.documents.preference_list ? 
+                                    `
+                                    <!-- What shows if the file ALREADY EXISTS -->
+                                    <span style="color: #20c997; font-weight: 700; font-size: 0.85rem; margin-right: 10px;"><i class="fas fa-check-circle"></i> Delivered</span>
+                                    <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=preference_list" target="_blank" style="background: var(--navy-900); color: var(--gold); padding: 8px 15px; text-decoration: none; font-size: 0.85rem; font-weight: 700; border-radius: 4px; transition: 0.3s;">
+                                        <i class="fas fa-eye"></i> View List
+                                    </a>
+                                    <button class="btn-action btn-danger" onclick="deletePreferenceList('${lead.email}')">
+                                        <i class="fas fa-trash"></i> Remove
+                                    </button>
+                                    ` 
+                                : 
+                                    `
+                                    <!-- What shows if the file is MISSING -->
+                                    <input type="file" id="pref_file_${lead.id}" accept=".pdf" style="font-size: 0.85rem; max-width: 200px;">
+                                    <button class="btn-action btn-success-alt" onclick="uploadPreferenceList('${lead.email}', ${lead.id})" id="pref_btn_${lead.id}">
+                                        <i class="fas fa-cloud-upload-alt"></i> Upload & Deliver
+                                    </button>
+                                    `
+                                }
                             </div>
                         </div>
 
@@ -405,6 +422,23 @@
                 btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload & Deliver';
                 btn.style.pointerEvents = 'auto';
             }
+        }
+
+        async function deletePreferenceList(email) {
+            if(!confirm("Are you sure you want to delete this preference list? It will immediately disappear from the student's dashboard.")) return;
+            
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/delete_preference', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if(response.ok) {
+                    alert("🗑️ Preference List securely removed.");
+                    loadLeads(); // Refreshes UI to show the Upload button again
+                } else alert("Failed to delete file.");
+            } catch(e) { alert("Network error connecting to server."); }
         }
 
         // Initialize
