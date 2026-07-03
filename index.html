@@ -1110,18 +1110,19 @@ html, body {
 @media (max-width: 768px) {
     .review-grid-wrapper {
         display: flex;
-        overflow-x: auto; /* Allows manual swiping */
+        overflow-x: auto;
         scroll-snap-type: x mandatory;
+        scroll-behavior: smooth; /* Native smooth scrolling */
         gap: 15px;
         scrollbar-width: none;
         padding-bottom: 20px;
-        -webkit-overflow-scrolling: touch; /* Smooth touch swiping */
+        width: 100%;
     }
+    .review-grid-wrapper::-webkit-scrollbar { display: none; }
     
     .review-card {
         flex: 0 0 90%;
         scroll-snap-align: center;
-        transition: transform 0.5s ease-in-out; /* Crucial for animation */
     }
 }
 
@@ -2205,7 +2206,7 @@ html, body {
             See what our students and parents have to say about their AyuMed counselling experience.
         </p>
         
-            <div class="review-grid-wrapper" id="reviewCarousel">
+                <div class="review-grid-wrapper" id="reviewCarousel">
         
         <div class="review-card">
             <div class="review-header">
@@ -2216,9 +2217,7 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "Excellent guidance and support for medical admissions. The team at Ayumed Counselling is very professional, helpful, and knowledgeable. They explain the complete admission process clearly and help students choose the best college according to their needs."
-            </div>
+            <div class="review-text">"Excellent guidance and support for medical admissions. The team at Ayumed Counselling is very professional, helpful, and knowledgeable. They explain the complete admission process clearly and help students choose the best college according to their needs."</div>
         </div>
 
         <div class="review-card">
@@ -2230,9 +2229,7 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "I had a very positive experience with the medical counselling service. The counsellor was knowledgeable, patient, and took the time to understand my concerns. The guidance provided was clear, practical, and reassuring."
-            </div>
+            <div class="review-text">"I had a very positive experience with the medical counselling service. The counsellor was knowledgeable, patient, and took the time to understand my concerns. The guidance provided was clear, practical, and reassuring."</div>
         </div>
         
         <div class="review-card">
@@ -2244,9 +2241,7 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "AyuMed Counselling team provided excellent guidance during the admission process. Choice filling, document verification and counselling updates were provided on time. I am very satisfied with the service."
-            </div>
+            <div class="review-text">"AyuMed Counselling team provided excellent guidance during the admission process. Choice filling, document verification and counselling updates were provided on time. I am very satisfied with the service."</div>
         </div>
 
         <div class="review-card">
@@ -2258,9 +2253,7 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "Transparency - Every information is given clearly and transparently, no hidden charges, a nice experience."
-            </div>
+            <div class="review-text">"Transparency - Every information is given clearly and transparently, no hidden charges, a nice experience."</div>
         </div>
 
         <div class="review-card">
@@ -2272,9 +2265,7 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "Thank you, sir. You helped me a lot during my admission, saving me from the fraudulent counselor system. Today I have a safe and secure college with the right budget."
-            </div>
+            <div class="review-text">"Thank you, sir. You helped me a lot during my admission, saving me from the fraudulent counselor system. Today I have a safe and secure college with the right budget."</div>
         </div>
 
         <div class="review-card">
@@ -2286,10 +2277,10 @@ html, body {
                 </div>
             </div>
             <div class="review-stars">★★★★★</div>
-            <div class="review-text">
-                "Excellent guidance and support for medical admissions. The team at Ayumed Counselling is very professional, helpful, and knowledgeable. They explain the complete admission process clearly and help students choose the best college according to their needs."
-            </div>
+            <div class="review-text">"Excellent guidance and support for medical admissions. The team at Ayumed Counselling is very professional, helpful, and knowledgeable. They explain the complete admission process clearly and help students choose the best college according to their needs."</div>
         </div>
+
+    </div>
 
     </div>
 
@@ -3048,17 +3039,56 @@ html, body {
 
     <script>
     const carousel = document.getElementById('reviewCarousel');
+    let scrollIndex = 0;
+    let isAutoSliding = false;
 
+    // 1. Keep track of user's manual swipes
+    carousel.addEventListener('scroll', () => {
+        if (isAutoSliding) return; // Ignore scroll events triggered by the auto-slider
+        
+        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
+        scrollIndex = Math.round(carousel.scrollLeft / cardWidth);
+        
+        // If the user manually swipes to the Clone, invisibly jump to the start
+        if (scrollIndex >= carousel.children.length - 1) {
+            setTimeout(() => {
+                carousel.style.scrollBehavior = 'auto'; // Turn off smooth scroll
+                carousel.scrollLeft = 0;                // Jump instantly to start
+                scrollIndex = 0;
+                setTimeout(() => { carousel.style.scrollBehavior = 'smooth'; }, 50); // Turn smooth scroll back on
+            }, 150);
+        }
+    });
+
+    // 2. The Auto Slider
     function autoSlide() {
         const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
-        const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+        const totalCards = carousel.children.length;
+        
+        isAutoSliding = true;
+        scrollIndex++;
+        
+        // Slide to the next card
+        carousel.style.scrollBehavior = 'smooth';
+        carousel.scrollLeft = scrollIndex * cardWidth;
 
-        // If we are at the end, jump back to start
-        if (carousel.scrollLeft >= maxScroll - 10) {
-            carousel.scrollTo({ left: 0, behavior: 'smooth' });
+        // 3. The Infinite Loop Magic
+        // If we just slid to the Clone (the 6th card)
+        if (scrollIndex >= totalCards - 1) {
+            setTimeout(() => {
+                // Instantly and invisibly jump back to the true first card
+                carousel.style.scrollBehavior = 'auto'; 
+                carousel.scrollLeft = 0; 
+                scrollIndex = 0;
+                
+                // Restore smooth behavior for the next slide
+                setTimeout(() => { 
+                    carousel.style.scrollBehavior = 'smooth'; 
+                    isAutoSliding = false;
+                }, 50);
+            }, 600); // Wait 600ms for the CSS smooth slide to finish before jumping
         } else {
-            // Otherwise, scroll to the next card
-            carousel.scrollBy({ left: cardWidth, behavior: 'smooth' });
+            setTimeout(() => { isAutoSliding = false; }, 600);
         }
     }
 
