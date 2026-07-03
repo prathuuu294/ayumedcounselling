@@ -319,36 +319,34 @@
         </div>
     </div>
 
-    <script>
+        <script>
         // 1. Authentication Check
         const studentEmail = localStorage.getItem('studentEmail');
         if (!studentEmail) window.location.href = 'login.html';
 
-                // 2. Interactive Panel Switcher (With Mobile Accordion Engine)
+        // Global Cache to remember uploaded documents instantly
+        let globalUserDocuments = null;
+
+        // 2. Interactive Panel Switcher (With Mobile Accordion Engine)
         function switchPanel(panelName) {
-            // Hide all panels & deactivate all nav nodes
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
             
             const selectedPanel = document.getElementById(`panel-${panelName}`);
             const selectedStep = document.getElementById(`nav-${panelName}`);
             
-            // Show selected panel & activate node
             selectedPanel.classList.add('active');
             selectedStep.classList.add('active');
 
-            // Accordion Logic: Move the panel under the button if on Mobile
             if (window.innerWidth <= 768) {
                 selectedStep.parentNode.insertBefore(selectedPanel, selectedStep.nextSibling);
                 selectedPanel.classList.add('mobile-accordion-panel');
             } else {
-                // Desktop: Keep it safely inside the master container
                 document.querySelector('.panel-container').appendChild(selectedPanel);
                 selectedPanel.classList.remove('mobile-accordion-panel');
             }
         }
 
-        // Re-adjust layout automatically if a user rotates their iPad/phone
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 document.querySelectorAll('.panel').forEach(panel => {
@@ -359,18 +357,16 @@
         });
 
         // 3. Update Timeline Progress Bar visually
-                function setTimelineProgress(stageString) {
+        function setTimelineProgress(stageString) {
             const progressLine = document.getElementById('timelineProgress');
             const navDocs = document.getElementById('nav-documents');
             const navPay = document.getElementById('nav-payment');
             const navCounselling = document.getElementById('nav-counselling');
             const navAllotment = document.getElementById('nav-allotment');
 
-            // Default: Profile is always active
             document.getElementById('nav-profile').classList.add('completed');
             progressLine.style.width = '12.5%'; 
 
-            // Only trigger "Completed" when we hit the specific Verified/Confirmed stages
             if(stageString.includes("4) Documents Verified") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
                 navDocs.classList.add('completed');
                 progressLine.style.width = '37.5%';
@@ -389,146 +385,100 @@
             }
         }
 
-        // 4. Fetch User Data from DB
+        // 4. Helper Function: Instantly turns boxes green if they are uploaded
+        function applyDocumentStatuses() {
+            if (!globalUserDocuments) return;
+            
+            // Check Preference List
+            if (globalUserDocuments.preference_list === true) {
+                const prefArea = document.getElementById('prefDownloadArea');
+                if (prefArea) {
+                    prefArea.style.display = "block";
+                    document.getElementById('prefDownloadBtn').href = `https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${studentEmail}&doc_type=preference_list`;
+                }
+            }
+            
+            // Color individual document slots
+            const slots = document.querySelectorAll('.doc-slot');
+            slots.forEach(slot => {
+                const docName = slot.querySelector('.doc-name').innerText;
+                const docKey = docName.replace(/ /g, "_").toLowerCase();
+                
+                if (globalUserDocuments[docKey] === true) {
+                    const statusText = slot.querySelector('.doc-status');
+                    statusText.innerText = "UPLOADED ✓";
+                    statusText.style.color = "var(--success)";
+                    slot.style.background = "rgba(37, 211, 102, 0.1)";
+                    slot.style.borderColor = "var(--success)";
+                    
+                    const uploadBtn = slot.querySelector('.upload-btn');
+                    if(uploadBtn) uploadBtn.style.display = "none";
+                }
+            });
+        }
+
+        // 5. Fetch User Data from DB
         async function loadDashboard() {
             try {
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
                 const data = await response.json();
-            // NEW: Auto-Logout if Admin deleted the account
-            if (response.status === 404 || data.error === "User not found") {
-                alert("🚨 Your Account has been Deleted by the Admin.");
                 
-                // Completely wipe the student's local session data
-                localStorage.clear();
-                sessionStorage.clear();
-                
-                // Kick them back to the login page
-                window.location.href = 'login.html';
-                return;
-            }
+                if (response.status === 404 || data.error === "User not found") {
+                    alert("🚨 Your Account has been Deleted by the Admin.");
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.href = 'login.html';
+                    return;
+                }
 
-// NEW: Professional Status Masking
-            // This changes what the student sees without breaking your CRM!
-            if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) {
-                data.stage = "Profile Registered";
-            }
+                if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) {
+                    data.stage = "Profile Registered";
+                }
 
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
-                    // 1. YOUR TEAM DIRECTORY (Bulletproof matching!)
-const teamDirectory = {
-    // Aditya's entries
-    "Aditya": {
-        phone: "917879078367",
-        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg",
-        title: "Senior Counsellor & BAMS Admissions Expert"
-    },
-    "Aditya Patel": {
-        phone: "917879078367",
-        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg",
-        title: "Senior Counsellor & BAMS Admissions Expert"
-    },
-
-    // Mahesh's entries
-    "Mahesh": {
-        phone: "919604408949",
-        image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
-        title: "Expert BAMS Counsellor and Cut-off Analyst"
-    },
-    "Mahesh Wankhade": {
-        phone: "919604408949",
-        image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
-        title: "Expert BAMS Counsellor and Cut-off Analyst"
-    },
-
-    // Prathamesh's entries
-    "Prathamesh": { 
-        phone: "918080026270",
-        image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
-        title: "Medical and Dental Admissions Expert"
-    },
-    "Prathamesh Salunke": { 
-        phone: "918080026270",
-        image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
-        title: "Medical and Dental Admissions Expert"
-    },
-
-    // Yatharth's entries
-    "Yatharth": {
-        phone: "917796126149",
-        image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg",
-        title: "Expert BAMS Counsellor and Social Media Handler"
-    },
-    "Yatharth Gobade": {
-        phone: "917796126149",
-        image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg",
-        title: "Expert BAMS Counsellor and Social Media Handler"
-    }
-};
-
-// 2. THE UI UPDATER
-if (data.counsellor && data.counsellor !== "Unassigned") {
-    document.getElementById('counsellorName').innerText = data.counsellor;
-    
-    // Check if the assigned name matches someone in your directory
-    if (teamDirectory[data.counsellor]) {
-        const advisor = teamDirectory[data.counsellor];
-        
-        // Show Image & Title
-        document.getElementById('counsellorImage').src = advisor.image;
-        document.getElementById('counsellorImage').style.display = "block";
-        document.getElementById('counsellorSubtitle').innerText = advisor.title;
-        
-        // Create an automated, pre-filled WhatsApp greeting
-        const waMessage = encodeURIComponent(`Hello ${data.counsellor} sir, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and assigned under you for my counselling process.`);
-        
-        // Setup WhatsApp Button
-        const waBtn = document.getElementById('counsellorContact');
-        waBtn.href = `https://wa.me/${advisor.phone}?text=${waMessage}`;
-        waBtn.style.display = "inline-flex"; 
-    } else {
-        // Fallback
-        document.getElementById('counsellorSubtitle').innerText = "Assigned Premium Advisor";
-        document.getElementById('counsellorContact').style.display = "inline-flex";
-    }
-}
                     
-                    if(data.counsellor !== "Unassigned") {
-                        document.getElementById('counsellorContact').style.display = "inline-block";
-                    }
+                    // Team Directory
+                    const teamDirectory = {
+                        "Aditya": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
+                        "Aditya Patel": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
+                        "Mahesh": { phone: "919604408949", image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png", title: "Expert BAMS Counsellor and Cut-off Analyst" },
+                        "Mahesh Wankhade": { phone: "919604408949", image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png", title: "Expert BAMS Counsellor and Cut-off Analyst" },
+                        "Prathamesh": { phone: "918080026270", image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg", title: "Medical and Dental Admissions Expert" },
+                        "Prathamesh Salunke": { phone: "918080026270", image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg", title: "Medical and Dental Admissions Expert" },
+                        "Yatharth": { phone: "917796126149", image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg", title: "Expert BAMS Counsellor and Social Media Handler" },
+                        "Yatharth Gobade": { phone: "917796126149", image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg", title: "Expert BAMS Counsellor and Social Media Handler" }
+                    };
 
-                    // Map the UI progress bar to their DB stage
+                    if (data.counsellor && data.counsellor !== "Unassigned") {
+                        document.getElementById('counsellorName').innerText = data.counsellor;
+                        if (teamDirectory[data.counsellor]) {
+                            const advisor = teamDirectory[data.counsellor];
+                            document.getElementById('counsellorImage').src = advisor.image;
+                            document.getElementById('counsellorImage').style.display = "block";
+                            document.getElementById('counsellorSubtitle').innerText = advisor.title;
+                            const waMessage = encodeURIComponent(`Hello ${data.counsellor} sir, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and assigned under you for my counselling process.`);
+                            const waBtn = document.getElementById('counsellorContact');
+                            waBtn.href = `https://wa.me/${advisor.phone}?text=${waMessage}`;
+                            waBtn.style.display = "inline-flex"; 
+                        } else {
+                            document.getElementById('counsellorSubtitle').innerText = "Assigned Premium Advisor";
+                            document.getElementById('counsellorContact').style.display = "inline-flex";
+                        }
+                    }
+                    
                     setTimelineProgress(data.stage);
 
-                    // Lock uploaded documents
+                    // Document Status Setup
                     if (data.documents) {
-// NEW: Check if Preference List is ready and reveal the download button!
-                        if (data.documents.preference_list === true) {
-                            document.getElementById('prefDownloadArea').style.display = "block";
-                            document.getElementById('prefDownloadBtn').href = `https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${studentEmail}&doc_type=preference_list`;
-                        }
-                        const slots = document.querySelectorAll('.doc-slot');
-                        slots.forEach(slot => {
-                            const docName = slot.querySelector('.doc-name').innerText;
-                            const docKey = docName.replace(/ /g, "_").toLowerCase();
-                            
-                            if (data.documents[docKey] === true) {
-                                const statusText = slot.querySelector('.doc-status');
-                                statusText.innerText = "UPLOADED ✓";
-                                statusText.style.color = "var(--success)";
-                                slot.style.background = "rgba(37, 211, 102, 0.1)";
-                                slot.style.borderColor = "var(--success)";
-                                
-                                const uploadBtn = slot.querySelector('.upload-btn');
-                                if(uploadBtn) uploadBtn.style.display = "none";
-                            }
-                                                });
+                        globalUserDocuments = data.documents; // Save securely to cache
+                        applyDocumentStatuses(); // Turn boxes green!
                     }
 
-                    // NEW: Display the Invoice if fee is set!
+                    // Payment Invoice Setup
                     if (data.fee_amount > 0) {
-                                                document.getElementById('panel-payment').innerHTML = `
+                        document.getElementById('panel-payment').innerHTML = `
                             <h2 class="panel-title">Pending Invoice</h2>
                             <div class="info-box" style="text-align: center; padding: 40px 20px; border-left-color: var(--warning);">
                                 <h3 style="color: var(--navy-900); margin-bottom: 10px;">Premium Counselling Fee</h3>
@@ -542,35 +492,27 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
                             </div>
                         `;
                     }
-// --- Counselling Lock Logic ---
-const counsellingContent = document.getElementById('counsellingContent');
-const counsellingLock = document.getElementById('counsellingLock');
 
-// Only these stages allow the Counselling section to be visible
-const unlockedStages = [
-    "5) Payment Confirmed", 
-    "6) Counselling In Progress", 
-    "6) Preference List Ready", 
-    "7) Seat Allotted", 
-    "8) Admission Complete"
-];
-
-// Check if current stage is in the unlocked list
-const isUnlocked = unlockedStages.some(stage => data.stage.includes(stage));
-
-if (!isUnlocked) {
-    counsellingContent.classList.add('locked-content');
-    counsellingLock.style.display = 'flex';
-} else {
-    counsellingContent.classList.remove('locked-content');
-    counsellingLock.style.display = 'none';
-}
-// --- End Lock Logic ---
+                    // Counselling Lock Logic
+                    const counsellingContent = document.getElementById('counsellingContent');
+                    const counsellingLock = document.getElementById('counsellingLock');
+                    const unlockedStages = [
+                        "5) Payment Confirmed", "6) Counselling In Progress", 
+                        "6) Preference List Ready", "7) Seat Allotted", "8) Admission Complete"
+                    ];
+                    
+                    if (!unlockedStages.some(stage => data.stage.includes(stage))) {
+                        counsellingContent.classList.add('locked-content');
+                        counsellingLock.style.display = 'flex';
+                    } else {
+                        counsellingContent.classList.remove('locked-content');
+                        counsellingLock.style.display = 'none';
+                    }
                 }
             } catch (error) { console.error(error); }
         }
 
-        // 5. Document Upload Engine
+        // 6. Document Upload Engine
         function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             fileInputs.forEach(input => {
@@ -599,11 +541,11 @@ if (!isUnlocked) {
                         if (response.ok) {
                             statusText.innerText = "UPLOADED ✓";
                             statusText.style.color = "var(--success)";
-                            this.parentElement.style.display = "none"; // Hide button after upload
+                            this.parentElement.style.display = "none"; 
                             this.closest('.doc-slot').style.background = "rgba(37, 211, 102, 0.1)";
                             this.closest('.doc-slot').style.borderColor = "var(--success)";
                             
-                            // Refresh data silently to update timeline status
+                            // Re-fetch data to permanently cache it
                             setTimeout(loadDashboard, 500); 
                         } else {
                             alert("Upload failed: " + result.message);
@@ -617,9 +559,9 @@ if (!isUnlocked) {
                 });
             });
         }
+
         async function startPayment() {
             try {
-                // 1. Ask Python server to generate an Order ID
                 const response = await fetch('https://prathuuu294.pythonanywhere.com/api/create_order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -628,17 +570,15 @@ if (!isUnlocked) {
                 const orderData = await response.json();
 
                 if (orderData.status === "success") {
-                    // 2. Launch Razorpay UI
                     var options = {
                         "key": orderData.key,
                         "amount": orderData.amount,
                         "currency": "INR",
                         "name": "AyuMed Counselling",
                         "description": "Premium Admission Services",
-                        "image": "https://i.postimg.cc/zXZtfMHn/1000627648.jpg", // Your AyuMed Logo
+                        "image": "https://i.postimg.cc/zXZtfMHn/1000627648.jpg", 
                         "order_id": orderData.order_id,
                         "handler": async function (response) {
-                            // 3. Verify Payment silently in background
                             const verifyRes = await fetch('https://prathuuu294.pythonanywhere.com/api/verify_payment', {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
@@ -653,18 +593,13 @@ if (!isUnlocked) {
                             if (verifyData.status === "success") {
                                 alert("Payment Successful! Your dashboard will now upgrade.");
                                 window.location.reload();
-                            } else {
-                                alert("Payment verification failed.");
-                            }
+                            } else { alert("Payment verification failed."); }
                         },
                         "prefill": { "email": studentEmail },
-                        "theme": { "color": "#0D1B2A" } // Matches your Navy Blue theme!
+                        "theme": { "color": "#0D1B2A" } 
                     };
-                    
                     var rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (response){
-                        alert("Payment Failed: " + response.error.description);
-                    });
+                    rzp.on('payment.failed', function (response){ alert("Payment Failed: " + response.error.description); });
                     rzp.open();
                 } else { alert("Server Error: Could not generate order."); }
             } catch (error) { alert("Network Error: Could not connect to payment gateway."); }
@@ -675,49 +610,27 @@ if (!isUnlocked) {
             window.location.href = 'login.html';
         }
 
-                // --- DYNAMIC DOCUMENT GENERATOR (WITH PERSISTENCE) ---
+        // --- DYNAMIC DOCUMENT GENERATOR (WITH PERSISTENCE) ---
         const universalDocs = [
-            { label: 'NEET UG Admit Card' },
-            { label: 'NEET UG Scorecard' },
-            { label: 'Class 10th Marksheet' },
-            { label: 'Class 12th Marksheet' },
-            { label: 'Aadhar Card' },
-            { label: 'Bank Passbook Front Page' },
-            { label: 'Migration Certificate' },
-            { label: 'Passport Size Photo' },
+            { label: 'NEET UG Admit Card' }, { label: 'NEET UG Scorecard' },
+            { label: 'Class 10th Marksheet' }, { label: 'Class 12th Marksheet' },
+            { label: 'Aadhar Card' }, { label: 'Bank Passbook Front Page' },
+            { label: 'Migration Certificate' }, { label: 'Passport Size Photo' },
             { label: 'Category Certificate' }
         ];
 
         const stateSpecificDocs = {
-            'MP': [
-                { label: 'MP Domicile Certificate' },
-                { label: 'Samagra ID' },
-                { label: 'MP Character Certificate' },
-                { label: 'MP Medical Fitness' }
-            ],
-            'MH': [
-                { label: 'Maharashtra Domicile' },
-                { label: 'Nationality Certificate' },
-                { label: 'Caste Validity Certificate' }
-            ],
-            'UP': [
-                { label: 'UP Domicile Certificate' },
-                { label: 'UP Transfer Certificate' }
-            ],
-            'RJ': [
-                { label: 'Rajasthan Domicile' }
-            ],
-            'GJ': [
-                { label: 'Gujarat Domicile' }
-            ]
+            'MP': [{ label: 'MP Domicile Certificate' }, { label: 'Samagra ID' }, { label: 'MP Character Certificate' }, { label: 'MP Medical Fitness' }],
+            'MH': [{ label: 'Maharashtra Domicile' }, { label: 'Nationality Certificate' }, { label: 'Caste Validity Certificate' }],
+            'UP': [{ label: 'UP Domicile Certificate' }, { label: 'UP Transfer Certificate' }],
+            'RJ': [{ label: 'Rajasthan Domicile' }],
+            'GJ': [{ label: 'Gujarat Domicile' }]
         };
 
-        // 1. Toggle State List Visibility when checking "State Quota"
         document.getElementById('chkState').addEventListener('change', function() {
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-        // 2. Save Selection on Button Click
         document.getElementById('btnConfirmSelection').addEventListener('click', function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
@@ -728,25 +641,20 @@ if (!isUnlocked) {
                 return;
             }
 
-            // Create preference object
             const prefs = { aiq: isAIQ, state: isState, states: selectedStates };
-
-            // Save to LocalStorage tightly bound to this specific student's email
             localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
             
-            // Show cute green confirmation text for 3 seconds
             const saveText = document.getElementById('saveConfirmText');
             saveText.style.display = 'inline-block';
             setTimeout(() => saveText.style.display = 'none', 3000);
 
-            // Render the documents to the screen
+            // Rebuild the DOM based on choices
             renderDocuments(prefs);
             
-            // Re-fetch backend data to mark already uploaded documents as green!
+            // In case they clicked confirm *after* data loaded, instantly re-color anything they already uploaded
             loadDashboard(); 
         });
 
-        // 3. Render the specific document upload boxes
         function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
@@ -759,7 +667,7 @@ if (!isUnlocked) {
                 return;
             }
             
-            requiredDocs.push(...universalDocs); // Push common docs
+            requiredDocs.push(...universalDocs); 
             
             if (prefs.state && prefs.states) {
                 prefs.states.forEach(stateCode => {
@@ -767,7 +675,6 @@ if (!isUnlocked) {
                 });
             }
             
-            // Remove any duplicates
             const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.label)))
                 .map(label => requiredDocs.find(a => a.label === label));
 
@@ -787,20 +694,18 @@ if (!isUnlocked) {
                     docsContainer.appendChild(docElement);
                 });
                 
-                // Re-bind the file upload logic to these new dynamic buttons!
+                // Immediately bind upload buttons and paint them green if data exists in cache!
                 setupUploads();
+                applyDocumentStatuses(); 
             } else {
                 dynamicDocsCard.style.display = 'none';
             }
         }
 
-        // 4. Load Saved Preferences automatically on Login/Refresh
         function loadSavedPreferences() {
             const savedData = localStorage.getItem('AyuMed_Prefs_' + studentEmail);
             if (savedData) {
                 const prefs = JSON.parse(savedData);
-                
-                // Check the boxes exactly as they left them
                 document.getElementById('chkAIQ').checked = prefs.aiq;
                 document.getElementById('chkState').checked = prefs.state;
                 
@@ -812,20 +717,22 @@ if (!isUnlocked) {
                     });
                 }
                 
-                // Render the document vault immediately
-                renderDocuments(prefs);
+                renderDocuments(prefs); // Build the UI synchronously
             }
         }
 
-        // Run the preference loader as soon as the DOM is ready
-        window.addEventListener('DOMContentLoaded', loadSavedPreferences);
-
-        // Boot up
-        loadDashboard();
-        setupUploads();
-
-// Auto-run the layout engine on load to dock the Profile tab on mobile!
-        switchPanel('profile');
+        // --- MASTER BOOT SEQUENCE ---
+        // This guarantees everything happens in the perfect order to avoid the bug!
+        window.addEventListener('DOMContentLoaded', async () => {
+            // 1. Visually lock onto the profile tab first
+            switchPanel('profile');
+            
+            // 2. Load LocalStorage & fully draw the document boxes
+            loadSavedPreferences();
+            
+            // 3. Finally, ask Python for the data to color the drawn boxes green
+            await loadDashboard();
+        });
 
     </script>
 </body>
