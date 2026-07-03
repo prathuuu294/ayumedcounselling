@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AyuMed | CRM Dashboard</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -99,6 +100,39 @@
         @media(max-width: 900px) {
             .lead-card { grid-template-columns: 1fr; }
         }
+/* CRM Admin Action Toolbar */
+.admin-actions {
+    grid-column: 1 / -1; 
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 2px dashed #eee;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+.btn-action {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-warning { background: #f09433; }
+.btn-warning:hover { background: #d97b20; }
+.btn-dark { background: #343a40; }
+.btn-dark:hover { background: #23272b; }
+.btn-success-alt { background: #20c997; }
+.btn-success-alt:hover { background: #17a2b8; }
+.btn-danger { background: #dc3545; }
+.btn-danger:hover { background: #c82333; }
+
     </style>
 </head>
 <body>
@@ -201,9 +235,26 @@
 
                         <div>
                             <button class="btn-update" onclick="updateLead('${lead.email}', ${lead.id})">Save Changes</button>
-                            <p id="status_${lead.id}" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: var(--success); display: none;">Saved!</p>
-                        </div>
-                    `;
+                                                    <p id="status_${lead.id}" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: var(--success); display: none;">Saved!</p>
+                    </div>
+
+                    <!-- NEW: Admin Actions Toolbar -->
+                    <div class="admin-actions">
+                        <button class="btn-action btn-warning" onclick="resetUserPassword('${lead.email}')">
+                            <i class="fas fa-key"></i> Reset Password
+                        </button>
+                        
+                        ${lead.is_locked ? 
+                            `<button class="btn-action btn-success-alt" onclick="toggleUserLock('${lead.email}', 'unlock')"><i class="fas fa-unlock"></i> Unlock Login</button>` : 
+                            `<button class="btn-action btn-dark" onclick="toggleUserLock('${lead.email}', 'lock')"><i class="fas fa-lock"></i> Lock Login</button>`
+                        }
+                        
+                        <button class="btn-action btn-danger" onclick="deleteUserAccount('${lead.email}')">
+                            <i class="fas fa-trash"></i> Delete Account
+                        </button>
+                    </div>
+                `;
+
                     container.appendChild(card);
                 });
 
@@ -242,6 +293,60 @@
                 alert("Error saving data! Check server logs.");
                 btn.innerText = "Save Changes";
             }
+        }
+
+        // --- ADMIN ACTION FUNCTIONS ---
+
+        async function resetUserPassword(email) {
+            if(!confirm(`Are you sure you want to reset the password for ${email}?`)) return;
+            
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/reset_password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                const result = await response.json();
+                
+                if(response.ok) {
+                    // This creates an alert pop-up with the new temporary password so you can copy it
+                    alert(`✅ SUCCESS\n\nThe new temporary password is:\n${result.new_password}\n\nPlease copy this and send it to the student.`);
+                } else alert("Failed: " + result.message);
+            } catch(e) { alert("Network error connecting to server."); }
+        }
+
+        async function toggleUserLock(email, action) {
+            if(!confirm(`Are you sure you want to ${action.toUpperCase()} the account for ${email}?`)) return;
+
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/toggle_lock', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, action })
+                });
+                
+                if(response.ok) {
+                    alert(`Account successfully ${action}ed!`);
+                    loadLeads(); // Refreshes the page to swap the lock/unlock button
+                } else alert("Failed to update lock status.");
+            } catch(e) { alert("Network error connecting to server."); }
+        }
+
+        async function deleteUserAccount(email) {
+            if(!confirm(`🚨 CRITICAL WARNING 🚨\n\nAre you sure you want to PERMANENTLY DELETE ${email}?\nThis will erase their profile, documents, and history. This CANNOT be undone!`)) return;
+
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/delete_user', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if(response.ok) {
+                    alert("Account permanently deleted.");
+                    loadLeads(); // Refreshes the page to remove the user card
+                } else alert("Failed to delete account.");
+            } catch(e) { alert("Network error connecting to server."); }
         }
 
         // Initialize
