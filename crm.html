@@ -183,14 +183,36 @@
                     const card = document.createElement('div');
                     card.className = 'lead-card';
 
-                    // Formatting documents
-                    const docs = lead.documents;
-                    const docHtml = `
-                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=neet_scorecard" target="_blank" class="doc-badge ${docs.neet_scorecard ? 'doc-yes' : 'doc-no'}">Scorecard</a>
-                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=neet_admit_card" target="_blank" class="doc-badge ${docs.neet_admit_card ? 'doc-yes' : 'doc-no'}">Admit Card</a>
-                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=domicile_certificate" target="_blank" class="doc-badge ${docs.domicile_certificate ? 'doc-yes' : 'doc-no'}">Domicile</a>
-                        <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=caste_certificate" target="_blank" class="doc-badge ${docs.caste_certificate ? 'doc-yes' : 'doc-no'}">Caste Cert</a>
-                    `;
+                                        // Formatting documents dynamically based on student's selection
+                    const docs = lead.documents || {};
+                    let docHtml = '';
+                    let requiredDocs = [];
+                    
+                    try {
+                        // Safely parse the JSON string saved in the database
+                        if (lead.required_docs_list) {
+                            requiredDocs = typeof lead.required_docs_list === 'string' ? JSON.parse(lead.required_docs_list) : lead.required_docs_list;
+                        }
+                    } catch(e) { console.error("Parse error", e); }
+
+                    if (requiredDocs.length > 0) {
+                        requiredDocs.forEach(doc => {
+                            // Check if the glob scanner marked this specific ID as True
+                            const isUploaded = docs[doc.id] === true;
+                            
+                            docHtml += `
+                                <a href="https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${lead.email}&doc_type=${doc.id}" 
+                                   target="_blank" 
+                                   class="doc-badge ${isUploaded ? 'doc-yes' : 'doc-no'}" 
+                                   title="${doc.label}">
+                                    ${doc.label}
+                                </a>
+                            `;
+                        });
+                    } else {
+                        // What the CRM shows if the student hasn't clicked "Confirm Selection" yet
+                        docHtml = `<span style="font-size:0.8rem; color:#999; font-style:italic;">Student hasn't confirmed counselling jurisdictions yet.</span>`;
+                    }
 
                     // Generate Stage Options
                     let stageOptions = '';
