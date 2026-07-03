@@ -86,6 +86,25 @@
         .contact-counsellor { display: inline-block; background: var(--success); color: white; text-decoration: none; padding: 12px 25px; border-radius: 4px; font-weight: 700; margin-top: 15px; transition: 0.3s; }
         .contact-counsellor:hover { background: #1da851; box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3); }
 
+/* Lock Overlay Styles */
+.locked-content { 
+    filter: blur(8px); 
+    pointer-events: none; 
+    user-select: none; 
+    opacity: 0.6; 
+}
+
+.lock-overlay { 
+    display: none; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 40px; 
+    text-align: center; 
+    color: var(--navy-900); 
+}
+
+
                 @media(max-width: 768px) {
             .timeline::before, .timeline-progress { display: none; }
             .timeline { flex-direction: column; gap: 15px; }
@@ -251,13 +270,24 @@
             </div>
 
             <!-- PANEL 4: Counselling -->
-            <div class="panel" id="panel-counselling">
-                <h2 class="panel-title">Counselling & Preferences</h2>
-                <div class="info-box">
-                    <h3 style="margin-bottom: 10px; color: var(--navy-900);">Preference List Output</h3>
-                    <p style="color: var(--navy-600); line-height: 1.6;">Once your documents are verified and your profile is analyzed, your personalized college choice-filling list will be generated and available for download here.</p>
-                </div>
-            </div>
+<div class="panel" id="panel-counselling">
+    <h2 class="panel-title">Counselling & Preferences</h2>
+    
+    <!-- Lock Overlay Placeholder -->
+    <div id="counsellingLock" class="lock-overlay">
+        <i class="fas fa-lock" style="font-size: 3rem; color: var(--gold); margin-bottom: 20px;"></i>
+        <h3 style="margin-bottom: 10px;">Access Locked</h3>
+        <p>Complete your payment to unlock your personalized college preference list.</p>
+    </div>
+
+    <!-- Wrapped Content -->
+    <div id="counsellingContent">
+        <div class="info-box">
+            <h3 style="margin-bottom: 10px; color: var(--navy-900);">Preference List Output</h3>
+            <p style="color: var(--navy-600); line-height: 1.6;">Once your documents are verified and your profile is analyzed, your personalized college choice-filling list will be generated and available for download here.</p>
+        </div>
+    </div>
+</div>
 
             <!-- PANEL 5: Allotment -->
             <div class="panel" id="panel-allotment">
@@ -472,6 +502,20 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
                             </div>
                         `;
                     }
+// --- Counselling Lock Logic ---
+const counsellingContent = document.getElementById('counsellingContent');
+const counsellingLock = document.getElementById('counsellingLock');
+
+// Check if there is a pending fee OR if the stage isn't confirmed yet
+const isPaymentPending = (data.fee_amount > 0) || !data.stage.includes("5) Payment Confirmed");
+
+if (isPaymentPending) {
+    counsellingContent.classList.add('locked-content');
+    counsellingLock.style.display = 'flex';
+} else {
+    counsellingContent.classList.remove('locked-content');
+    counsellingLock.style.display = 'none';
+}
                 }
             } catch (error) { console.error(error); }
         }
