@@ -218,13 +218,14 @@
 </div>
             </div>
 
-            <!-- PANEL 2: Document Vault -->
-                        <div class="panel" id="panel-documents">
+                        <!-- PANEL 2: Document Vault -->
+            <div class="panel" id="panel-documents">
                 <h2 class="panel-title">Secure Document Vault</h2>
                 
-                <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--gold); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                <!-- Target Jurisdictions Selection -->
+                <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--gold); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
                     <h3 style="color: var(--navy-900); font-family: 'Playfair Display', serif; margin-bottom: 10px;"><i class="fas fa-globe"></i> Counselling Selection</h3>
-                    <p style="color: var(--navy-600); font-size: 0.9rem; margin-bottom: 15px;">Select your counselling preferences to generate your personalized document checklist.</p>
+                    <p style="color: var(--navy-600); font-size: 0.95rem; margin-bottom: 20px;">Select your counselling preferences and click <b>Confirm</b> to generate your personalized document checklist.</p>
                     
                     <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
                         <label style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
@@ -235,7 +236,8 @@
                         </label>
                     </div>
 
-                    <div id="stateListWrapper" style="display: none; padding-left: 20px; border-left: 3px solid var(--gold); margin-top: 10px;">
+                    <!-- Hidden by default, reveals if State Quota is checked -->
+                    <div id="stateListWrapper" style="display: none; padding-left: 20px; border-left: 3px solid var(--gold); margin-top: 15px; margin-bottom: 20px;">
                         <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Select Target State(s):</p>
                         <div style="display: flex; flex-direction: column; gap: 10px;">
                             <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="MP"> Madhya Pradesh</label>
@@ -245,13 +247,23 @@
                             <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="GJ"> Gujarat</label>
                         </div>
                     </div>
+                    
+                    <!-- New Confirm Button -->
+                    <div style="margin-top: 20px; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 20px; display: flex; align-items: center;">
+                        <button type="button" id="btnConfirmSelection" style="background: var(--navy-900); color: var(--gold); padding: 12px 25px; border: none; border-radius: 4px; font-weight: 700; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(13,27,42,0.2);">
+                            <i class="fas fa-save" style="margin-right: 8px;"></i> Confirm Selection
+                        </button>
+                        <span id="saveConfirmText" style="color: var(--success); font-weight: bold; margin-left: 15px; display: none;"><i class="fas fa-check-circle"></i> Saved successfully!</span>
+                    </div>
                 </div>
 
+                <!-- Dynamic Document Upload Section -->
                 <div id="dynamicDocsCard" style="display: none;">
                     <p style="margin-bottom: 25px; font-size: 0.95rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies of the mandatory documents for your selected regions.</p>
                     
                     <div class="doc-grid" id="dynamicDocsContainer">
-                        </div>
+                        <!-- JavaScript will auto-generate the file inputs here -->
+                    </div>
                 </div>
             </div>
 
@@ -663,7 +675,7 @@ if (!isUnlocked) {
             window.location.href = 'login.html';
         }
 
-        // --- DYNAMIC DOCUMENT GENERATOR ---
+                // --- DYNAMIC DOCUMENT GENERATOR (WITH PERSISTENCE) ---
         const universalDocs = [
             { label: 'NEET UG Admit Card' },
             { label: 'NEET UG Scorecard' },
@@ -700,34 +712,62 @@ if (!isUnlocked) {
             ]
         };
 
-        function updateDocumentChecklist() {
+        // 1. Toggle State List Visibility when checking "State Quota"
+        document.getElementById('chkState').addEventListener('change', function() {
+            document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // 2. Save Selection on Button Click
+        document.getElementById('btnConfirmSelection').addEventListener('click', function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
-            const stateListWrapper = document.getElementById('stateListWrapper');
+            const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
+
+            if (!isAIQ && (!isState || selectedStates.length === 0)) {
+                alert("Please select at least one Quota (and state if State Quota is selected).");
+                return;
+            }
+
+            // Create preference object
+            const prefs = { aiq: isAIQ, state: isState, states: selectedStates };
+
+            // Save to LocalStorage tightly bound to this specific student's email
+            localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
+            
+            // Show cute green confirmation text for 3 seconds
+            const saveText = document.getElementById('saveConfirmText');
+            saveText.style.display = 'inline-block';
+            setTimeout(() => saveText.style.display = 'none', 3000);
+
+            // Render the documents to the screen
+            renderDocuments(prefs);
+            
+            // Re-fetch backend data to mark already uploaded documents as green!
+            loadDashboard(); 
+        });
+
+        // 3. Render the specific document upload boxes
+        function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
             
-            stateListWrapper.style.display = isState ? 'block' : 'none';
             docsContainer.innerHTML = '';
             let requiredDocs = [];
             
-            if (!isAIQ && !isState) {
+            if (!prefs.aiq && !prefs.state) {
                 dynamicDocsCard.style.display = 'none';
                 return;
             }
             
-            requiredDocs.push(...universalDocs);
+            requiredDocs.push(...universalDocs); // Push common docs
             
-            if (isState) {
-                const stateChecks = document.querySelectorAll('.state-chk:checked');
-                stateChecks.forEach(chk => {
-                    if (stateSpecificDocs[chk.value]) {
-                        requiredDocs.push(...stateSpecificDocs[chk.value]);
-                    }
+            if (prefs.state && prefs.states) {
+                prefs.states.forEach(stateCode => {
+                    if (stateSpecificDocs[stateCode]) requiredDocs.push(...stateSpecificDocs[stateCode]);
                 });
             }
             
-            // Remove duplicates
+            // Remove any duplicates
             const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.label)))
                 .map(label => requiredDocs.find(a => a.label === label));
 
@@ -747,18 +787,38 @@ if (!isUnlocked) {
                     docsContainer.appendChild(docElement);
                 });
                 
-                // Re-bind your existing secure upload logic to these new buttons!
+                // Re-bind the file upload logic to these new dynamic buttons!
                 setupUploads();
-                
             } else {
                 dynamicDocsCard.style.display = 'none';
             }
         }
 
-        // Attach listeners to the checkboxes
-        document.getElementById('chkAIQ').addEventListener('change', updateDocumentChecklist);
-        document.getElementById('chkState').addEventListener('change', updateDocumentChecklist);
-        document.querySelectorAll('.state-chk').forEach(chk => chk.addEventListener('change', updateDocumentChecklist));
+        // 4. Load Saved Preferences automatically on Login/Refresh
+        function loadSavedPreferences() {
+            const savedData = localStorage.getItem('AyuMed_Prefs_' + studentEmail);
+            if (savedData) {
+                const prefs = JSON.parse(savedData);
+                
+                // Check the boxes exactly as they left them
+                document.getElementById('chkAIQ').checked = prefs.aiq;
+                document.getElementById('chkState').checked = prefs.state;
+                
+                if (prefs.state) {
+                    document.getElementById('stateListWrapper').style.display = 'block';
+                    prefs.states.forEach(stateCode => {
+                        const chk = document.querySelector(`.state-chk[value="${stateCode}"]`);
+                        if (chk) chk.checked = true;
+                    });
+                }
+                
+                // Render the document vault immediately
+                renderDocuments(prefs);
+            }
+        }
+
+        // Run the preference loader as soon as the DOM is ready
+        window.addEventListener('DOMContentLoaded', loadSavedPreferences);
 
         // Boot up
         loadDashboard();
