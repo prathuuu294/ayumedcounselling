@@ -280,11 +280,20 @@
         <p>Complete your payment to unlock your personalized college preference list.</p>
     </div>
 
-    <!-- Wrapped Content -->
+        <!-- Wrapped Content -->
     <div id="counsellingContent">
         <div class="info-box">
             <h3 style="margin-bottom: 10px; color: var(--navy-900);">Preference List Output</h3>
             <p style="color: var(--navy-600); line-height: 1.6;">Once your documents are verified and your profile is analyzed, your personalized college choice-filling list will be generated and available for download here.</p>
+        </div>
+        
+        <!-- NEW: Dynamic Download Area (Hidden until delivered) -->
+        <div id="prefDownloadArea" style="display: none; text-align: center; margin-top: 30px; padding: 30px; background: rgba(212, 175, 55, 0.05); border-radius: 8px; border: 2px dashed var(--gold);">
+            <i class="fas fa-file-invoice" style="font-size: 3rem; color: var(--navy-900); margin-bottom: 15px;"></i>
+            <h3 style="color: var(--navy-900); margin-bottom: 15px;">🎉 Your Official List is Ready!</h3>
+            <a href="#" id="prefDownloadBtn" target="_blank" style="background: var(--gold); color: var(--navy-900); padding: 15px 30px; text-decoration: none; font-weight: 800; border-radius: 6px; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(212,175,55,0.3); transition: 0.3s;">
+                <i class="fas fa-download"></i> Download Preference List (PDF)
+            </a>
         </div>
     </div>
 </div>
@@ -468,6 +477,11 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
 
                     // Lock uploaded documents
                     if (data.documents) {
+// NEW: Check if Preference List is ready and reveal the download button!
+                        if (data.documents.preference_list === true) {
+                            document.getElementById('prefDownloadArea').style.display = "block";
+                            document.getElementById('prefDownloadBtn').href = `https://prathuuu294.pythonanywhere.com/api/admin/download_doc?email=${studentEmail}&doc_type=preference_list`;
+                        }
                         const slots = document.querySelectorAll('.doc-slot');
                         slots.forEach(slot => {
                             const docName = slot.querySelector('.doc-name').innerText;
