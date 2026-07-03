@@ -219,43 +219,39 @@
             </div>
 
             <!-- PANEL 2: Document Vault -->
-            <div class="panel" id="panel-documents">
+                        <div class="panel" id="panel-documents">
                 <h2 class="panel-title">Secure Document Vault</h2>
-                <p style="margin-bottom: 25px; font-size: 0.95rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies. Once uploaded, files are securely locked and sent directly to our verification team.</p>
                 
-                <div class="doc-grid">
-                    <div class="doc-slot">
-                        <div class="doc-name">NEET Scorecard</div>
-                        <div class="doc-status">Pending</div>
-                        <label class="upload-btn">
-                            Select File
-                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                <div style="background: rgba(212, 175, 55, 0.05); border: 1px solid var(--gold); border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+                    <h3 style="color: var(--navy-900); font-family: 'Playfair Display', serif; margin-bottom: 10px;"><i class="fas fa-globe"></i> Counselling Selection</h3>
+                    <p style="color: var(--navy-600); font-size: 0.9rem; margin-bottom: 15px;">Select your counselling preferences to generate your personalized document checklist.</p>
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+                        <label style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="chkAIQ" value="AIQ" style="width: 18px; height: 18px; accent-color: var(--gold);"> All India Quota (AIQ) 15%
+                        </label>
+                        <label style="font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="chkState" value="State" style="width: 18px; height: 18px; accent-color: var(--gold);"> State Quota 85%
                         </label>
                     </div>
-                    <div class="doc-slot">
-                        <div class="doc-name">NEET Admit Card</div>
-                        <div class="doc-status">Pending</div>
-                        <label class="upload-btn">
-                            Select File
-                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                        </label>
+
+                    <div id="stateListWrapper" style="display: none; padding-left: 20px; border-left: 3px solid var(--gold); margin-top: 10px;">
+                        <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Select Target State(s):</p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="MP"> Madhya Pradesh</label>
+                            <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="MH"> Maharashtra</label>
+                            <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="UP"> Uttar Pradesh</label>
+                            <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="RJ"> Rajasthan</label>
+                            <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="GJ"> Gujarat</label>
+                        </div>
                     </div>
-                    <div class="doc-slot">
-                        <div class="doc-name">Domicile Certificate</div>
-                        <div class="doc-status">Pending</div>
-                        <label class="upload-btn">
-                            Select File
-                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                        </label>
-                    </div>
-                    <div class="doc-slot">
-                        <div class="doc-name">Caste Certificate</div>
-                        <div class="doc-status">Pending</div>
-                        <label class="upload-btn">
-                            Select File
-                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                        </label>
-                    </div>
+                </div>
+
+                <div id="dynamicDocsCard" style="display: none;">
+                    <p style="margin-bottom: 25px; font-size: 0.95rem; color: var(--navy-600);">Please upload clear, scanned PDF or image copies of the mandatory documents for your selected regions.</p>
+                    
+                    <div class="doc-grid" id="dynamicDocsContainer">
+                        </div>
                 </div>
             </div>
 
@@ -667,6 +663,102 @@ if (!isUnlocked) {
             window.location.href = 'login.html';
         }
 
+        // --- DYNAMIC DOCUMENT GENERATOR ---
+        const universalDocs = [
+            { label: 'NEET UG Admit Card' },
+            { label: 'NEET UG Scorecard' },
+            { label: 'Class 10th Marksheet' },
+            { label: 'Class 12th Marksheet' },
+            { label: 'Aadhar Card' },
+            { label: 'Bank Passbook Front Page' },
+            { label: 'Migration Certificate' },
+            { label: 'Passport Size Photo' },
+            { label: 'Category Certificate' }
+        ];
+
+        const stateSpecificDocs = {
+            'MP': [
+                { label: 'MP Domicile Certificate' },
+                { label: 'Samagra ID' },
+                { label: 'MP Character Certificate' },
+                { label: 'MP Medical Fitness' }
+            ],
+            'MH': [
+                { label: 'Maharashtra Domicile' },
+                { label: 'Nationality Certificate' },
+                { label: 'Caste Validity Certificate' }
+            ],
+            'UP': [
+                { label: 'UP Domicile Certificate' },
+                { label: 'UP Transfer Certificate' }
+            ],
+            'RJ': [
+                { label: 'Rajasthan Domicile' }
+            ],
+            'GJ': [
+                { label: 'Gujarat Domicile' }
+            ]
+        };
+
+        function updateDocumentChecklist() {
+            const isAIQ = document.getElementById('chkAIQ').checked;
+            const isState = document.getElementById('chkState').checked;
+            const stateListWrapper = document.getElementById('stateListWrapper');
+            const docsContainer = document.getElementById('dynamicDocsContainer');
+            const dynamicDocsCard = document.getElementById('dynamicDocsCard');
+            
+            stateListWrapper.style.display = isState ? 'block' : 'none';
+            docsContainer.innerHTML = '';
+            let requiredDocs = [];
+            
+            if (!isAIQ && !isState) {
+                dynamicDocsCard.style.display = 'none';
+                return;
+            }
+            
+            requiredDocs.push(...universalDocs);
+            
+            if (isState) {
+                const stateChecks = document.querySelectorAll('.state-chk:checked');
+                stateChecks.forEach(chk => {
+                    if (stateSpecificDocs[chk.value]) {
+                        requiredDocs.push(...stateSpecificDocs[chk.value]);
+                    }
+                });
+            }
+            
+            // Remove duplicates
+            const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.label)))
+                .map(label => requiredDocs.find(a => a.label === label));
+
+            if (uniqueDocs.length > 0) {
+                dynamicDocsCard.style.display = 'block';
+                uniqueDocs.forEach(doc => {
+                    const docElement = document.createElement('div');
+                    docElement.className = 'doc-slot';
+                    docElement.innerHTML = `
+                        <div class="doc-name">${doc.label}</div>
+                        <div class="doc-status">Pending</div>
+                        <label class="upload-btn">
+                            Select File
+                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
+                        </label>
+                    `;
+                    docsContainer.appendChild(docElement);
+                });
+                
+                // Re-bind your existing secure upload logic to these new buttons!
+                setupUploads();
+                
+            } else {
+                dynamicDocsCard.style.display = 'none';
+            }
+        }
+
+        // Attach listeners to the checkboxes
+        document.getElementById('chkAIQ').addEventListener('change', updateDocumentChecklist);
+        document.getElementById('chkState').addEventListener('change', updateDocumentChecklist);
+        document.querySelectorAll('.state-chk').forEach(chk => chk.addEventListener('change', updateDocumentChecklist));
 
         // Boot up
         loadDashboard();
