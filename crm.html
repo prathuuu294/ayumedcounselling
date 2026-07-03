@@ -243,6 +243,20 @@
                                                     <p id="status_${lead.id}" style="font-size: 0.8rem; text-align: center; margin-top: 10px; color: var(--success); display: none;">Saved!</p>
                     </div>
 
+                        <div style="grid-column: 1 / -1; background: #fafafa; border: 1px solid #ddd; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                            <div>
+                                <h4 style="margin-bottom: 5px; color: var(--navy-900);"><i class="fas fa-file-pdf" style="color: #dc3545;"></i> Deliver Preference List</h4>
+                                <p style="font-size: 0.8rem; color: #666;">Securely push the custom PDF to the student's dashboard and auto-unlock their Counselling tab.</p>
+                            </div>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="file" id="pref_file_${lead.id}" accept=".pdf" style="font-size: 0.85rem; max-width: 200px;">
+                                <button class="btn-action btn-success-alt" onclick="uploadPreferenceList('${lead.email}', ${lead.id})" id="pref_btn_${lead.id}">
+                                    <i class="fas fa-cloud-upload-alt"></i> Upload & Deliver
+                                </button>
+                            </div>
+                        </div>
+
+
                     <!-- NEW: Admin Actions Toolbar -->
                     <div class="admin-actions">
                         <button class="btn-action btn-warning" onclick="resetUserPassword('${lead.email}')">
@@ -352,6 +366,45 @@
                     loadLeads(); // Refreshes the page to remove the user card
                 } else alert("Failed to delete account.");
             } catch(e) { alert("Network error connecting to server."); }
+        }
+
+        async function uploadPreferenceList(email, id) {
+            const fileInput = document.getElementById(`pref_file_${id}`);
+            const btn = document.getElementById(`pref_btn_${id}`);
+            
+            if(fileInput.files.length === 0) {
+                alert("Please select a PDF file first!");
+                return;
+            }
+            
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            btn.style.pointerEvents = 'none';
+
+            const formData = new FormData();
+            formData.append('email', email);
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/admin/upload_preference', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if(response.ok) {
+                    alert("✅ PDF Delivered Successfully! The student's dashboard is now unlocked.");
+                    loadLeads(); // Refreshes page to update their stage automatically
+                } else {
+                    alert("Upload failed: " + result.message);
+                    btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload & Deliver';
+                    btn.style.pointerEvents = 'auto';
+                }
+            } catch(e) {
+                alert("Network error.");
+                btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Upload & Deliver';
+                btn.style.pointerEvents = 'auto';
+            }
         }
 
         // Initialize
