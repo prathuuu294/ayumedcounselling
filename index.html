@@ -1110,17 +1110,13 @@ html, body {
 @media (max-width: 768px) {
     .review-grid-wrapper {
         display: flex;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
+        overflow: hidden; /* Prevent native scrollbars */
+        width: 100%;
         gap: 15px;
-        scrollbar-width: none; /* Hide scrollbar */
-        padding-bottom: 20px;
     }
-    .review-grid-wrapper::-webkit-scrollbar { display: none; }
-    
     .review-card {
-        flex: 0 0 90%; /* Each card takes up 90% of screen width */
-        scroll-snap-align: center;
+        flex: 0 0 90%;
+        transition: transform 0.5s ease-in-out;
     }
 }
 
@@ -3047,36 +3043,21 @@ html, body {
 
     <script>
     const carousel = document.getElementById('reviewCarousel');
-    let scrollIndex = 0;
-    const totalCards = carousel.children.length;
-
-    carousel.addEventListener('scroll', () => {
-        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
-        scrollIndex = Math.round(carousel.scrollLeft / cardWidth);
-    });
-
+    
     function autoSlide() {
-        const cardWidth = carousel.querySelector('.review-card').offsetWidth + 15;
+        const firstCard = carousel.firstElementChild;
         
-        scrollIndex++;
+        // 1. Trigger the sliding animation by adding a class or inline style
+        firstCard.style.marginLeft = `-${firstCard.offsetWidth + 15}px`;
         
-        carousel.scrollTo({
-            left: scrollIndex * cardWidth,
-            behavior: 'smooth'
-        });
-
-        // If we hit the clone (the last card), reset to start seamlessly
-        if (scrollIndex >= totalCards - 1) {
-            setTimeout(() => {
-                carousel.scrollTo({
-                    left: 0,
-                    behavior: 'auto' // Instant reset without animation
-                });
-                scrollIndex = 0;
-            }, 600); // Wait for the transition to finish before resetting
-        }
+        // 2. Wait for the animation to finish (e.g., 500ms), then move the card
+        setTimeout(() => {
+            firstCard.style.marginLeft = '0px';
+            carousel.appendChild(firstCard); // Move first card to the END
+        }, 500); 
     }
 
+    // Run every 5 seconds
     setInterval(autoSlide, 5000);
 </script>
 
