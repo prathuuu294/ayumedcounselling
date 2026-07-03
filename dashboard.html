@@ -319,22 +319,17 @@
         </div>
     </div>
 
-        <script>
-        // 1. Authentication Check
+            <script>
         const studentEmail = localStorage.getItem('studentEmail');
         if (!studentEmail) window.location.href = 'login.html';
 
-        // Global Cache to remember uploaded documents instantly
         let globalUserDocuments = null;
 
-        // 2. Interactive Panel Switcher (With Mobile Accordion Engine)
         function switchPanel(panelName) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-            
             const selectedPanel = document.getElementById(`panel-${panelName}`);
             const selectedStep = document.getElementById(`nav-${panelName}`);
-            
             selectedPanel.classList.add('active');
             selectedStep.classList.add('active');
 
@@ -356,7 +351,6 @@
             }
         });
 
-        // 3. Update Timeline Progress Bar visually
         function setTimelineProgress(stageString) {
             const progressLine = document.getElementById('timelineProgress');
             const navDocs = document.getElementById('nav-documents');
@@ -385,11 +379,10 @@
             }
         }
 
-        // 4. Helper Function: Instantly turns boxes green if they are uploaded
+        // CRITICAL FIX: Now uses strict data-ids instead of text names
         function applyDocumentStatuses() {
             if (!globalUserDocuments) return;
             
-            // Check Preference List
             if (globalUserDocuments.preference_list === true) {
                 const prefArea = document.getElementById('prefDownloadArea');
                 if (prefArea) {
@@ -398,11 +391,9 @@
                 }
             }
             
-            // Color individual document slots
             const slots = document.querySelectorAll('.doc-slot');
             slots.forEach(slot => {
-                const docName = slot.querySelector('.doc-name').innerText;
-                const docKey = docName.replace(/ /g, "_").toLowerCase();
+                const docKey = slot.querySelector('.doc-name').getAttribute('data-id');
                 
                 if (globalUserDocuments[docKey] === true) {
                     const statusText = slot.querySelector('.doc-status');
@@ -410,14 +401,12 @@
                     statusText.style.color = "var(--success)";
                     slot.style.background = "rgba(37, 211, 102, 0.1)";
                     slot.style.borderColor = "var(--success)";
-                    
                     const uploadBtn = slot.querySelector('.upload-btn');
                     if(uploadBtn) uploadBtn.style.display = "none";
                 }
             });
         }
 
-        // 5. Fetch User Data from DB
         async function loadDashboard() {
             try {
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
@@ -426,20 +415,16 @@
                 if (response.status === 404 || data.error === "User not found") {
                     alert("🚨 Your Account has been Deleted by the Admin.");
                     localStorage.clear();
-                    sessionStorage.clear();
                     window.location.href = 'login.html';
                     return;
                 }
 
-                if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) {
-                    data.stage = "Profile Registered";
-                }
+                if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) data.stage = "Profile Registered";
 
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
                     
-                    // Team Directory
                     const teamDirectory = {
                         "Aditya": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
                         "Aditya Patel": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
@@ -458,9 +443,8 @@
                             document.getElementById('counsellorImage').src = advisor.image;
                             document.getElementById('counsellorImage').style.display = "block";
                             document.getElementById('counsellorSubtitle').innerText = advisor.title;
-                            const waMessage = encodeURIComponent(`Hello ${data.counsellor} sir, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and assigned under you for my counselling process.`);
                             const waBtn = document.getElementById('counsellorContact');
-                            waBtn.href = `https://wa.me/${advisor.phone}?text=${waMessage}`;
+                            waBtn.href = `https://wa.me/${advisor.phone}?text=Hello ${data.counsellor} sir, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling.`;
                             waBtn.style.display = "inline-flex"; 
                         } else {
                             document.getElementById('counsellorSubtitle').innerText = "Assigned Premium Advisor";
@@ -470,13 +454,11 @@
                     
                     setTimelineProgress(data.stage);
 
-                    // Document Status Setup
                     if (data.documents) {
-                        globalUserDocuments = data.documents; // Save securely to cache
-                        applyDocumentStatuses(); // Turn boxes green!
+                        globalUserDocuments = data.documents; 
+                        applyDocumentStatuses(); 
                     }
 
-                    // Payment Invoice Setup
                     if (data.fee_amount > 0) {
                         document.getElementById('panel-payment').innerHTML = `
                             <h2 class="panel-title">Pending Invoice</h2>
@@ -484,22 +466,16 @@
                                 <h3 style="color: var(--navy-900); margin-bottom: 10px;">Premium Counselling Fee</h3>
                                 <p style="font-size: 2.5rem; font-weight: 700; color: var(--navy-900); margin-bottom: 5px;">₹${data.fee_amount}</p>
                                 <p style="color: var(--navy-600); font-weight: 600; margin-bottom: 25px;">Please complete your payment to unlock the choice-filling stage.</p>
-                                
                                 <button onclick="startPayment()" style="background: var(--navy-900); color: var(--gold); padding: 15px 40px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 10px 20px rgba(13,27,42,0.15);">
                                     <i class="fas fa-lock"></i> Pay Securely via Razorpay
                                 </button>
-                                <p style="font-size:0.75rem; color:#888; margin-top:15px;"><i class="fas fa-shield-alt"></i> 100% Encrypted & Secure</p>
                             </div>
                         `;
                     }
 
-                    // Counselling Lock Logic
                     const counsellingContent = document.getElementById('counsellingContent');
                     const counsellingLock = document.getElementById('counsellingLock');
-                    const unlockedStages = [
-                        "5) Payment Confirmed", "6) Counselling In Progress", 
-                        "6) Preference List Ready", "7) Seat Allotted", "8) Admission Complete"
-                    ];
+                    const unlockedStages = ["5) Payment Confirmed", "6) Counselling In Progress", "6) Preference List Ready", "7) Seat Allotted", "8) Admission Complete"];
                     
                     if (!unlockedStages.some(stage => data.stage.includes(stage))) {
                         counsellingContent.classList.add('locked-content');
@@ -512,7 +488,7 @@
             } catch (error) { console.error(error); }
         }
 
-        // 6. Document Upload Engine
+        // CRITICAL FIX: Uploads now securely link via exact IDs
         function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             fileInputs.forEach(input => {
@@ -520,7 +496,7 @@
                     if (this.files.length === 0) return;
 
                     const file = this.files[0];
-                    const docName = this.closest('.doc-slot').querySelector('.doc-name').innerText;
+                    const docKey = this.closest('.doc-slot').querySelector('.doc-name').getAttribute('data-id');
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
                     
                     statusText.innerText = "UPLOADING...";
@@ -528,7 +504,7 @@
 
                     const formData = new FormData();
                     formData.append('email', studentEmail);
-                    formData.append('doc_type', docName.replace(/ /g, "_").toLowerCase());
+                    formData.append('doc_type', docKey);
                     formData.append('file', file);
 
                     try {
@@ -544,8 +520,6 @@
                             this.parentElement.style.display = "none"; 
                             this.closest('.doc-slot').style.background = "rgba(37, 211, 102, 0.1)";
                             this.closest('.doc-slot').style.borderColor = "var(--success)";
-                            
-                            // Re-fetch data to permanently cache it
                             setTimeout(loadDashboard, 500); 
                         } else {
                             alert("Upload failed: " + result.message);
@@ -575,8 +549,6 @@
                         "amount": orderData.amount,
                         "currency": "INR",
                         "name": "AyuMed Counselling",
-                        "description": "Premium Admission Services",
-                        "image": "https://i.postimg.cc/zXZtfMHn/1000627648.jpg", 
                         "order_id": orderData.order_id,
                         "handler": async function (response) {
                             const verifyRes = await fetch('https://prathuuu294.pythonanywhere.com/api/verify_payment', {
@@ -591,7 +563,7 @@
                             });
                             const verifyData = await verifyRes.json();
                             if (verifyData.status === "success") {
-                                alert("Payment Successful! Your dashboard will now upgrade.");
+                                alert("Payment Successful!");
                                 window.location.reload();
                             } else { alert("Payment verification failed."); }
                         },
@@ -599,10 +571,9 @@
                         "theme": { "color": "#0D1B2A" } 
                     };
                     var rzp = new Razorpay(options);
-                    rzp.on('payment.failed', function (response){ alert("Payment Failed: " + response.error.description); });
                     rzp.open();
-                } else { alert("Server Error: Could not generate order."); }
-            } catch (error) { alert("Network Error: Could not connect to payment gateway."); }
+                } else { alert("Server Error."); }
+            } catch (error) { alert("Network Error."); }
         }
 
         function logout() {
@@ -610,61 +581,73 @@
             window.location.href = 'login.html';
         }
 
-        // --- DYNAMIC DOCUMENT GENERATOR (WITH PERSISTENCE) ---
+        // DATABASE: Strict ID mapping
         const universalDocs = [
-            { label: 'NEET UG Admit Card' }, { label: 'NEET UG Scorecard' },
-            { label: 'Class 10th Marksheet' }, { label: 'Class 12th Marksheet' },
-            { label: 'Aadhar Card' }, { label: 'Bank Passbook Front Page' },
-            { label: 'Migration Certificate' }, { label: 'Passport Size Photo' },
-            { label: 'Category Certificate' }
+            { id: 'doc_admit', label: 'NEET UG Admit Card' },
+            { id: 'doc_score', label: 'NEET UG Scorecard' },
+            { id: 'doc_10th', label: 'Class 10th Marksheet' },
+            { id: 'doc_12th', label: 'Class 12th Marksheet' },
+            { id: 'doc_aadhar', label: 'Aadhar Card' },
+            { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
+            { id: 'doc_migration', label: 'Migration Certificate' },
+            { id: 'doc_photo', label: 'Passport Size Photo' },
+            { id: 'doc_category', label: 'Category Certificate' }
         ];
 
         const stateSpecificDocs = {
-            'MP': [{ label: 'MP Domicile Certificate' }, { label: 'Samagra ID' }, { label: 'MP Character Certificate' }, { label: 'MP Medical Fitness' }],
-            'MH': [{ label: 'Maharashtra Domicile' }, { label: 'Nationality Certificate' }, { label: 'Caste Validity Certificate' }],
-            'UP': [{ label: 'UP Domicile Certificate' }, { label: 'UP Transfer Certificate' }],
-            'RJ': [{ label: 'Rajasthan Domicile' }],
-            'GJ': [{ label: 'Gujarat Domicile' }]
+            'MP': [{ id: 'doc_mp_dom', label: 'MP Domicile Certificate' }, { id: 'doc_mp_samagra', label: 'Samagra ID' }, { id: 'doc_mp_char', label: 'MP Character Certificate' }, { id: 'doc_mp_med', label: 'MP Medical Fitness' }],
+            'MH': [{ id: 'doc_mh_dom', label: 'Maharashtra Domicile' }, { id: 'doc_mh_nat', label: 'Nationality Certificate' }, { id: 'doc_mh_caste', label: 'Caste Validity Certificate' }],
+            'UP': [{ id: 'doc_up_dom', label: 'UP Domicile Certificate' }, { id: 'doc_up_tc', label: 'UP Transfer Certificate' }],
+            'RJ': [{ id: 'doc_rj_dom', label: 'Rajasthan Domicile' }],
+            'GJ': [{ id: 'doc_gj_dom', label: 'Gujarat Domicile' }]
         };
 
         document.getElementById('chkState').addEventListener('change', function() {
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-        document.getElementById('btnConfirmSelection').addEventListener('click', function() {
+        // CRITICAL FIX: Sending data directly to the CRM Backend
+        document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
             const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
 
             if (!isAIQ && (!isState || selectedStates.length === 0)) {
-                alert("Please select at least one Quota (and state if State Quota is selected).");
+                alert("Please select at least one Quota.");
                 return;
             }
 
             const prefs = { aiq: isAIQ, state: isState, states: selectedStates };
             localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
             
+            const uniqueDocs = renderDocuments(prefs); 
+            
             const saveText = document.getElementById('saveConfirmText');
             saveText.style.display = 'inline-block';
             setTimeout(() => saveText.style.display = 'none', 3000);
-
-            // Rebuild the DOM based on choices
-            renderDocuments(prefs);
             
-            // In case they clicked confirm *after* data loaded, instantly re-color anything they already uploaded
+            // SEND TO CRM BACKEND
+            const requiredDocsList = uniqueDocs.map(d => ({ id: d.id, label: d.label }));
+            try {
+                await fetch('https://prathuuu294.pythonanywhere.com/api/update_counselling_prefs', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: studentEmail, prefs: prefs, required_docs: requiredDocsList })
+                });
+            } catch(e) { console.error("Failed to sync with CRM"); }
+
             loadDashboard(); 
         });
 
         function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
-            
             docsContainer.innerHTML = '';
-            let requiredDocs = [];
             
+            let requiredDocs = [];
             if (!prefs.aiq && !prefs.state) {
                 dynamicDocsCard.style.display = 'none';
-                return;
+                return [];
             }
             
             requiredDocs.push(...universalDocs); 
@@ -675,8 +658,8 @@
                 });
             }
             
-            const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.label)))
-                .map(label => requiredDocs.find(a => a.label === label));
+            const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.id)))
+                .map(id => requiredDocs.find(a => a.id === id));
 
             if (uniqueDocs.length > 0) {
                 dynamicDocsCard.style.display = 'block';
@@ -684,22 +667,19 @@
                     const docElement = document.createElement('div');
                     docElement.className = 'doc-slot';
                     docElement.innerHTML = `
-                        <div class="doc-name">${doc.label}</div>
+                        <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
                         <div class="doc-status">Pending</div>
-                        <label class="upload-btn">
-                            Select File
-                            <input type="file" accept=".pdf, .jpg, .jpeg, .png">
-                        </label>
+                        <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
                     `;
                     docsContainer.appendChild(docElement);
                 });
                 
-                // Immediately bind upload buttons and paint them green if data exists in cache!
                 setupUploads();
                 applyDocumentStatuses(); 
             } else {
                 dynamicDocsCard.style.display = 'none';
             }
+            return uniqueDocs;
         }
 
         function loadSavedPreferences() {
@@ -708,7 +688,6 @@
                 const prefs = JSON.parse(savedData);
                 document.getElementById('chkAIQ').checked = prefs.aiq;
                 document.getElementById('chkState').checked = prefs.state;
-                
                 if (prefs.state) {
                     document.getElementById('stateListWrapper').style.display = 'block';
                     prefs.states.forEach(stateCode => {
@@ -716,21 +695,14 @@
                         if (chk) chk.checked = true;
                     });
                 }
-                
-                renderDocuments(prefs); // Build the UI synchronously
+                renderDocuments(prefs); 
             }
         }
 
-        // --- MASTER BOOT SEQUENCE ---
-        // This guarantees everything happens in the perfect order to avoid the bug!
+        // MASTER BOOT SEQUENCE
         window.addEventListener('DOMContentLoaded', async () => {
-            // 1. Visually lock onto the profile tab first
             switchPanel('profile');
-            
-            // 2. Load LocalStorage & fully draw the document boxes
             loadSavedPreferences();
-            
-            // 3. Finally, ask Python for the data to color the drawn boxes green
             await loadDashboard();
         });
 
