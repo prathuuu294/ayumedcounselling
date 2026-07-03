@@ -163,11 +163,22 @@
                     <p style="margin-bottom: 10px; color: var(--navy-600);">Your AyuMed account is successfully registered and secured. Please proceed to the <b>Documents</b> tab to upload your mandatory verification files.</p>
                 </div>
                 <h3 style="margin-top: 30px; margin-bottom: 15px; font-family: 'Playfair Display', serif;">Your Dedicated Counsellor</h3>
-                <div id="counsellorSection">
-                    <p id="counsellorName" style="font-weight: 700; font-size: 1.2rem; color: var(--navy-900);">Unassigned</p>
-                    <p style="color: var(--navy-600); font-size: 0.9rem;">Your advisor will be assigned shortly.</p>
-                    <a href="#" class="contact-counsellor" id="counsellorContact" style="display: none;"><i class="fab fa-whatsapp"></i> Chat on WhatsApp</a>
-                </div>
+                <div id="counsellorSection" style="display: flex; flex-direction: column; align-items: flex-start; background: #fafafa; padding: 25px; border-radius: 8px; border-left: 4px solid var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.03);">
+    
+    <div style="display: flex; align-items: center; gap: 18px; margin-bottom: 15px;">
+        <!-- The Dynamic Image Container -->
+        <img id="counsellorImage" src="" style="width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid var(--gold); display: none; box-shadow: 0 4px 10px rgba(212,175,55,0.2);">
+        
+        <div>
+            <p id="counsellorName" style="font-weight: 800; font-size: 1.3rem; color: var(--navy-900); margin-bottom: 3px;">Unassigned</p>
+            <p id="counsellorSubtitle" style="color: var(--navy-600); font-size: 0.95rem; font-weight: 500; margin: 0;">Your advisor will be assigned shortly.</p>
+        </div>
+    </div>
+    
+    <a href="#" class="contact-counsellor" id="counsellorContact" style="display: none; background: #25D366; color: white; padding: 10px 25px; border-radius: 6px; text-decoration: none; font-weight: 700; font-size: 0.9rem; align-items: center; gap: 8px; transition: 0.3s; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);" target="_blank">
+        <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Chat on WhatsApp
+    </a>
+</div>
             </div>
 
             <!-- PANEL 2: Document Vault -->
@@ -298,7 +309,56 @@
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
-                    document.getElementById('counsellorName').innerText = data.counsellor;
+                    // 1. YOUR TEAM DIRECTORY (Fill in your exact image URLs and WhatsApp numbers here)
+const teamDirectory = {
+    "Aditya Patel": {
+        phone: "917879078367", // e.g., 919876543210 (Country code + Number, no + sign)
+        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", // Paste the same image link from index.html
+        title: "Senior Consellor & BAMS Admissions Expert"
+    },
+    "Mahesh Wankhade": {  // Replace with the actual name of your brother/other team member
+        phone: "919604408949",
+        image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
+        title: "Expert BAMS Counsellor and Cut-off Anaylst"
+    },
+    "Prathamesh Salunke": {  // Replace with the actual name of your brother/other team member
+        phone: "918080026270",
+        image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
+        title: "Expertise Medical and Dental Admission"
+    },
+    "Yatharth Gobade": {  // Replace with the actual name of your brother/other team member
+        phone: "917796126149",
+        image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg",
+        title: "Expert BAMS Counsellor and Social Media Handler"
+    },
+};
+
+// 2. THE UI UPDATER (Runs when data loads)
+if (data.counsellor && data.counsellor !== "Unassigned") {
+    document.getElementById('counsellorName').innerText = data.counsellor;
+    
+    // Check if the assigned name matches someone in your team directory
+    if (teamDirectory[data.counsellor]) {
+        const advisor = teamDirectory[data.counsellor];
+        
+        // Show Image & Title
+        document.getElementById('counsellorImage').src = advisor.image;
+        document.getElementById('counsellorImage').style.display = "block";
+        document.getElementById('counsellorSubtitle').innerText = advisor.title;
+        
+        // Create an automated, pre-filled WhatsApp greeting!
+        const waMessage = encodeURIComponent(`Hello ${data.counsellor}, I am ${data.name}. I have successfully registered for AyuMed Premium Counselling and need your assistance.`);
+        
+        // Setup WhatsApp Button
+        const waBtn = document.getElementById('counsellorContact');
+        waBtn.href = `https://wa.me/${advisor.phone}?text=${waMessage}`;
+        waBtn.style.display = "inline-flex"; // Show the button safely
+    } else {
+        // Fallback just in case a name is assigned but not found in the directory
+        document.getElementById('counsellorSubtitle').innerText = "Assigned Premium Advisor";
+        document.getElementById('counsellorContact').style.display = "inline-flex";
+    }
+}
                     
                     if(data.counsellor !== "Unassigned") {
                         document.getElementById('counsellorContact').style.display = "inline-block";
