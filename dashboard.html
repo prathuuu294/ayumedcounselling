@@ -506,16 +506,26 @@ if (data.counsellor && data.counsellor !== "Unassigned") {
 const counsellingContent = document.getElementById('counsellingContent');
 const counsellingLock = document.getElementById('counsellingLock');
 
-// Check if there is a pending fee OR if the stage isn't confirmed yet
-const isPaymentPending = (data.fee_amount > 0) || !data.stage.includes("5) Payment Confirmed");
+// Only these stages allow the Counselling section to be visible
+const unlockedStages = [
+    "5) Payment Confirmed", 
+    "6) Counselling In Progress", 
+    "6) Preference List Ready", 
+    "7) Seat Allotted", 
+    "8) Admission Complete"
+];
 
-if (isPaymentPending) {
+// Check if current stage is in the unlocked list
+const isUnlocked = unlockedStages.some(stage => data.stage.includes(stage));
+
+if (!isUnlocked) {
     counsellingContent.classList.add('locked-content');
     counsellingLock.style.display = 'flex';
 } else {
     counsellingContent.classList.remove('locked-content');
     counsellingLock.style.display = 'none';
 }
+// --- End Lock Logic ---
                 }
             } catch (error) { console.error(error); }
         }
