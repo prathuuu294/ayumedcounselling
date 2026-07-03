@@ -309,27 +309,49 @@
                 if (response.ok) {
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
-                    // 1. YOUR TEAM DIRECTORY (Spelling must match CRM exactly!)
+                    // 1. YOUR TEAM DIRECTORY (Bulletproof matching!)
 const teamDirectory = {
+    // Aditya's entries
+    "Aditya": {
+        phone: "917879078367",
+        image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg",
+        title: "Senior Counsellor & BAMS Admissions Expert"
+    },
     "Aditya Patel": {
         phone: "917879078367",
         image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg",
         title: "Senior Counsellor & BAMS Admissions Expert"
+    },
+
+    // Mahesh's entries
+    "Mahesh": {
+        phone: "919604408949",
+        image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
+        title: "Expert BAMS Counsellor and Cut-off Analyst"
     },
     "Mahesh Wankhade": {
         phone: "919604408949",
         image: "https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png",
         title: "Expert BAMS Counsellor and Cut-off Analyst"
     },
-    "Prathamesh": { // Failsafe for if CRM just outputs first name
+
+    // Prathamesh's entries
+    "Prathamesh": { 
         phone: "918080026270",
         image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
         title: "Medical and Dental Admissions Expert"
     },
-    "Prathamesh Salunke": { // Failsafe for if CRM outputs full name
+    "Prathamesh Salunke": { 
         phone: "918080026270",
         image: "https://i.postimg.cc/FHvBTq9X/1000627881.jpg",
         title: "Medical and Dental Admissions Expert"
+    },
+
+    // Yatharth's entries
+    "Yatharth": {
+        phone: "917796126149",
+        image: "https://i.postimg.cc/mrzCCL0y/yatharth.jpg",
+        title: "Expert BAMS Counsellor and Social Media Handler"
     },
     "Yatharth Gobade": {
         phone: "917796126149",
