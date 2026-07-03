@@ -1093,6 +1093,19 @@ html, body {
     padding: 0;
     position: relative;
 }
+
+    /* Only shrink the menu on Desktop/Tablets, leave Mobile alone! */
+    @media (min-width: 850px) {
+        .nav-container, .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .nav-links li a {
+            font-size: 0.85rem; 
+            padding: 8px 10px;
+        }
+    }
+
     </style>
 
 <!-- Trustindex Review Certificate Widget -->
