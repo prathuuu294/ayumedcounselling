@@ -319,11 +319,12 @@
         </div>
     </div>
 
-                <script>
+                    <script>
         const studentEmail = localStorage.getItem('studentEmail');
         if (!studentEmail) window.location.href = 'login.html';
 
         let globalUserDocuments = null;
+        let globalLeadStage = ""; // Tracks the student's stage to lock panels!
 
         function switchPanel(panelName) {
             document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -361,7 +362,8 @@
             document.getElementById('nav-profile').classList.add('completed');
             progressLine.style.width = '12.5%'; 
 
-            if(stageString.includes("4) Documents Verified") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
+            // Added the new "Document Verification" stage here
+            if(stageString.includes("4) Document Verification") || stageString.includes("4) Documents Verified") || stageString.includes("5)") || stageString.includes("6)") || stageString.includes("7)") || stageString.includes("8)")) {
                 navDocs.classList.add('completed');
                 progressLine.style.width = '37.5%';
             }
@@ -379,7 +381,7 @@
             }
         }
 
-        // CRITICAL FIX: Applies green UPLOADED status based on strict IDs
+        // --- NEW SMART STATUS ENGINE (REMOVE & SUBMIT BUTTONS) ---
         function applyDocumentStatuses() {
             if (!globalUserDocuments) return;
             
@@ -392,22 +394,73 @@
             }
             
             const slots = document.querySelectorAll('.doc-slot');
+            let uploadedCount = 0;
+            
+            // Check if the student has already submitted. If yes, we lock the buttons!
+            const isLocked = ["4) Document Verification", "4) Documents Verified", "5)", "6)", "7)", "8)"].some(stage => globalLeadStage.includes(stage));
+
             slots.forEach(slot => {
                 const docNameDiv = slot.querySelector('.doc-name');
                 if (!docNameDiv) return;
-                
                 const docKey = docNameDiv.getAttribute('data-id');
                 
+                let uploadBtn = slot.querySelector('.upload-btn');
+                let statusText = slot.querySelector('.doc-status');
+                
+                // Create Remove Button if it doesn't exist
+                let removeBtn = slot.querySelector('.remove-btn');
+                if (!removeBtn) {
+                    removeBtn = document.createElement('button');
+                    removeBtn.className = 'remove-btn';
+                    removeBtn.innerHTML = '<i class="fas fa-trash"></i> Remove File';
+                    removeBtn.style = "background: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: 600; font-size: 0.85rem;";
+                    removeBtn.onclick = () => removeDocument(docKey);
+                    slot.appendChild(removeBtn);
+                }
+                
                 if (globalUserDocuments[docKey] === true) {
-                    const statusText = slot.querySelector('.doc-status');
+                    uploadedCount++;
                     statusText.innerText = "UPLOADED ✓";
                     statusText.style.color = "var(--success)";
                     slot.style.background = "rgba(37, 211, 102, 0.1)";
                     slot.style.borderColor = "var(--success)";
-                    const uploadBtn = slot.querySelector('.upload-btn');
+                    
                     if(uploadBtn) uploadBtn.style.display = "none";
+                    removeBtn.style.display = isLocked ? "none" : "block"; // Hide remove if locked
+                } else {
+                    statusText.innerText = "PENDING";
+                    statusText.style.color = "var(--warning)";
+                    slot.style.background = "#fafafa";
+                    slot.style.borderColor = "#ccc";
+                    
+                    if(uploadBtn) uploadBtn.style.display = isLocked ? "none" : "block";
+                    removeBtn.style.display = "none";
                 }
             });
+
+            // Master Submit Button Logic
+            const submitBtn = document.getElementById('btnSubmitDocs');
+            if (submitBtn) {
+                if (isLocked) {
+                    submitBtn.innerHTML = '<i class="fas fa-lock"></i> Documents Submitted for Verification';
+                    submitBtn.style.background = "var(--success)";
+                    submitBtn.style.color = "white";
+                    submitBtn.style.opacity = "1";
+                    submitBtn.style.pointerEvents = "none"; // Lock it
+                } else if (uploadedCount === slots.length && slots.length > 0) {
+                    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Documents for Verification';
+                    submitBtn.style.background = "var(--navy-900)";
+                    submitBtn.style.color = "var(--gold)";
+                    submitBtn.style.opacity = "1";
+                    submitBtn.style.pointerEvents = "auto"; // Unlock it
+                } else {
+                    submitBtn.innerHTML = `Upload remaining ${slots.length - uploadedCount} document(s) to submit`;
+                    submitBtn.style.background = "var(--navy-900)";
+                    submitBtn.style.color = "white";
+                    submitBtn.style.opacity = "0.5";
+                    submitBtn.style.pointerEvents = "none"; // Keep locked
+                }
+            }
         }
 
         async function loadDashboard() {
@@ -425,6 +478,7 @@
                 if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) data.stage = "Profile Registered";
 
                 if (response.ok) {
+                    globalLeadStage = data.stage; // Save to global
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
                     
@@ -457,7 +511,6 @@
                     
                     setTimelineProgress(data.stage);
 
-                    // STORE DOCUMENTS FOR STATUS
                     if (data.documents) {
                         globalUserDocuments = data.documents; 
                         applyDocumentStatuses(); 
@@ -492,7 +545,38 @@
             } catch (error) { console.error(error); }
         }
 
-        // CRITICAL FIX: The Uploader now explicitly reads the strict data-id
+        // --- NEW REMOVE & SUBMIT FUNCTIONS ---
+        async function removeDocument(docKey) {
+            if(!confirm("Are you sure you want to remove this document?")) return;
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/remove_document', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: studentEmail, doc_type: docKey })
+                });
+                if (response.ok) {
+                    globalUserDocuments[docKey] = false; // Update local memory immediately
+                    applyDocumentStatuses(); // Redraw UI immediately
+                    loadDashboard(); // Sync with server
+                } else { alert("Failed to remove document."); }
+            } catch (e) { alert("Network error."); }
+        }
+
+        async function submitAllDocuments() {
+            if(!confirm("Are you sure you want to submit all documents? You will not be able to change them afterwards.")) return;
+            try {
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/submit_documents', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: studentEmail })
+                });
+                if (response.ok) {
+                    alert("Documents successfully submitted for verification!");
+                    window.location.reload(); // Reload to apply all locks
+                } else { alert("Failed to submit."); }
+            } catch (e) { alert("Network error."); }
+        }
+
         function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             fileInputs.forEach(input => {
@@ -500,7 +584,6 @@
                     if (this.files.length === 0) return;
 
                     const file = this.files[0];
-                    // IMPORTANT: Grabs docKey from data-id!
                     const docKey = this.closest('.doc-slot').querySelector('.doc-name').getAttribute('data-id');
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
                     
@@ -517,17 +600,10 @@
                             method: 'POST',
                             body: formData
                         });
-                        const result = await response.json();
-                        
                         if (response.ok) {
-                            statusText.innerText = "UPLOADED ✓";
-                            statusText.style.color = "var(--success)";
-                            this.parentElement.style.display = "none"; 
-                            this.closest('.doc-slot').style.background = "rgba(37, 211, 102, 0.1)";
-                            this.closest('.doc-slot').style.borderColor = "var(--success)";
-                            setTimeout(loadDashboard, 500); 
+                            setTimeout(loadDashboard, 300); 
                         } else {
-                            alert("Upload failed: " + result.message);
+                            alert("Upload failed.");
                             statusText.innerText = "FAILED";
                             statusText.style.color = "red";
                         }
@@ -586,16 +662,11 @@
             window.location.href = 'login.html';
         }
 
-        // --- DATABASE: Strict ID mapping ---
         const universalDocs = [
-            { id: 'doc_admit', label: 'NEET UG Admit Card' },
-            { id: 'doc_score', label: 'NEET UG Scorecard' },
-            { id: 'doc_10th', label: 'Class 10th Marksheet' },
-            { id: 'doc_12th', label: 'Class 12th Marksheet' },
-            { id: 'doc_aadhar', label: 'Aadhar Card' },
-            { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
-            { id: 'doc_migration', label: 'Migration Certificate' },
-            { id: 'doc_photo', label: 'Passport Size Photo' },
+            { id: 'doc_admit', label: 'NEET UG Admit Card' }, { id: 'doc_score', label: 'NEET UG Scorecard' },
+            { id: 'doc_10th', label: 'Class 10th Marksheet' }, { id: 'doc_12th', label: 'Class 12th Marksheet' },
+            { id: 'doc_aadhar', label: 'Aadhar Card' }, { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
+            { id: 'doc_migration', label: 'Migration Certificate' }, { id: 'doc_photo', label: 'Passport Size Photo' },
             { id: 'doc_category', label: 'Category Certificate' }
         ];
 
@@ -611,7 +682,6 @@
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-        // CRITICAL FIX: Sends selection payload direct to CRM
         document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
@@ -631,7 +701,6 @@
             saveText.style.display = 'inline-block';
             setTimeout(() => saveText.style.display = 'none', 3000);
             
-            // Send payload via API
             const requiredDocsList = uniqueDocs.map(d => ({ id: d.id, label: d.label }));
             try {
                 await fetch('https://prathuuu294.pythonanywhere.com/api/update_counselling_prefs', {
@@ -639,7 +708,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: studentEmail, prefs: prefs, required_docs: requiredDocsList })
                 });
-            } catch(e) { console.error("Failed to sync with CRM"); }
+            } catch(e) {}
 
             loadDashboard(); 
         });
@@ -648,6 +717,16 @@
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
             docsContainer.innerHTML = '';
+            
+            // Check if Submit Container exists, if not, create it below the grid
+            let submitContainer = document.getElementById('submitDocsContainer');
+            if (!submitContainer) {
+                submitContainer = document.createElement('div');
+                submitContainer.id = 'submitDocsContainer';
+                submitContainer.style = "margin-top: 35px; text-align: center; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 30px;";
+                submitContainer.innerHTML = `<button id="btnSubmitDocs" style="background: var(--navy-900); color: white; padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700; box-shadow: 0 5px 15px rgba(0,0,0,0.1); opacity: 0.5; pointer-events: none;" onclick="submitAllDocuments()">Upload all documents to submit</button>`;
+                dynamicDocsCard.appendChild(submitContainer);
+            }
             
             let requiredDocs = [];
             if (!prefs.aiq && !prefs.state) {
@@ -704,7 +783,6 @@
             }
         }
 
-        // --- MASTER BOOT SEQUENCE ---
         window.addEventListener('DOMContentLoaded', async () => {
             switchPanel('profile');
             loadSavedPreferences();
