@@ -319,7 +319,7 @@
         </div>
     </div>
 
-            <script>
+                <script>
         const studentEmail = localStorage.getItem('studentEmail');
         if (!studentEmail) window.location.href = 'login.html';
 
@@ -379,7 +379,7 @@
             }
         }
 
-        // CRITICAL FIX: Now uses strict data-ids instead of text names
+        // CRITICAL FIX: Applies green UPLOADED status based on strict IDs
         function applyDocumentStatuses() {
             if (!globalUserDocuments) return;
             
@@ -393,7 +393,10 @@
             
             const slots = document.querySelectorAll('.doc-slot');
             slots.forEach(slot => {
-                const docKey = slot.querySelector('.doc-name').getAttribute('data-id');
+                const docNameDiv = slot.querySelector('.doc-name');
+                if (!docNameDiv) return;
+                
+                const docKey = docNameDiv.getAttribute('data-id');
                 
                 if (globalUserDocuments[docKey] === true) {
                     const statusText = slot.querySelector('.doc-status');
@@ -454,6 +457,7 @@
                     
                     setTimelineProgress(data.stage);
 
+                    // STORE DOCUMENTS FOR STATUS
                     if (data.documents) {
                         globalUserDocuments = data.documents; 
                         applyDocumentStatuses(); 
@@ -488,7 +492,7 @@
             } catch (error) { console.error(error); }
         }
 
-        // CRITICAL FIX: Uploads now securely link via exact IDs
+        // CRITICAL FIX: The Uploader now explicitly reads the strict data-id
         function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             fileInputs.forEach(input => {
@@ -496,6 +500,7 @@
                     if (this.files.length === 0) return;
 
                     const file = this.files[0];
+                    // IMPORTANT: Grabs docKey from data-id!
                     const docKey = this.closest('.doc-slot').querySelector('.doc-name').getAttribute('data-id');
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
                     
@@ -581,7 +586,7 @@
             window.location.href = 'login.html';
         }
 
-        // DATABASE: Strict ID mapping
+        // --- DATABASE: Strict ID mapping ---
         const universalDocs = [
             { id: 'doc_admit', label: 'NEET UG Admit Card' },
             { id: 'doc_score', label: 'NEET UG Scorecard' },
@@ -606,7 +611,7 @@
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-        // CRITICAL FIX: Sending data directly to the CRM Backend
+        // CRITICAL FIX: Sends selection payload direct to CRM
         document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
@@ -626,7 +631,7 @@
             saveText.style.display = 'inline-block';
             setTimeout(() => saveText.style.display = 'none', 3000);
             
-            // SEND TO CRM BACKEND
+            // Send payload via API
             const requiredDocsList = uniqueDocs.map(d => ({ id: d.id, label: d.label }));
             try {
                 await fetch('https://prathuuu294.pythonanywhere.com/api/update_counselling_prefs', {
@@ -699,7 +704,7 @@
             }
         }
 
-        // MASTER BOOT SEQUENCE
+        // --- MASTER BOOT SEQUENCE ---
         window.addEventListener('DOMContentLoaded', async () => {
             switchPanel('profile');
             loadSavedPreferences();
