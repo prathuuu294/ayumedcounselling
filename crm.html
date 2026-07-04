@@ -183,21 +183,22 @@
                     const card = document.createElement('div');
                     card.className = 'lead-card';
 
-                                        // Formatting documents dynamically based on student's selection
+                                                            // Formatting documents dynamically based on student's selection
                     const docs = lead.documents || {};
                     let docHtml = '';
                     let requiredDocs = [];
                     
-                    try {
-                        // Safely parse the JSON string saved in the database
-                        if (lead.required_docs_list) {
+                    if (lead.required_docs_list) {
+                        try {
+                            // Safely handle string payloads vs parsed database text
                             requiredDocs = typeof lead.required_docs_list === 'string' ? JSON.parse(lead.required_docs_list) : lead.required_docs_list;
+                        } catch(e) { 
+                            console.error("Parse error parsing doc list", e); 
                         }
-                    } catch(e) { console.error("Parse error", e); }
+                    }
 
-                    if (requiredDocs.length > 0) {
+                    if (Array.isArray(requiredDocs) && requiredDocs.length > 0) {
                         requiredDocs.forEach(doc => {
-                            // Check if the glob scanner marked this specific ID as True
                             const isUploaded = docs[doc.id] === true;
                             
                             docHtml += `
@@ -210,7 +211,6 @@
                             `;
                         });
                     } else {
-                        // What the CRM shows if the student hasn't clicked "Confirm Selection" yet
                         docHtml = `<span style="font-size:0.8rem; color:#999; font-style:italic;">Student hasn't confirmed counselling jurisdictions yet.</span>`;
                     }
 
