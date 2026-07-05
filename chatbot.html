@@ -171,6 +171,35 @@
             box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
         }
 
+/* --- AI Suggestion Chips --- */
+.suggestions-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 15px;
+    background-color: transparent;
+}
+
+.suggestion-chip {
+    background-color: #F7F3E9;
+    border: 1px solid #D4AF37;
+    color: #0D1B2A;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.suggestion-chip:hover {
+    background-color: #D4AF37;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
         /* Typing Indicator Animation */
         .typing-indicator {
             display: none;
@@ -223,6 +252,16 @@
                 </div>
             </div>
         </div>
+
+<!-- Suggestion Chips Container -->
+<div id="ai-suggestions" class="suggestions-container">
+    <button class="suggestion-chip" onclick="sendSuggestion('What is AyuMed?')">What is AyuMed?</button>
+    <button class="suggestion-chip" onclick="sendSuggestion('Services Offered')">Services Offered</button>
+    <button class="suggestion-chip" onclick="sendSuggestion('Detailed Overview of Services')">Detailed Overview of Services</button>
+    <button class="suggestion-chip" onclick="sendSuggestion('How will be the Counselling process?')">How will be the Counselling process?</button>
+    <button class="suggestion-chip" onclick="sendSuggestion('How to register on AyuMed?')">How to register on AyuMed?</button>
+    <button class="suggestion-chip" onclick="sendSuggestion('What are the documents required for Neet UG Counselling?')">What are the documents required for Neet UG Counselling?</button>
+</div>
         
         <div class="message-wrapper wrapper-ai" id="typingIndicatorWrapper" style="display: none; padding: 0 20px;">
             <div class="sender-label">AyuMed AI is typing...</div>
@@ -238,6 +277,50 @@
     </div>
 
     <script>
+    // Function to handle Suggestion Clicks
+    function sendSuggestion(keyword) {
+        // Hide the suggestions after a choice is made
+        document.getElementById('ai-suggestions').style.display = 'none';
+        
+        // Grab your specific input field
+        let inputField = document.getElementById('chatInput'); 
+        inputField.value = keyword;
+        
+        // Trigger your specific send function
+        sendMessage(); 
+    }
+
+    // Smart AI Typewriter Effect
+    function typeWriterEffect(element, htmlString, speed = 15) {
+        element.innerHTML = "";
+        let i = 0;
+        let isTag = false;
+        let text = "";
+
+        function type() {
+            if (i < htmlString.length) {
+                let char = htmlString.charAt(i);
+                text += char;
+                element.innerHTML = text;
+                i++;
+
+                // Check if we are typing inside an HTML tag (like <b> or <br>)
+                if (char === '<') isTag = true;
+                if (char === '>') isTag = false;
+
+                if (isTag) {
+                    type();
+                } else {
+                    // Keep chat scrolled to the bottom while typing
+                    let chatBox = document.getElementById('chatBody'); 
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                    setTimeout(type, speed);
+                }
+            }
+        }
+        type();
+    }
+
         function handleChatEnter(event) {
             if (event.key === 'Enter') sendMessage();
         }
@@ -282,13 +365,20 @@
                 typingWrapper.style.display = "none";
                 
                 if (response.ok) {
-                    const aiHTML = `
-                        <div class="message-wrapper wrapper-ai">
-                            <div class="sender-label">AyuMed AI</div>
-                            <div class="message msg-ai">${data.reply}</div>
-                        </div>
-                    `;
-                    chatBody.insertAdjacentHTML('beforeend', aiHTML);
+                            // Create a unique ID for this specific AI message
+        const uniqueId = 'ai-msg-' + Date.now(); 
+
+        const aiHTML = `
+            <div class="message-wrapper wrapper-ai">
+                <div class="sender-label">AyuMed AI</div>
+                <div class="message msg-ai" id="${uniqueId}"></div>
+            </div>
+        `;
+        chatBody.insertAdjacentHTML('beforeend', aiHTML);
+
+        // Grab that empty div and trigger the typewriter engine!
+        const botMessageElement = document.getElementById(uniqueId);
+        typeWriterEffect(botMessageElement, data.reply, 15);
                 } else {
                     chatBody.insertAdjacentHTML('beforeend', `<div class="message-wrapper wrapper-ai"><div class="message msg-ai" style="color:red;">Error connecting to AI Server.</div></div>`);
                 }
