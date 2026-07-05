@@ -276,52 +276,52 @@
         </div>
     </div>
 
-    <script>
-    // Function to handle Suggestion Clicks
-    function sendSuggestion(keyword) {
-        // Hide the suggestions after a choice is made
-        document.getElementById('ai-suggestions').style.display = 'none';
-        
-        // Grab your specific input field
-        let inputField = document.getElementById('chatInput'); 
-        inputField.value = keyword;
-        
-        // Trigger your specific send function
-        sendMessage(); 
-    }
+        <script>
+        // Function to handle Suggestion Clicks
+        function sendSuggestion(keyword) {
+            // Hide the suggestions after a choice is made
+            document.getElementById('ai-suggestions').style.display = 'none';
+            
+            // Grab your specific input field
+            let inputField = document.getElementById('chatInput'); 
+            inputField.value = keyword;
+            
+            // Trigger your specific send function
+            sendMessage(); 
+        }
 
         // Smart AI Typewriter Effect (Upgraded with Callback)
-    function typeWriterEffect(element, htmlString, speed = 15, onComplete = null) {
-        element.innerHTML = "";
-        let i = 0;
-        let isTag = false;
-        let text = "";
+        function typeWriterEffect(element, htmlString, speed = 15, onComplete = null) {
+            element.innerHTML = "";
+            let i = 0;
+            let isTag = false;
+            let text = "";
 
-        function type() {
-            if (i < htmlString.length) {
-                let char = htmlString.charAt(i);
-                text += char;
-                element.innerHTML = text;
-                i++;
+            function type() {
+                if (i < htmlString.length) {
+                    let char = htmlString.charAt(i);
+                    text += char;
+                    element.innerHTML = text;
+                    i++;
 
-                // Check if we are typing inside an HTML tag
-                if (char === '<') isTag = true;
-                if (char === '>') isTag = false;
+                    // Check if we are typing inside an HTML tag
+                    if (char === '<') isTag = true;
+                    if (char === '>') isTag = false;
 
-                if (isTag) {
-                    type();
+                    if (isTag) {
+                        type();
+                    } else {
+                        let chatBox = document.getElementById('chatBody'); 
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                        setTimeout(type, speed);
+                    }
                 } else {
-                    let chatBox = document.getElementById('chatBody'); 
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                    setTimeout(type, speed);
+                    // TYPEWRITER IS FINISHED! Trigger the next action.
+                    if (onComplete) onComplete();
                 }
-            } else {
-                // TYPEWRITER IS FINISHED! Trigger the next action.
-                if (onComplete) onComplete();
             }
+            type();
         }
-        type();
-    }
 
         function handleChatEnter(event) {
             if (event.key === 'Enter') sendMessage();
@@ -366,41 +366,48 @@
                 // 4. Hide Typing Indicator & Append AI Reply
                 typingWrapper.style.display = "none";
                 
-                    if (response.ok) {
-        // 1. Add the follow-up question smoothly to the bot's reply
-        let finalReply = data.reply + "<br><br><b>Anything else I can help you with?</b>";
+                if (response.ok) {
+                    // Add the follow-up question smoothly to the bot's reply
+                    let finalReply = data.reply + "<br><br><b>Anything else I can help you with?</b>";
 
-        const uniqueId = 'ai-msg-' + Date.now(); 
+                    const uniqueId = 'ai-msg-' + Date.now(); 
 
-        const aiHTML = `
-            <div class="message-wrapper wrapper-ai">
-                <div class="sender-label">AyuMed AI</div>
-                <div class="message msg-ai" id="${uniqueId}"></div>
-            </div>
-        `;
-        chatBody.insertAdjacentHTML('beforeend', aiHTML);
+                    const aiHTML = `
+                        <div class="message-wrapper wrapper-ai">
+                            <div class="sender-label">AyuMed AI</div>
+                            <div class="message msg-ai" id="${uniqueId}"></div>
+                        </div>
+                    `;
+                    chatBody.insertAdjacentHTML('beforeend', aiHTML);
 
-        const botMessageElement = document.getElementById(uniqueId);
-        
-        // 2. Trigger typewriter, and tell it to move/show the chips when finished!
-        typeWriterEffect(botMessageElement, finalReply, 15, function() {
-            let suggestionsDiv = document.getElementById('ai-suggestions');
-            
-            // Move the chips to the very bottom of the chat
-            chatBody.appendChild(suggestionsDiv);
-            
-            // Unhide them!
-            suggestionsDiv.style.display = 'flex';
-            
-            // Give the chat one final scroll to ensure the chips are visible
-            chatBody.scrollTop = chatBody.scrollHeight;
-        });
-        
-    } else {
-        chatBody.insertAdjacentHTML('beforeend', `<div class="message-wrapper wrapper-ai"><div class="message msg-ai" style="color:red;">Error connecting to AI Server.</div></div>`);
-    }
-            
-            chatBody.scrollTop = chatBody.scrollHeight;
+                    const botMessageElement = document.getElementById(uniqueId);
+                    
+                    // Trigger typewriter, and tell it to move/show the chips when finished!
+                    typeWriterEffect(botMessageElement, finalReply, 15, function() {
+                        let suggestionsDiv = document.getElementById('ai-suggestions');
+                        
+                        // Move the chips to the very bottom of the chat
+                        chatBody.appendChild(suggestionsDiv);
+                        
+                        // Unhide them!
+                        suggestionsDiv.style.display = 'flex';
+                        
+                        // Give the chat one final scroll to ensure the chips are visible
+                        chatBody.scrollTop = chatBody.scrollHeight;
+                    });
+                    
+                } else {
+                    chatBody.insertAdjacentHTML('beforeend', `<div class="message-wrapper wrapper-ai"><div class="message msg-ai" style="color:red;">Error connecting to AI Server.</div></div>`);
+                }
+                
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+            } catch (error) {
+                // THE MISSING CATCH BLOCK IS NOW RESTORED
+                typingWrapper.style.display = "none";
+                chatBody.insertAdjacentHTML('beforeend', `<div class="message-wrapper wrapper-ai"><div class="message msg-ai" style="color:red;">Network Error: Failed to connect to server.</div></div>`);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
         }
     </script>
 </body>
