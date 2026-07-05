@@ -2381,7 +2381,7 @@ html, body {
                     </div>
                     <div class="team-card-back">
                         <div class="back-contact-title">Aditya Patel</div>
-                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">Lead Counsellor</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">Founder & Lead Counsellor</div>
                         <div class="back-contact-number">+91 78790 78367</div>
                         <div class="back-buttons">
                             <a href="tel:+917879078367" class="btn-back-call" title="Call Aditya">
@@ -2405,14 +2405,14 @@ html, body {
                                 <img src="https://i.postimg.cc/CL4QQgmC/file-00000000bd2072078365011ed5bca81c.png" alt="Mahesh Wankhade" class="team-photo">
                             </div>
                             <h3 class="team-name">Mahesh Wankhade (BAMS)</h3>
-                            <div class="team-role">BAMS Expert</div>
+                            <div class="team-role">Co-founder & BAMS Expert</div>
                             <div class="team-desc">Specialized Expertise in BAMS & BHMS Cut-off Analysis.</div>
                         </div>
                         <div class="card-connect-btn" onclick="toggleFlip(this)">Connect</div>
                     </div>
                     <div class="team-card-back">
                         <div class="back-contact-title">Mahesh Wankhade</div>
-                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">BAMS Counsellor</div>
+                        <div style="color: var(--cream); opacity: 0.8; font-size: 0.9rem; text-transform: uppercase; font-weight: 600;">Co-founder & BAMS Counsellor</div>
                         <div class="back-contact-number">+91 97301 20277</div>
                         <div class="back-buttons">
                             <a href="tel:+919730120277" class="btn-back-call" title="Call Mahesh">
@@ -2747,12 +2747,13 @@ html, body {
             <span>Updates</span>
         </a>
 
-        <a href="#services" class="dock-item">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                <a href="chatbot.html" class="dock-item">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                <circle cx="9" cy="10" r="1.5" fill="currentColor" stroke="none"></circle>
+                <circle cx="15" cy="10" r="1.5" fill="currentColor" stroke="none"></circle>
             </svg>
-            <span>Services</span>
+            <span>Ask AI</span>
         </a>
     </nav>
 
@@ -3103,196 +3104,5 @@ html, body {
     // Run every 5 seconds
     setInterval(autoSlide, 5000);
 </script>
-
-<!-- ========================================== -->
-<!-- 🤖 AYUMED AI CHATBOT INTERFACE 🤖 -->
-<!-- ========================================== -->
-<style>
-    /* Chat Widget Styling */
-    .chat-widget-btn {
-        position: fixed;
-        bottom: 110px; /* Sits right above your bottom dock */
-        right: 20px;
-        width: 60px;
-        height: 60px;
-        background: linear-gradient(135deg, #0D1B2A, #1B263B);
-        border: 2px solid #D4AF37;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        cursor: pointer;
-        box-shadow: 0 10px 25px rgba(13, 27, 42, 0.4);
-        z-index: 10000;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .chat-widget-btn:hover { transform: scale(1.1); box-shadow: 0 15px 35px rgba(212, 175, 55, 0.4); }
-    .chat-widget-btn i { color: #D4AF37; font-size: 28px; }
-
-    .chat-window {
-        position: fixed;
-        bottom: 180px;
-        right: 20px;
-        width: 380px;
-        max-width: 90vw;
-        height: 550px;
-        max-height: 70vh;
-        background: #FFFFFF;
-        border-radius: 12px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        display: none;
-        flex-direction: column;
-        z-index: 10000;
-        overflow: hidden;
-        font-family: 'Montserrat', sans-serif;
-        transform: translateY(20px);
-        opacity: 0;
-        transition: all 0.3s ease;
-    }
-    .chat-window.active { display: flex; transform: translateY(0); opacity: 1; }
-
-    .chat-header {
-        background: #0D1B2A;
-        color: #D4AF37;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 3px solid #D4AF37;
-    }
-    .chat-header h3 { margin: 0; font-family: 'Playfair Display', serif; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;}
-    .close-chat { background: none; border: none; color: #F7F3E9; font-size: 20px; cursor: pointer; transition: color 0.2s;}
-    .close-chat:hover { color: #D4AF37; }
-
-    .chat-body {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto;
-        background: #F7F3E9;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .message { max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.5; }
-    .msg-ai { background: #FFFFFF; color: #0D1B2A; border-bottom-left-radius: 2px; border: 1px solid rgba(13,27,42,0.1); align-self: flex-start; box-shadow: 0 4px 10px rgba(0,0,0,0.05);}
-    .msg-user { background: #0D1B2A; color: #F7F3E9; border-bottom-right-radius: 2px; align-self: flex-end; box-shadow: 0 4px 10px rgba(0,0,0,0.1);}
-
-    .chat-input-area {
-        padding: 15px;
-        background: #FFFFFF;
-        border-top: 1px solid rgba(13, 27, 42, 0.1);
-        display: flex;
-        gap: 10px;
-    }
-    .chat-input-area input {
-        flex: 1;
-        padding: 12px;
-        border: 1px solid #ccc;
-        border-radius: 20px;
-        outline: none;
-        font-family: 'Montserrat', sans-serif;
-        transition: border-color 0.3s;
-    }
-    .chat-input-area input:focus { border-color: #D4AF37; }
-    .chat-input-area button {
-        background: #D4AF37;
-        color: #0D1B2A;
-        border: none;
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 18px;
-        transition: transform 0.2s;
-    }
-    .chat-input-area button:hover { transform: scale(1.1); }
-    
-    .typing-indicator { font-style: italic; color: #888; font-size: 0.85rem; align-self: flex-start; display: none; }
-</style>
-
-<!-- Floating Button -->
-<div class="chat-widget-btn" onclick="toggleChat()">
-    <i class="fas fa-robot"></i>
-</div>
-
-<!-- Chat Window -->
-<div class="chat-window" id="aiChatWindow">
-    <div class="chat-header">
-        <h3><i class="fas fa-magic"></i> AyuMed AI</h3>
-        <button class="close-chat" onclick="toggleChat()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="chat-body" id="chatBody">
-        <div class="message msg-ai">
-            Hello! I am the AyuMed AI Assistant. I can guide you through our admission process, fee structure, document requirements, and college predictions. How can I assist you today?
-        </div>
-    </div>
-    <div class="typing-indicator" id="typingIndicator">AyuMed AI is typing...</div>
-    <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Ask anything..." onkeypress="handleChatEnter(event)">
-        <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
-
-<script>
-    function toggleChat() {
-        const chatWindow = document.getElementById('aiChatWindow');
-        chatWindow.classList.toggle('active');
-    }
-
-    function handleChatEnter(event) {
-        if (event.key === 'Enter') sendMessage();
-    }
-
-    async function sendMessage() {
-        const input = document.getElementById('chatInput');
-        const messageText = input.value.trim();
-        if (!messageText) return;
-
-        const chatBody = document.getElementById('chatBody');
-        const typingIndicator = document.getElementById('typingIndicator');
-
-        // Append User Message
-        chatBody.innerHTML += `<div class="message msg-user">${messageText}</div>`;
-        input.value = '';
-        chatBody.scrollTop = chatBody.scrollHeight; // Scroll to bottom
-
-        // Show Typing Indicator
-        typingIndicator.style.display = "block";
-        chatBody.appendChild(typingIndicator); 
-        chatBody.scrollTop = chatBody.scrollHeight;
-
-        try {
-            // Call Python Backend
-            const response = await fetch('https://prathuuu294.pythonanywhere.com/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: messageText })
-            });
-
-            const data = await response.json();
-            
-            // Remove Typing Indicator & Append AI Reply
-            typingIndicator.style.display = "none";
-            
-            if (response.ok) {
-                // Using innerHTML so buttons and bold tags render correctly
-                chatBody.innerHTML += `<div class="message msg-ai">${data.reply}</div>`;
-            } else {
-                chatBody.innerHTML += `<div class="message msg-ai" style="color:red;">Error connecting to AI Server.</div>`;
-            }
-        } catch (error) {
-            typingIndicator.style.display = "none";
-            chatBody.innerHTML += `<div class="message msg-ai" style="color:red;">Network Error.</div>`;
-        }
-        
-        chatBody.scrollTop = chatBody.scrollHeight;
-    }
-</script>
-
 </body>
 </html>
