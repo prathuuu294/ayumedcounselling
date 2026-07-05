@@ -122,12 +122,53 @@
             <div style="text-align: center; color: var(--navy-600); padding: 30px;">Fetching categorized announcements...</div>
         </div>
 
-        <!-- YouTube Announcements Button -->
-        <div style="text-align: center; margin-top: 40px;">
-            <a href="youtube_announcements.html" class="btn-gold" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 12px 30px; border-radius: 4px; font-size: 1.05rem; letter-spacing: 0.5px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                <i class="fab fa-youtube" style="color: #ff0000; font-size: 1.4rem;"></i>
-                YouTube Announcements
-            </a>
+                <!-- Premium YouTube Announcements Button (Matches Main Page) -->
+        <style>
+            .yt-premium-btn {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                max-width: 900px;
+                margin: 30px auto 0;
+                background-color: var(--navy-900);
+                border-radius: 8px;
+                padding: 18px 30px;
+                text-decoration: none;
+                box-shadow: 0 8px 25px rgba(13, 27, 42, 0.15);
+                transition: all 0.3s ease;
+            }
+            .yt-premium-btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 30px rgba(13, 27, 42, 0.25);
+            }
+            .yt-premium-btn i {
+                color: #FF0000;
+                font-size: 2.2rem;
+                flex-shrink: 0;
+            }
+            .yt-premium-btn .yt-btn-text {
+                flex-grow: 1;
+                text-align: center;
+                color: var(--cream);
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 600;
+                font-size: 1.1rem;
+                line-height: 1.5;
+            }
+            @media (max-width: 768px) {
+                .yt-premium-btn { padding: 15px 20px; }
+                .yt-premium-btn i { font-size: 1.8rem; }
+                .yt-premium-btn .yt-btn-text { font-size: 1rem; }
+            }
+        </style>
+        
+        <a href="youtube_announcements.html" class="yt-premium-btn">
+            <i class="fab fa-youtube"></i>
+            <div class="yt-btn-text">
+                Watch YouTube<br>Announcements
+            </div>
+        </a>
+
         </div>
     </section>
 
