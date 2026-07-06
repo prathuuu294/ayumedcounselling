@@ -2590,6 +2590,7 @@ html, body {
         <div class="footer-links">
             <button onclick="openModal('privacyModal')">Privacy Policy</button>
             <button onclick="openModal('termsModal')">Terms & Conditions</button>
+            <button onclick="openModal('refundModal')">Refund & Cancellation Policy</button>
         </div>
     </footer>
 
@@ -2620,8 +2621,32 @@ html, body {
                 <li><strong>Informational Purposes:</strong> The content provided on this website is for informational and reference purposes only.</li>
                 <li><strong>Intellectual Property:</strong> AyuMed reserves all rights to the content, design, and intellectual property displayed on this site.</li>
             </ul>
+
+                <!-- Legal Entity & Compliance Section (For Razorpay) -->
+                <hr style="border: 0; border-top: 1px solid rgba(13, 27, 42, 0.1); margin: 20px 0;">
+                <div style="font-size: 0.85rem; line-height: 1.5; color: var(--navy-600); margin-top: 15px;">
+                    <p><strong>Legal Entity & Jurisdiction:</strong> This website and AyuMed Counselling services are operated by Aaditya Patel.</p>
+                    <p><strong>Operating Address:</strong> AyuMed Counselling Group, Near Prabhat Chouraha, New Ashoka Garden, Bhopal, Madhya Pradesh - 462011</p>
+                    <p><strong>Official Support Email:</strong> ayumedcounselling@gmail.com</p>
+                </div>
+
         </div>
     </div>
+
+    <!-- Refund & Cancellation Policy Modal -->
+    <div class="modal-overlay" id="refundModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal('refundModal')">✖</button>
+            <h2 class="modal-title">Refund & Cancellation Policy</h2>
+            <ul class="legal-list">
+                <li><strong>Consultation Fees:</strong> All fees paid for AyuMed Premium Counselling services are strictly non-refundable under any circumstances once the service has commenced or the payment is successfully processed.</li>
+                <li><strong>Cancellations:</strong> Clients may choose to discontinue our advisory services at any time; however, no partial or full refunds will be issued for the unutilized portion of the consultation process.</li>
+                <li><strong>Seat Allotment:</strong> As outlined in our Terms & Conditions, AyuMed provides strategic guidance but does not guarantee seat allotment. Failure to secure a medical seat does not constitute grounds for a refund.</li>
+                <li><strong>Technical Failures:</strong> In the rare event of a duplicate transaction or a technical payment gateway failure where funds are deducted multiple times, the excess amount will be refunded to the original payment method within 5-7 business days.</li>
+            </ul>
+        </div>
+    </div>
+
         <div class="modal-overlay" id="bookingModal">
         <div class="modal-content" style="max-width: 500px;">
             <button class="close-modal" onclick="closeModal('bookingModal')">✖</button>
