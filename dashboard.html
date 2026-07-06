@@ -506,9 +506,8 @@
             }
         }
 
-                async function loadDashboard() {
+                        async function loadDashboard() {
             try {
-                // NEW: Cache buster included here to guarantee fresh data!
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}&t=${new Date().getTime()}`);
                 const data = await response.json();
                 
@@ -591,50 +590,51 @@
                         }
                     }
 
-                    // --- NEW: ADMIN OVERRIDE SYNC ---
-                    let serverPrefs = data.counselling_prefs || data.prefs || data.preferences;
-                    if (serverPrefs) {
-                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
-                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
-                        loadSavedPreferences(); 
-                    } 
-                    else if (data.required_docs_list) {
+                    // --- THE ULTIMATE ADMIN SYNC (REVERSE ENGINEERING) ---
+                    if (data.required_docs_list) {
                         let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
-                        const docsContainer = document.getElementById('dynamicDocsContainer');
-                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
                         
-                        if (reqDocs && reqDocs.length > 0 && docsContainer && dynamicDocsCard) {
-                            docsContainer.innerHTML = '';
-                            dynamicDocsCard.style.display = 'block';
-                            
-                            let submitContainer = document.getElementById('submitDocsContainer');
-                            if (!submitContainer) {
-                                submitContainer = document.createElement('div');
-                                submitContainer.id = 'submitDocsContainer';
-                                submitContainer.style = "margin-top: 35px; text-align: center; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 30px;";
-                                submitContainer.innerHTML = `<button id="btnSubmitDocs" style="background: var(--navy-900); color: white; padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700; opacity: 0.5; pointer-events: none;" onclick="submitAllDocuments()">Upload all documents to submit</button>`;
-                                dynamicDocsCard.appendChild(submitContainer);
-                            }
+                        if (reqDocs && reqDocs.length > 0) {
+                            let forcedPrefs = { aiq: true, state: false, states: [], category: 'UR', quotas: [] };
+                            let docIds = reqDocs.map(d => d.id);
 
-                            reqDocs.forEach(doc => {
-                                const docElement = document.createElement('div');
-                                docElement.className = 'doc-slot';
-                                docElement.innerHTML = `
-                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
-                                    <div class="doc-status">Pending</div>
-                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
-                                `;
-                                docsContainer.appendChild(docElement);
-                            });
+                            // Reverse engineer States
+                            if (docIds.includes('doc_mp_dom')) { forcedPrefs.state = true; forcedPrefs.states.push('MP'); }
+                            if (docIds.includes('doc_mh_dom')) { forcedPrefs.state = true; forcedPrefs.states.push('MH'); }
+                            if (docIds.includes('doc_up_dom')) { forcedPrefs.state = true; forcedPrefs.states.push('UP'); }
+                            if (docIds.includes('doc_rj_dom')) { forcedPrefs.state = true; forcedPrefs.states.push('RJ'); }
+                            if (docIds.includes('doc_gj_dom')) { forcedPrefs.state = true; forcedPrefs.states.push('GJ'); }
+
+                            // Reverse engineer Main Category
+                            if (docIds.includes('doc_ews')) forcedPrefs.category = 'EWS';
+                            else if (docIds.includes('doc_ncl')) forcedPrefs.category = 'OBC';
+                            else if (docIds.includes('doc_caste')) forcedPrefs.category = 'SC_ST';
+
+                            // Reverse engineer Special Quotas
+                            if (docIds.includes('doc_pwd')) forcedPrefs.quotas.push('PWD');
+                            if (docIds.includes('doc_def')) forcedPrefs.quotas.push('DEF');
+                            if (docIds.includes('doc_min')) forcedPrefs.quotas.push('MIN');
+                            if (docIds.includes('doc_orp')) forcedPrefs.quotas.push('ORP');
+                            if (docIds.includes('doc_ha_dom')) forcedPrefs.quotas.push('HA');
+                            if (docIds.includes('doc_mkb_disp')) forcedPrefs.quotas.push('MKB');
+                            if (forcedPrefs.quotas.length === 0) forcedPrefs.quotas.push('NONE');
+
+                            // Compare server truth to local memory
+                            const currentLocalPrefs = localStorage.getItem('AyuMed_Prefs_' + studentEmail);
+                            const newPrefsString = JSON.stringify(forcedPrefs);
                             
-                            setupUploads();
-                            if(typeof applyDocumentStatuses === 'function') applyDocumentStatuses(); 
+                            // If they don't match, force an overwrite and visually update the screen!
+                            if (currentLocalPrefs !== newPrefsString) {
+                                localStorage.setItem('AyuMed_Prefs_' + studentEmail, newPrefsString);
+                                loadSavedPreferences(); // Instantly checks the correct visual boxes!
+                            }
                         }
                     }
-                    // ------------------------------------------
+                    // -----------------------------------------------------
                 }
             } catch (error) { console.error(error); }
         }
+
 
         async function removeDocument(docKey) {
             if(!confirm("Are you sure you want to remove this document?")) return;
