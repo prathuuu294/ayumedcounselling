@@ -524,6 +524,38 @@
                     globalLeadStage = data.stage; // Save to global
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
+
+                    // --- ADMIN OVERRIDE FORCE SYNC ---
+                    let serverPrefs = data.counselling_prefs || data.prefs;
+                    if (serverPrefs) {
+                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
+                        // Overwrite the student's browser memory with Admin's server data
+                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
+                        loadSavedPreferences(); // Forces the checkboxes and document UI to update
+                    } 
+                    else if (data.required_docs_list) {
+                        // Fallback: If backend only sends the doc list, force-render the Admin's documents
+                        let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
+                        const docsContainer = document.getElementById('dynamicDocsContainer');
+                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
+                        if (reqDocs.length > 0) {
+                            docsContainer.innerHTML = '';
+                            dynamicDocsCard.style.display = 'block';
+                            reqDocs.forEach(doc => {
+                                const docElement = document.createElement('div');
+                                docElement.className = 'doc-slot';
+                                docElement.innerHTML = `
+                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
+                                    <div class="doc-status">Pending</div>
+                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
+                                `;
+                                docsContainer.appendChild(docElement);
+                            });
+                            setupUploads();
+                        }
+                    }
+                    // ---------------------------------
+
                     
                     const teamDirectory = {
                         "Aditya": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
