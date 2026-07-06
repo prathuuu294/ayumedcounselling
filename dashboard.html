@@ -248,16 +248,46 @@
                         </div>
                     </div>
 
-                    <!-- Category Selection Dropdown -->
+                                        <!-- Reservation & Special Quotas Selection -->
                     <div id="categorySelectionWrapper" style="margin-top: 20px; border-top: 1px dashed rgba(13, 27, 42, 0.1); padding-top: 20px;">
-                        <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Select Reservation Category:</p>
-                        <select id="categorySelection" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--navy-900); outline: none; cursor: pointer;">
+                        
+                        <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Select Main Category (Mandatory):</p>
+                        <select id="categorySelection" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--navy-900); outline: none; cursor: pointer; margin-bottom: 20px;">
                             <option value="">-- Select Category --</option>
                             <option value="UR">UR / General (Unreserved)</option>
                             <option value="EWS">EWS (Economically Weaker Section)</option>
                             <option value="OBC">OBC / SEBC / VJ / NT / SBC</option>
                             <option value="SC_ST">SC / ST</option>
                         </select>
+
+                        <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Special Quotas (Mandatory Selection):</p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; background: rgba(13, 27, 42, 0.03); padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                            
+                            <!-- The 'None' Option -->
+                            <label style="font-weight: 700; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; color: var(--navy-900);">
+                                <input type="checkbox" id="quotaNone" value="NONE" style="width: 16px; height: 16px; accent-color: var(--gold);"> None (Not Applicable)
+                            </label>
+                            
+                            <!-- The Special Quotas -->
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="PWD" style="width: 16px; height: 16px; accent-color: var(--gold);"> PwD (Disability)
+                            </label>
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="DEF" style="width: 16px; height: 16px; accent-color: var(--gold);"> Defence (DEF)
+                            </label>
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="MIN" style="width: 16px; height: 16px; accent-color: var(--gold);"> Minority
+                            </label>
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="ORP" style="width: 16px; height: 16px; accent-color: var(--gold);"> Orphan
+                            </label>
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="HA" style="width: 16px; height: 16px; accent-color: var(--gold);"> Hilly Area (HA)
+                            </label>
+                            <label style="font-weight: 500; cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
+                                <input type="checkbox" class="quota-chk" value="MKB" style="width: 16px; height: 16px; accent-color: var(--gold);"> MKB (Border)
+                            </label>
+                        </div>
                     </div>
 
                     
@@ -675,12 +705,11 @@
             window.location.href = 'login.html';
         }
 
-                const universalDocs = [
+                        const universalDocs = [
             { id: 'doc_admit', label: 'NEET UG Admit Card' }, { id: 'doc_score', label: 'NEET UG Scorecard' },
             { id: 'doc_10th', label: 'Class 10th Marksheet' }, { id: 'doc_12th', label: 'Class 12th Marksheet' },
             { id: 'doc_aadhar', label: 'Aadhar Card' }, { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
-            { id: 'doc_migration', label: 'Migration Certificate' }, { id: 'doc_photo', label: 'Passport Size Photo' },
-            { id: 'doc_category', label: 'Category Certificate' }
+            { id: 'doc_migration', label: 'Migration Certificate' }, { id: 'doc_photo', label: 'Passport Size Photo' }
         ];
 
         const stateSpecificDocs = {
@@ -704,9 +733,48 @@
             ]
         };
 
+        const specialQuotaDocs = {
+            'PWD': [{ id: 'doc_pwd', label: 'Disability Certificate (NEET Center)' }],
+            'DEF': [{ id: 'doc_def', label: 'Defence Certificate (Zilla Sainik/CO)' }],
+            'MIN': [{ id: 'doc_min', label: 'Minority Certificate / Proforma O' }],
+            'ORP': [{ id: 'doc_orp', label: 'Orphan Certificate (WCD Dept)' }],
+            'HA': [
+                { id: 'doc_ha_dom', label: 'Parent Hilly Area Domicile' },
+                { id: 'doc_ha_school', label: '10th/12th Hilly Area School Proof' }
+            ],
+            'MKB': [
+                { id: 'doc_mkb_disp', label: 'Disputed Area Certificate' },
+                { id: 'doc_mkb_lang', label: 'Mother Tongue Certificate (Marathi)' },
+                { id: 'doc_mkb_school', label: '10th/12th MKB School Proof' }
+            ]
+        };
+
         document.getElementById('chkState').addEventListener('change', function() {
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
+
+        // --- NEW: Exclusivity Logic for "None" Special Quota ---
+        const quotaNoneCb = document.getElementById('quotaNone');
+        const quotaCbs = document.querySelectorAll('.quota-chk');
+
+        if (quotaNoneCb) {
+            quotaNoneCb.addEventListener('change', function() {
+                if (this.checked) {
+                    // If "None" is checked, uncheck all other quotas
+                    quotaCbs.forEach(chk => chk.checked = false);
+                }
+            });
+        }
+
+        quotaCbs.forEach(chk => {
+            chk.addEventListener('change', function() {
+                if (this.checked && quotaNoneCb) {
+                    // If any other quota is checked, uncheck "None"
+                    quotaNoneCb.checked = false;
+                }
+            });
+        });
+        // --------------------------------------------------------
 
         document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
@@ -714,17 +782,34 @@
             const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
             const categoryElem = document.getElementById('categorySelection');
             const category = categoryElem ? categoryElem.value : "";
+            
+            // Get all checked special quotas
+            const selectedQuotas = Array.from(document.querySelectorAll('.quota-chk:checked')).map(chk => chk.value);
+            if (quotaNoneCb && quotaNoneCb.checked) {
+                selectedQuotas.push('NONE');
+            }
 
             if (!isAIQ && (!isState || selectedStates.length === 0)) {
-                alert("Please select at least one Quota.");
+                alert("Please select at least one Quota (AIQ or State).");
                 return;
             }
             if (!category) {
-                alert("Please select your Reservation Category.");
+                alert("Please select your Main Reservation Category.");
+                return;
+            }
+            if (selectedQuotas.length === 0) {
+                alert("Please specify your Special Quotas, or explicitly choose 'None'.");
                 return;
             }
 
-            const prefs = { aiq: isAIQ, state: isState, states: selectedStates, category: category };
+            const prefs = { 
+                aiq: isAIQ, 
+                state: isState, 
+                states: selectedStates, 
+                category: category,
+                quotas: selectedQuotas 
+            };
+            
             localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
             
             const uniqueDocs = renderDocuments(prefs); 
@@ -777,6 +862,13 @@
                 requiredDocs.push(...categoryDocs[prefs.category]);
             }
             
+            if (prefs.quotas && prefs.quotas.length > 0) {
+                prefs.quotas.forEach(quotaCode => {
+                    // This naturally ignores 'NONE' because 'NONE' is not inside specialQuotaDocs!
+                    if (specialQuotaDocs[quotaCode]) requiredDocs.push(...specialQuotaDocs[quotaCode]);
+                });
+            }
+            
             const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.id)))
                 .map(id => requiredDocs.find(a => a.id === id));
 
@@ -805,8 +897,10 @@
             const savedData = localStorage.getItem('AyuMed_Prefs_' + studentEmail);
             if (savedData) {
                 const prefs = JSON.parse(savedData);
-                document.getElementById('chkAIQ').checked = prefs.aiq;
-                document.getElementById('chkState').checked = prefs.state;
+                
+                document.getElementById('chkAIQ').checked = prefs.aiq || false;
+                document.getElementById('chkState').checked = prefs.state || false;
+                
                 if (prefs.state && prefs.states) {
                     document.getElementById('stateListWrapper').style.display = 'block';
                     prefs.states.forEach(stateCode => {
@@ -814,10 +908,24 @@
                         if (chk) chk.checked = true;
                     });
                 }
+                
                 const catElem = document.getElementById('categorySelection');
                 if (prefs.category && catElem) {
                     catElem.value = prefs.category;
                 }
+                
+                // Reload saved checkboxes for Special Quotas
+                if (prefs.quotas && prefs.quotas.length > 0) {
+                    if (prefs.quotas.includes('NONE')) {
+                        const noneChk = document.getElementById('quotaNone');
+                        if (noneChk) noneChk.checked = true;
+                    }
+                    prefs.quotas.forEach(quotaCode => {
+                        const chk = document.querySelector(`.quota-chk[value="${quotaCode}"]`);
+                        if (chk) chk.checked = true;
+                    });
+                }
+                
                 renderDocuments(prefs); 
             }
         }
