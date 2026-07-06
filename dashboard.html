@@ -675,7 +675,7 @@
             window.location.href = 'login.html';
         }
 
-        const universalDocs = [
+                const universalDocs = [
             { id: 'doc_admit', label: 'NEET UG Admit Card' }, { id: 'doc_score', label: 'NEET UG Scorecard' },
             { id: 'doc_10th', label: 'Class 10th Marksheet' }, { id: 'doc_12th', label: 'Class 12th Marksheet' },
             { id: 'doc_aadhar', label: 'Aadhar Card' }, { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
@@ -691,30 +691,29 @@
             'GJ': [{ id: 'doc_gj_dom', label: 'Gujarat Domicile' }]
         };
 
-const categoryDocs = {
-    'EWS': [{ id: 'doc_ews', label: 'EWS Certificate (Current FY)' }],
-    'OBC': [
-        { id: 'doc_caste', label: 'Caste Certificate' },
-        { id: 'doc_validity', label: 'Caste Validity Certificate' },
-        { id: 'doc_ncl', label: 'Non-Creamy Layer (NCL)' }
-    ],
-    'SC_ST': [
-        { id: 'doc_caste', label: 'Caste Certificate' },
-        { id: 'doc_validity', label: 'Caste Validity Certificate' }
-    ]
-};
-
-document.getElementById('chkState').addEventListener('change', function() {
+        const categoryDocs = {
+            'EWS': [{ id: 'doc_ews', label: 'EWS Certificate (Current FY)' }],
+            'OBC': [
+                { id: 'doc_caste', label: 'Caste Certificate' },
+                { id: 'doc_validity', label: 'Caste Validity Certificate' },
+                { id: 'doc_ncl', label: 'Non-Creamy Layer (NCL)' }
+            ],
+            'SC_ST': [
+                { id: 'doc_caste', label: 'Caste Certificate' },
+                { id: 'doc_validity', label: 'Caste Validity Certificate' }
+            ]
+        };
 
         document.getElementById('chkState').addEventListener('change', function() {
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-                document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
+        document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
             const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
-            const category = document.getElementById('categorySelection').value;
+            const categoryElem = document.getElementById('categorySelection');
+            const category = categoryElem ? categoryElem.value : "";
 
             if (!isAIQ && (!isState || selectedStates.length === 0)) {
                 alert("Please select at least one Quota.");
@@ -746,13 +745,11 @@ document.getElementById('chkState').addEventListener('change', function() {
             loadDashboard(); 
         });
 
-
         function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
             docsContainer.innerHTML = '';
             
-            // Check if Submit Container exists, if not, create it below the grid
             let submitContainer = document.getElementById('submitDocsContainer');
             if (!submitContainer) {
                 submitContainer = document.createElement('div');
@@ -775,12 +772,11 @@ document.getElementById('chkState').addEventListener('change', function() {
                     if (stateSpecificDocs[stateCode]) requiredDocs.push(...stateSpecificDocs[stateCode]);
                 });
             }
-            
-            // Add Category specific documents
+
             if (prefs.category && categoryDocs[prefs.category]) {
                 requiredDocs.push(...categoryDocs[prefs.category]);
             }
-
+            
             const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.id)))
                 .map(id => requiredDocs.find(a => a.id === id));
 
@@ -811,15 +807,17 @@ document.getElementById('chkState').addEventListener('change', function() {
                 const prefs = JSON.parse(savedData);
                 document.getElementById('chkAIQ').checked = prefs.aiq;
                 document.getElementById('chkState').checked = prefs.state;
-                if (prefs.state) {
+                if (prefs.state && prefs.states) {
                     document.getElementById('stateListWrapper').style.display = 'block';
                     prefs.states.forEach(stateCode => {
                         const chk = document.querySelector(`.state-chk[value="${stateCode}"]`);
                         if (chk) chk.checked = true;
                     });
                 }
-                if (prefs.category) document.getElementById('categorySelection').value = prefs.category;
-
+                const catElem = document.getElementById('categorySelection');
+                if (prefs.category && catElem) {
+                    catElem.value = prefs.category;
+                }
                 renderDocuments(prefs); 
             }
         }
