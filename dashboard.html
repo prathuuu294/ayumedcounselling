@@ -506,8 +506,9 @@
             }
         }
 
-        async function loadDashboard() {
+                async function loadDashboard() {
             try {
+                // NEW: Cache buster included here to guarantee fresh data!
                 const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}&t=${new Date().getTime()}`);
                 const data = await response.json();
                 
@@ -521,85 +522,9 @@
                 if (data.stage === "1) New Lead" || data.stage === "New Lead" || !data.stage) data.stage = "Profile Registered";
 
                 if (response.ok) {
-                    globalLeadStage = data.stage; // Save to global
+                    globalLeadStage = data.stage; 
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
-
-                    // --- OVERRIDE SYNC: LISTEN TO ADMIN CRM ---
-                    // 1. If the database has raw preferences, sync the checkboxes
-                    let serverPrefs = data.counselling_prefs || data.prefs || data.preferences;
-                    if (serverPrefs) {
-                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
-                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
-                        loadSavedPreferences(); 
-                    } 
-                    // 2. Fallback: Force the document section to render what the Admin requested
-                    else if (data.required_docs_list) {
-                        let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
-                        const docsContainer = document.getElementById('dynamicDocsContainer');
-                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
-                        
-                        if (reqDocs && reqDocs.length > 0) {
-                            docsContainer.innerHTML = '';
-                            dynamicDocsCard.style.display = 'block';
-                            
-                            let submitContainer = document.getElementById('submitDocsContainer');
-                            if (!submitContainer) {
-                                submitContainer = document.createElement('div');
-                                submitContainer.id = 'submitDocsContainer';
-                                submitContainer.style = "margin-top: 35px; text-align: center; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 30px;";
-                                submitContainer.innerHTML = `<button id="btnSubmitDocs" style="background: var(--navy-900); color: white; padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700; opacity: 0.5; pointer-events: none;" onclick="submitAllDocuments()">Upload all documents to submit</button>`;
-                                dynamicDocsCard.appendChild(submitContainer);
-                            }
-
-                            reqDocs.forEach(doc => {
-                                const docElement = document.createElement('div');
-                                docElement.className = 'doc-slot';
-                                docElement.innerHTML = `
-                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
-                                    <div class="doc-status">Pending</div>
-                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
-                                `;
-                                docsContainer.appendChild(docElement);
-                            });
-                            
-                            setupUploads();
-                            if(globalUserDocuments) applyDocumentStatuses(); 
-                        }
-                    }
-                    // ------------------------------------------
-
-                    // --- ADMIN OVERRIDE FORCE SYNC ---
-                    let serverPrefs = data.counselling_prefs || data.prefs;
-                    if (serverPrefs) {
-                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
-                        // Overwrite the student's browser memory with Admin's server data
-                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
-                        loadSavedPreferences(); // Forces the checkboxes and document UI to update
-                    } 
-                    else if (data.required_docs_list) {
-                        // Fallback: If backend only sends the doc list, force-render the Admin's documents
-                        let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
-                        const docsContainer = document.getElementById('dynamicDocsContainer');
-                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
-                        if (reqDocs.length > 0) {
-                            docsContainer.innerHTML = '';
-                            dynamicDocsCard.style.display = 'block';
-                            reqDocs.forEach(doc => {
-                                const docElement = document.createElement('div');
-                                docElement.className = 'doc-slot';
-                                docElement.innerHTML = `
-                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
-                                    <div class="doc-status">Pending</div>
-                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
-                                `;
-                                docsContainer.appendChild(docElement);
-                            });
-                            setupUploads();
-                        }
-                    }
-                    // ---------------------------------
-
                     
                     const teamDirectory = {
                         "Aditya": { phone: "917879078367", image: "https://i.postimg.cc/nrN9fxnb/IMG-20260530-172556-836.jpg", title: "Senior Counsellor & BAMS Admissions Expert" },
@@ -628,43 +553,89 @@
                         }
                     }
                     
-                    setTimelineProgress(data.stage);
+                    if(typeof setTimelineProgress === 'function') setTimelineProgress(data.stage);
 
                     if (data.documents) {
                         globalUserDocuments = data.documents; 
-                        applyDocumentStatuses(); 
+                        if(typeof applyDocumentStatuses === 'function') applyDocumentStatuses(); 
                     }
 
                     if (data.fee_amount > 0) {
-                        document.getElementById('panel-payment').innerHTML = `
-                            <h2 class="panel-title">Pending Invoice</h2>
-                            <div class="info-box" style="text-align: center; padding: 40px 20px; border-left-color: var(--warning);">
-                                <h3 style="color: var(--navy-900); margin-bottom: 10px;">Premium Counselling Fee</h3>
-                                <p style="font-size: 2.5rem; font-weight: 700; color: var(--navy-900); margin-bottom: 5px;">₹${data.fee_amount}</p>
-                                <p style="color: var(--navy-600); font-weight: 600; margin-bottom: 25px;">Please complete your payment to unlock the choice-filling stage.</p>
-                                <button onclick="startPayment()" style="background: var(--navy-900); color: var(--gold); padding: 15px 40px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 10px 20px rgba(13,27,42,0.15);">
-                                    <i class="fas fa-lock"></i> Pay Securely via Razorpay
-                                </button>
-                            </div>
-                        `;
+                        const paymentPanel = document.getElementById('panel-payment');
+                        if(paymentPanel) {
+                            paymentPanel.innerHTML = `
+                                <h2 class="panel-title">Pending Invoice</h2>
+                                <div class="info-box" style="text-align: center; padding: 40px 20px; border-left-color: var(--warning);">
+                                    <h3 style="color: var(--navy-900); margin-bottom: 10px;">Premium Counselling Fee</h3>
+                                    <p style="font-size: 2.5rem; font-weight: 700; color: var(--navy-900); margin-bottom: 5px;">₹${data.fee_amount}</p>
+                                    <p style="color: var(--navy-600); font-weight: 600; margin-bottom: 25px;">Please complete your payment to unlock the choice-filling stage.</p>
+                                    <button onclick="startPayment()" style="background: var(--navy-900); color: var(--gold); padding: 15px 40px; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; box-shadow: 0 10px 20px rgba(13,27,42,0.15);">
+                                        <i class="fas fa-lock"></i> Pay Securely via Razorpay
+                                    </button>
+                                </div>
+                            `;
+                        }
                     }
 
                     const counsellingContent = document.getElementById('counsellingContent');
                     const counsellingLock = document.getElementById('counsellingLock');
                     const unlockedStages = ["5) Payment Confirmed", "6) Counselling In Progress", "6) Preference List Ready", "7) Seat Allotted", "8) Admission Complete"];
                     
-                    if (!unlockedStages.some(stage => data.stage.includes(stage))) {
-                        counsellingContent.classList.add('locked-content');
-                        counsellingLock.style.display = 'flex';
-                    } else {
-                        counsellingContent.classList.remove('locked-content');
-                        counsellingLock.style.display = 'none';
+                    if (counsellingContent && counsellingLock) {
+                        if (!unlockedStages.some(stage => data.stage.includes(stage))) {
+                            counsellingContent.classList.add('locked-content');
+                            counsellingLock.style.display = 'flex';
+                        } else {
+                            counsellingContent.classList.remove('locked-content');
+                            counsellingLock.style.display = 'none';
+                        }
                     }
+
+                    // --- NEW: ADMIN OVERRIDE SYNC ---
+                    let serverPrefs = data.counselling_prefs || data.prefs || data.preferences;
+                    if (serverPrefs) {
+                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
+                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
+                        loadSavedPreferences(); 
+                    } 
+                    else if (data.required_docs_list) {
+                        let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
+                        const docsContainer = document.getElementById('dynamicDocsContainer');
+                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
+                        
+                        if (reqDocs && reqDocs.length > 0 && docsContainer && dynamicDocsCard) {
+                            docsContainer.innerHTML = '';
+                            dynamicDocsCard.style.display = 'block';
+                            
+                            let submitContainer = document.getElementById('submitDocsContainer');
+                            if (!submitContainer) {
+                                submitContainer = document.createElement('div');
+                                submitContainer.id = 'submitDocsContainer';
+                                submitContainer.style = "margin-top: 35px; text-align: center; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 30px;";
+                                submitContainer.innerHTML = `<button id="btnSubmitDocs" style="background: var(--navy-900); color: white; padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700; opacity: 0.5; pointer-events: none;" onclick="submitAllDocuments()">Upload all documents to submit</button>`;
+                                dynamicDocsCard.appendChild(submitContainer);
+                            }
+
+                            reqDocs.forEach(doc => {
+                                const docElement = document.createElement('div');
+                                docElement.className = 'doc-slot';
+                                docElement.innerHTML = `
+                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
+                                    <div class="doc-status">Pending</div>
+                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
+                                `;
+                                docsContainer.appendChild(docElement);
+                            });
+                            
+                            setupUploads();
+                            if(typeof applyDocumentStatuses === 'function') applyDocumentStatuses(); 
+                        }
+                    }
+                    // ------------------------------------------
                 }
             } catch (error) { console.error(error); }
         }
 
-        // --- NEW REMOVE & SUBMIT FUNCTIONS ---
         async function removeDocument(docKey) {
             if(!confirm("Are you sure you want to remove this document?")) return;
             try {
@@ -674,9 +645,9 @@
                     body: JSON.stringify({ email: studentEmail, doc_type: docKey })
                 });
                 if (response.ok) {
-                    globalUserDocuments[docKey] = false; // Update local memory immediately
-                    applyDocumentStatuses(); // Redraw UI immediately
-                    loadDashboard(); // Sync with server
+                    globalUserDocuments[docKey] = false; 
+                    if(typeof applyDocumentStatuses === 'function') applyDocumentStatuses(); 
+                    loadDashboard(); 
                 } else { alert("Failed to remove document."); }
             } catch (e) { alert("Network error."); }
         }
@@ -691,7 +662,7 @@
                 });
                 if (response.ok) {
                     alert("Documents successfully submitted for verification!");
-                    window.location.reload(); // Reload to apply all locks
+                    window.location.reload(); 
                 } else { alert("Failed to submit."); }
             } catch (e) { alert("Network error."); }
         }
@@ -701,19 +672,15 @@
             fileInputs.forEach(input => {
                 input.addEventListener('change', async function() {
                     if (this.files.length === 0) return;
-
                     const file = this.files[0];
                     const docKey = this.closest('.doc-slot').querySelector('.doc-name').getAttribute('data-id');
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
-                    
                     statusText.innerText = "UPLOADING...";
                     statusText.style.color = "var(--warning)";
-
                     const formData = new FormData();
                     formData.append('email', studentEmail);
                     formData.append('doc_type', docKey);
                     formData.append('file', file);
-
                     try {
                         const response = await fetch('https://prathuuu294.pythonanywhere.com/api/upload', {
                             method: 'POST',
@@ -742,7 +709,6 @@
                     body: JSON.stringify({ email: studentEmail })
                 });
                 const orderData = await response.json();
-
                 if (orderData.status === "success") {
                     var options = {
                         "key": orderData.key,
@@ -781,7 +747,7 @@
             window.location.href = 'login.html';
         }
 
-                        const universalDocs = [
+        const universalDocs = [
             { id: 'doc_admit', label: 'NEET UG Admit Card' }, { id: 'doc_score', label: 'NEET UG Scorecard' },
             { id: 'doc_10th', label: 'Class 10th Marksheet' }, { id: 'doc_12th', label: 'Class 12th Marksheet' },
             { id: 'doc_aadhar', label: 'Aadhar Card' }, { id: 'doc_passbook', label: 'Bank Passbook Front Page' },
@@ -798,117 +764,88 @@
 
         const categoryDocs = {
             'EWS': [{ id: 'doc_ews', label: 'EWS Certificate (Current FY)' }],
-            'OBC': [
-                { id: 'doc_caste', label: 'Caste Certificate' },
-                { id: 'doc_validity', label: 'Caste Validity Certificate' },
-                { id: 'doc_ncl', label: 'Non-Creamy Layer (NCL)' }
-            ],
-            'SC_ST': [
-                { id: 'doc_caste', label: 'Caste Certificate' },
-                { id: 'doc_validity', label: 'Caste Validity Certificate' }
-            ]
+            'OBC': [{ id: 'doc_caste', label: 'Caste Certificate' }, { id: 'doc_validity', label: 'Caste Validity Certificate' }, { id: 'doc_ncl', label: 'Non-Creamy Layer (NCL)' }],
+            'SC_ST': [{ id: 'doc_caste', label: 'Caste Certificate' }, { id: 'doc_validity', label: 'Caste Validity Certificate' }]
         };
 
         const specialQuotaDocs = {
-            'PWD': [{ id: 'doc_pwd', label: 'Disability Certificate (NEET Center)' }],
-            'DEF': [{ id: 'doc_def', label: 'Defence Certificate (Zilla Sainik/CO)' }],
-            'MIN': [{ id: 'doc_min', label: 'Minority Certificate / Proforma O' }],
-            'ORP': [{ id: 'doc_orp', label: 'Orphan Certificate (WCD Dept)' }],
-            'HA': [
-                { id: 'doc_ha_dom', label: 'Parent Hilly Area Domicile' },
-                { id: 'doc_ha_school', label: '10th/12th Hilly Area School Proof' }
-            ],
-            'MKB': [
-                { id: 'doc_mkb_disp', label: 'Disputed Area Certificate' },
-                { id: 'doc_mkb_lang', label: 'Mother Tongue Certificate (Marathi)' },
-                { id: 'doc_mkb_school', label: '10th/12th MKB School Proof' }
-            ]
+            'PWD': [{ id: 'doc_pwd', label: 'Disability Certificate (NEET)' }],
+            'DEF': [{ id: 'doc_def', label: 'Defence Certificate' }],
+            'MIN': [{ id: 'doc_min', label: 'Minority Certificate' }],
+            'ORP': [{ id: 'doc_orp', label: 'Orphan Certificate' }],
+            'HA': [{ id: 'doc_ha_dom', label: 'HA Domicile' }, { id: 'doc_ha_school', label: 'HA School Proof' }],
+            'MKB': [{ id: 'doc_mkb_disp', label: 'Disputed Area' }, { id: 'doc_mkb_lang', label: 'Mother Tongue' }, { id: 'doc_mkb_school', label: 'MKB School Proof' }]
         };
 
-        document.getElementById('chkState').addEventListener('change', function() {
-            document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
-        });
+        const chkStateElem = document.getElementById('chkState');
+        if (chkStateElem) {
+            chkStateElem.addEventListener('change', function() {
+                const wrapper = document.getElementById('stateListWrapper');
+                if (wrapper) wrapper.style.display = this.checked ? 'block' : 'none';
+            });
+        }
 
-        // --- NEW: Exclusivity Logic for "None" Special Quota ---
         const quotaNoneCb = document.getElementById('quotaNone');
         const quotaCbs = document.querySelectorAll('.quota-chk');
 
         if (quotaNoneCb) {
             quotaNoneCb.addEventListener('change', function() {
-                if (this.checked) {
-                    // If "None" is checked, uncheck all other quotas
-                    quotaCbs.forEach(chk => chk.checked = false);
-                }
+                if (this.checked) quotaCbs.forEach(chk => chk.checked = false);
             });
         }
-
         quotaCbs.forEach(chk => {
             chk.addEventListener('change', function() {
-                if (this.checked && quotaNoneCb) {
-                    // If any other quota is checked, uncheck "None"
-                    quotaNoneCb.checked = false;
-                }
+                if (this.checked && quotaNoneCb) quotaNoneCb.checked = false;
             });
         });
-        // --------------------------------------------------------
 
-        document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
-            const isAIQ = document.getElementById('chkAIQ').checked;
-            const isState = document.getElementById('chkState').checked;
-            const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
-            const categoryElem = document.getElementById('categorySelection');
-            const category = categoryElem ? categoryElem.value : "";
-            
-            // Get all checked special quotas
-            const selectedQuotas = Array.from(document.querySelectorAll('.quota-chk:checked')).map(chk => chk.value);
-            if (quotaNoneCb && quotaNoneCb.checked) {
-                selectedQuotas.push('NONE');
-            }
+        const btnConfirm = document.getElementById('btnConfirmSelection');
+        if (btnConfirm) {
+            btnConfirm.addEventListener('click', async function() {
+                const aiqChk = document.getElementById('chkAIQ');
+                const stateChk = document.getElementById('chkState');
+                
+                const isAIQ = aiqChk ? aiqChk.checked : false;
+                const isState = stateChk ? stateChk.checked : false;
+                const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
+                const categoryElem = document.getElementById('categorySelection');
+                const category = categoryElem ? categoryElem.value : "";
+                
+                const selectedQuotas = Array.from(document.querySelectorAll('.quota-chk:checked')).map(chk => chk.value);
+                if (quotaNoneCb && quotaNoneCb.checked) selectedQuotas.push('NONE');
 
-            if (!isAIQ && (!isState || selectedStates.length === 0)) {
-                alert("Please select at least one Quota (AIQ or State).");
-                return;
-            }
-            if (!category) {
-                alert("Please select your Main Reservation Category.");
-                return;
-            }
-            if (selectedQuotas.length === 0) {
-                alert("Please specify your Special Quotas, or explicitly choose 'None'.");
-                return;
-            }
+                if (!isAIQ && (!isState || selectedStates.length === 0)) return alert("Please select at least one Quota (AIQ or State).");
+                if (!category) return alert("Please select your Main Reservation Category.");
+                if (selectedQuotas.length === 0) return alert("Please specify your Special Quotas, or explicitly choose 'None'.");
 
-            const prefs = { 
-                aiq: isAIQ, 
-                state: isState, 
-                states: selectedStates, 
-                category: category,
-                quotas: selectedQuotas 
-            };
-            
-            localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
-            
-            const uniqueDocs = renderDocuments(prefs); 
-            
-            const saveText = document.getElementById('saveConfirmText');
-            saveText.style.display = 'inline-block';
-            setTimeout(() => saveText.style.display = 'none', 3000);
-            
-            const requiredDocsList = uniqueDocs.map(d => ({ id: d.id, label: d.label }));
-            try {
-                await fetch('https://prathuuu294.pythonanywhere.com/api/update_counselling_prefs', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: studentEmail, prefs: prefs, required_docs: requiredDocsList })
-                });
-            } catch(e) {}
+                const prefs = { aiq: isAIQ, state: isState, states: selectedStates, category: category, quotas: selectedQuotas };
+                localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
+                
+                const uniqueDocs = renderDocuments(prefs); 
+                
+                const saveText = document.getElementById('saveConfirmText');
+                if (saveText) {
+                    saveText.style.display = 'inline-block';
+                    setTimeout(() => saveText.style.display = 'none', 3000);
+                }
+                
+                const requiredDocsList = uniqueDocs.map(d => ({ id: d.id, label: d.label }));
+                try {
+                    await fetch('https://prathuuu294.pythonanywhere.com/api/update_counselling_prefs', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: studentEmail, prefs: prefs, required_docs: requiredDocsList })
+                    });
+                } catch(e) {}
 
-            loadDashboard(); 
-        });
+                loadDashboard(); 
+            });
+        }
 
         function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
             const dynamicDocsCard = document.getElementById('dynamicDocsCard');
+            if (!docsContainer || !dynamicDocsCard) return [];
             docsContainer.innerHTML = '';
             
             let submitContainer = document.getElementById('submitDocsContainer');
@@ -940,7 +877,6 @@
             
             if (prefs.quotas && prefs.quotas.length > 0) {
                 prefs.quotas.forEach(quotaCode => {
-                    // This naturally ignores 'NONE' because 'NONE' is not inside specialQuotaDocs!
                     if (specialQuotaDocs[quotaCode]) requiredDocs.push(...specialQuotaDocs[quotaCode]);
                 });
             }
@@ -962,7 +898,7 @@
                 });
                 
                 setupUploads();
-                applyDocumentStatuses(); 
+                if(typeof applyDocumentStatuses === 'function') applyDocumentStatuses(); 
             } else {
                 dynamicDocsCard.style.display = 'none';
             }
@@ -974,11 +910,14 @@
             if (savedData) {
                 const prefs = JSON.parse(savedData);
                 
-                document.getElementById('chkAIQ').checked = prefs.aiq || false;
-                document.getElementById('chkState').checked = prefs.state || false;
+                const aiqChk = document.getElementById('chkAIQ');
+                const stateChk = document.getElementById('chkState');
+                if (aiqChk) aiqChk.checked = prefs.aiq || false;
+                if (stateChk) stateChk.checked = prefs.state || false;
                 
                 if (prefs.state && prefs.states) {
-                    document.getElementById('stateListWrapper').style.display = 'block';
+                    const wrapper = document.getElementById('stateListWrapper');
+                    if (wrapper) wrapper.style.display = 'block';
                     prefs.states.forEach(stateCode => {
                         const chk = document.querySelector(`.state-chk[value="${stateCode}"]`);
                         if (chk) chk.checked = true;
@@ -990,7 +929,6 @@
                     catElem.value = prefs.category;
                 }
                 
-                // Reload saved checkboxes for Special Quotas
                 if (prefs.quotas && prefs.quotas.length > 0) {
                     if (prefs.quotas.includes('NONE')) {
                         const noneChk = document.getElementById('quotaNone');
@@ -1007,7 +945,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', async () => {
-            switchPanel('profile');
+            if(typeof switchPanel === 'function') switchPanel('profile');
             loadSavedPreferences();
             await loadDashboard();
         });
