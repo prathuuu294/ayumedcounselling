@@ -247,6 +247,19 @@
                             <label style="font-weight: 500; cursor: pointer;"><input type="checkbox" class="state-chk" value="GJ"> Gujarat</label>
                         </div>
                     </div>
+
+                    <!-- Category Selection Dropdown -->
+                    <div id="categorySelectionWrapper" style="margin-top: 20px; border-top: 1px dashed rgba(13, 27, 42, 0.1); padding-top: 20px;">
+                        <p style="font-weight: 700; color: var(--navy-900); margin-bottom: 10px; font-size: 0.9rem;">Select Reservation Category:</p>
+                        <select id="categorySelection" style="width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #ccc; font-family: 'Montserrat', sans-serif; font-weight: 500; color: var(--navy-900); outline: none; cursor: pointer;">
+                            <option value="">-- Select Category --</option>
+                            <option value="UR">UR / General (Unreserved)</option>
+                            <option value="EWS">EWS (Economically Weaker Section)</option>
+                            <option value="OBC">OBC / SEBC / VJ / NT / SBC</option>
+                            <option value="SC_ST">SC / ST</option>
+                        </select>
+                    </div>
+
                     
                     <!-- New Confirm Button -->
                     <div style="margin-top: 20px; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 20px; display: flex; align-items: center;">
@@ -678,21 +691,41 @@
             'GJ': [{ id: 'doc_gj_dom', label: 'Gujarat Domicile' }]
         };
 
+const categoryDocs = {
+    'EWS': [{ id: 'doc_ews', label: 'EWS Certificate (Current FY)' }],
+    'OBC': [
+        { id: 'doc_caste', label: 'Caste Certificate' },
+        { id: 'doc_validity', label: 'Caste Validity Certificate' },
+        { id: 'doc_ncl', label: 'Non-Creamy Layer (NCL)' }
+    ],
+    'SC_ST': [
+        { id: 'doc_caste', label: 'Caste Certificate' },
+        { id: 'doc_validity', label: 'Caste Validity Certificate' }
+    ]
+};
+
+document.getElementById('chkState').addEventListener('change', function() {
+
         document.getElementById('chkState').addEventListener('change', function() {
             document.getElementById('stateListWrapper').style.display = this.checked ? 'block' : 'none';
         });
 
-        document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
+                document.getElementById('btnConfirmSelection').addEventListener('click', async function() {
             const isAIQ = document.getElementById('chkAIQ').checked;
             const isState = document.getElementById('chkState').checked;
             const selectedStates = Array.from(document.querySelectorAll('.state-chk:checked')).map(chk => chk.value);
+            const category = document.getElementById('categorySelection').value;
 
             if (!isAIQ && (!isState || selectedStates.length === 0)) {
                 alert("Please select at least one Quota.");
                 return;
             }
+            if (!category) {
+                alert("Please select your Reservation Category.");
+                return;
+            }
 
-            const prefs = { aiq: isAIQ, state: isState, states: selectedStates };
+            const prefs = { aiq: isAIQ, state: isState, states: selectedStates, category: category };
             localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(prefs));
             
             const uniqueDocs = renderDocuments(prefs); 
@@ -712,6 +745,7 @@
 
             loadDashboard(); 
         });
+
 
         function renderDocuments(prefs) {
             const docsContainer = document.getElementById('dynamicDocsContainer');
@@ -742,6 +776,11 @@
                 });
             }
             
+            // Add Category specific documents
+            if (prefs.category && categoryDocs[prefs.category]) {
+                requiredDocs.push(...categoryDocs[prefs.category]);
+            }
+
             const uniqueDocs = Array.from(new Set(requiredDocs.map(a => a.id)))
                 .map(id => requiredDocs.find(a => a.id === id));
 
@@ -779,6 +818,8 @@
                         if (chk) chk.checked = true;
                     });
                 }
+                if (prefs.category) document.getElementById('categorySelection').value = prefs.category;
+
                 renderDocuments(prefs); 
             }
         }
