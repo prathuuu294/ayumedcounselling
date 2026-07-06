@@ -508,7 +508,7 @@
 
         async function loadDashboard() {
             try {
-                const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}`);
+                const response = await fetch(`https://prathuuu294.pythonanywhere.com/api/dashboard?email=${studentEmail}&t=${new Date().getTime()}`);
                 const data = await response.json();
                 
                 if (response.status === 404 || data.error === "User not found") {
@@ -524,6 +524,50 @@
                     globalLeadStage = data.stage; // Save to global
                     document.getElementById('studentName').innerText = `Welcome, ${data.name}`;
                     document.getElementById('leadStage').innerText = `Current Status: ${data.stage}`;
+
+                    // --- OVERRIDE SYNC: LISTEN TO ADMIN CRM ---
+                    // 1. If the database has raw preferences, sync the checkboxes
+                    let serverPrefs = data.counselling_prefs || data.prefs || data.preferences;
+                    if (serverPrefs) {
+                        if (typeof serverPrefs === 'string') serverPrefs = JSON.parse(serverPrefs);
+                        localStorage.setItem('AyuMed_Prefs_' + studentEmail, JSON.stringify(serverPrefs));
+                        loadSavedPreferences(); 
+                    } 
+                    // 2. Fallback: Force the document section to render what the Admin requested
+                    else if (data.required_docs_list) {
+                        let reqDocs = typeof data.required_docs_list === 'string' ? JSON.parse(data.required_docs_list) : data.required_docs_list;
+                        const docsContainer = document.getElementById('dynamicDocsContainer');
+                        const dynamicDocsCard = document.getElementById('dynamicDocsCard');
+                        
+                        if (reqDocs && reqDocs.length > 0) {
+                            docsContainer.innerHTML = '';
+                            dynamicDocsCard.style.display = 'block';
+                            
+                            let submitContainer = document.getElementById('submitDocsContainer');
+                            if (!submitContainer) {
+                                submitContainer = document.createElement('div');
+                                submitContainer.id = 'submitDocsContainer';
+                                submitContainer.style = "margin-top: 35px; text-align: center; border-top: 1px solid rgba(13, 27, 42, 0.1); padding-top: 30px;";
+                                submitContainer.innerHTML = `<button id="btnSubmitDocs" style="background: var(--navy-900); color: white; padding: 15px 35px; font-size: 1.1rem; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; font-weight: 700; opacity: 0.5; pointer-events: none;" onclick="submitAllDocuments()">Upload all documents to submit</button>`;
+                                dynamicDocsCard.appendChild(submitContainer);
+                            }
+
+                            reqDocs.forEach(doc => {
+                                const docElement = document.createElement('div');
+                                docElement.className = 'doc-slot';
+                                docElement.innerHTML = `
+                                    <div class="doc-name" data-id="${doc.id}">${doc.label}</div>
+                                    <div class="doc-status">Pending</div>
+                                    <label class="upload-btn">Select File<input type="file" accept=".pdf, .jpg, .jpeg, .png"></label>
+                                `;
+                                docsContainer.appendChild(docElement);
+                            });
+                            
+                            setupUploads();
+                            if(globalUserDocuments) applyDocumentStatuses(); 
+                        }
+                    }
+                    // ------------------------------------------
 
                     // --- ADMIN OVERRIDE FORCE SYNC ---
                     let serverPrefs = data.counselling_prefs || data.prefs;
