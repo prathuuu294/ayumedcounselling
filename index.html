@@ -906,7 +906,7 @@
             gap: 20px;
         }
 
-        .footer-links button {
+                .footer-links a {
             background: none;
             border: none;
             color: var(--cream);
@@ -919,7 +919,7 @@
             letter-spacing: 0.5px;
         }
 
-        .footer-links button:hover {
+        .footer-links a:hover {
             opacity: 1;
             color: var(--gold);
         }
@@ -2587,65 +2587,12 @@ html, body {
         <div class="copyright">
             © 2026 AyuMed Medical Counselling Group. All Rights Reserved.
         </div>
-        <div class="footer-links">
-            <button onclick="openModal('privacyModal')">Privacy Policy</button>
-            <button onclick="openModal('termsModal')">Terms & Conditions</button>
-            <button onclick="openModal('refundModal')">Refund & Cancellation Policy</button>
+                <div class="footer-links">
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms & Conditions</a>
+            <a href="refund.html">Refund & Cancellation Policy</a>
         </div>
     </footer>
-
-    <div class="modal-overlay" id="privacyModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('privacyModal')">✖</button>
-            <h2 class="modal-title">Privacy Policy</h2>
-            <ul class="legal-list">
-                <li><strong>Data Collection:</strong> We collect essential details, including Name, Mobile Number, Email Address, NEET Score, and Course Preference, voluntarily provided by users via our inquiry forms.</li>
-                <li><strong>Purpose of Use:</strong> All gathered information is strictly utilized for educational counselling, personalized admission guidance, and relevant communication.</li>
-                <li><strong>Data Protection:</strong> We maintain strict confidentiality. Your personal data is securely stored and will never be sold, rented, or shared with unauthorized third parties.</li>
-                <li><strong>Communication:</strong> By providing your details, you consent to receive crucial updates regarding counselling rounds, deadlines, and admission procedures.</li>
-                <li><strong>External Links:</strong> Our platform may contain links to third-party resources which are not governed by this Privacy Policy.</li>
-                <li><strong>Consent:</strong> Continued use of the AyuMed website constitutes your acknowledgment and acceptance of these privacy terms.</li>
-            </ul>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="termsModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('termsModal')">✖</button>
-            <h2 class="modal-title">Terms & Conditions</h2>
-            <ul class="legal-list">
-                <li><strong>Scope of Service:</strong> AyuMed Counselling Group operates solely as an educational advisory service, providing strategic guidance for medical admissions.</li>
-                <li><strong>Admission Contingency:</strong> All admissions are strictly subject to the candidate's NEET merit rank, institutional eligibility criteria, seat availability, and the official regulations of the respective counselling authorities.</li>
-                <li><strong>No Guarantee Clause:</strong> While we provide expert strategic support, we do not guarantee seat allotment or admission into any specific medical institution or course.</li>
-                <li><strong>User Responsibility:</strong> Clients are required to provide accurate, authentic, and up-to-date documentation and scores for effective counselling.</li>
-                <li><strong>Informational Purposes:</strong> The content provided on this website is for informational and reference purposes only.</li>
-                <li><strong>Intellectual Property:</strong> AyuMed reserves all rights to the content, design, and intellectual property displayed on this site.</li>
-            </ul>
-
-                <!-- Legal Entity & Compliance Section (For Razorpay) -->
-                <hr style="border: 0; border-top: 1px solid rgba(13, 27, 42, 0.1); margin: 20px 0;">
-                <div style="font-size: 0.85rem; line-height: 1.5; color: var(--navy-600); margin-top: 15px;">
-                    <p><strong>Legal Entity & Jurisdiction:</strong> This website and AyuMed Counselling services are operated by a student-led team primarily by Aaditya Patel & Mahesh Wankhade.</p>
-                    <p><strong>Operating Address:</strong> AyuMed Counselling Group, Near Prabhat Chouraha, New Ashoka Garden, Bhopal, Madhya Pradesh - 462011</p>
-                    <p><strong>Official Support Email:</strong> ayumedcounselling@gmail.com</p>
-                </div>
-
-        </div>
-    </div>
-
-    <!-- Refund & Cancellation Policy Modal -->
-    <div class="modal-overlay" id="refundModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="closeModal('refundModal')">✖</button>
-            <h2 class="modal-title">Refund & Cancellation Policy</h2>
-            <ul class="legal-list">
-                <li><strong>Consultation Fees:</strong> All fees paid for AyuMed Premium Counselling services are strictly non-refundable under any circumstances once the service has commenced or the payment is successfully processed.</li>
-                <li><strong>Cancellations:</strong> Clients may choose to discontinue our advisory services at any time; however, no partial or full refunds will be issued for the unutilized portion of the consultation process.</li>
-                <li><strong>Seat Allotment:</strong> As outlined in our Terms & Conditions, AyuMed provides strategic guidance but does not guarantee seat allotment. Failure to secure a medical seat does not constitute grounds for a refund.</li>
-                <li><strong>Technical Failures:</strong> In the rare event of a duplicate transaction or a technical payment gateway failure where funds are deducted multiple times, the excess amount will be refunded to the original payment method within 5-7 business days.</li>
-            </ul>
-        </div>
-    </div>
 
         <div class="modal-overlay" id="bookingModal">
         <div class="modal-content" style="max-width: 500px;">
