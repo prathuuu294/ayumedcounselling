@@ -3088,6 +3088,33 @@ html, body {
             }
         });
 
+        // Premium Magnetic Button Effect
+        const magneticButtons = document.querySelectorAll('.btn-glowing-hero, .dock-center-btn');
+
+        magneticButtons.forEach(btn => {
+            btn.addEventListener('mousemove', function(e) {
+                const position = btn.getBoundingClientRect();
+                
+                // Calculate mouse position relative to the center of the button
+                const x = e.clientX - position.left - position.width / 2;
+                const y = e.clientY - position.top - position.height / 2;
+                
+                // Move the button slightly towards the cursor (0.3 controls the magnet strength)
+                btn.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px)`;
+                
+                // Remove standard transition so it perfectly tracks the mouse without lagging
+                btn.style.transition = 'none'; 
+            });
+
+            btn.addEventListener('mouseleave', function(e) {
+                // Snap back to absolute center when the mouse leaves
+                btn.style.transform = 'translate(0px, 0px)';
+                
+                // Restore your original smooth transition for the snap-back effect
+                btn.style.transition = 'all 0.3s ease'; 
+            });
+        });
+
 </script>
 </body>
 </html>
