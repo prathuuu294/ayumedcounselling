@@ -3075,6 +3075,19 @@ html, body {
 
     // Run every 5 seconds
     setInterval(autoSlide, 5000);
+
+        // Premium Parallax Engine for Hero Section
+        window.addEventListener('scroll', function() {
+            const heroSection = document.querySelector('.hero');
+            if (heroSection) {
+                // Get the current scroll distance in pixels
+                let scrollPosition = window.scrollY;
+                
+                // Shift the background position dynamically (0.4 controls the speed/depth)
+                heroSection.style.backgroundPosition = `center ${scrollPosition * 0.4}px`;
+            }
+        });
+
 </script>
 </body>
 </html>
