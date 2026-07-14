@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AyuMed | AI Prediction Portal</title>
     
-    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -24,14 +22,14 @@
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: #C5A880;
+            background: #D4AF37; /* Updated to Vibrant Brand Yellow */
             border: 2px solid #0D1B2A;
             cursor: pointer;
             transition: all 0.15s ease-in-out;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         input[type="range"]::-webkit-slider-thumb:hover {
-            background: #b5966c;
+            background: #B8952B; /* Darker vibrant yellow for hover */
             transform: scale(1.1);
         }
         
@@ -55,15 +53,13 @@
 
     <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden border-t-4 border-t-[#0D1B2A]">
         
-        <!-- Header -->
-        <div class="bg-[#0D1B2A] p-6 text-center border-b-4 border-[#C5A880]">
-            <h1 class="text-3xl font-bold tracking-tight text-[#C5A880] m-0">AyuMed AI Predictor</h1>
+        <div class="bg-[#0D1B2A] p-6 text-center border-b-4 border-[#D4AF37]">
+            <h1 class="text-3xl font-bold tracking-tight text-[#D4AF37] m-0">AyuMed AI Predictor</h1>
             <p class="text-white text-sm mt-2 font-light">Data-Driven Admission Probabilities & Rank Analytics</p>
         </div>
 
-        <!-- Tab Navigation -->
         <div class="flex border-b border-slate-200 bg-slate-50">
-            <button id="tabCollege" onclick="switchTab('college')" class="flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#C5A880] bg-[#0D1B2A] transition-colors focus:outline-none">
+            <button id="tabCollege" onclick="switchTab('college')" class="flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#D4AF37] bg-[#0D1B2A] transition-colors focus:outline-none">
                 <i class="fas fa-university mr-2"></i> College Predictor
             </button>
             <button id="tabRank" onclick="switchTab('rank')" class="flex-1 py-4 text-sm font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-200 transition-colors focus:outline-none">
@@ -71,23 +67,20 @@
             </button>
         </div>
 
-        <!-- ========================================== -->
-        <!-- SECTION 1: COLLEGE PREDICTOR (Default Active) -->
-        <!-- ========================================== -->
         <div id="sectionCollege" class="p-6 sm:p-8 space-y-6 block fade-in">
             <h2 class="text-2xl text-center mb-6 serif-font">Find Your Probable Colleges</h2>
             
             <div class="space-y-5">
                 <div>
                     <label class="block font-bold mb-2 text-sm uppercase tracking-wide text-slate-600">Your Expected NEET Score (out of 720)</label>
-                    <input type="number" id="marks" placeholder="e.g. 580" required 
-                           class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#C5A880] focus:ring-1 focus:ring-[#C5A880] transition-colors font-bold text-lg">
+                    <input type="number" id="marks" placeholder="e.g. 600" required 
+                           class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] transition-colors font-bold text-lg">
                 </div>
                 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     <div>
                         <label class="block font-bold mb-2 text-sm uppercase tracking-wide text-slate-600">Target Course</label>
-                        <select id="course" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#C5A880] transition-colors bg-white">
+                        <select id="course" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white">
                             <option value="MBBS">MBBS</option>
                             <option value="BDS">BDS</option>
                             <option value="BAMS">BAMS</option>
@@ -97,7 +90,7 @@
                     
                     <div>
                         <label class="block font-bold mb-2 text-sm uppercase tracking-wide text-slate-600">Target State</label>
-                        <select id="state" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#C5A880] transition-colors bg-white">
+                        <select id="state" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white">
                             <option value="Maharashtra">Maharashtra</option>
                             <option value="Madhya Pradesh">Madhya Pradesh</option>
                         </select>
@@ -105,38 +98,33 @@
                 </div>
             </div>
 
-            <button onclick="runPredictor()" id="predictBtn" class="w-full bg-[#0D1B2A] text-[#C5A880] py-4 rounded-lg font-bold text-lg uppercase tracking-wider hover:bg-[#1a2e45] transition-colors shadow-md mt-4">
+            <button onclick="runPredictor()" id="predictBtn" class="w-full bg-[#0D1B2A] text-[#D4AF37] py-4 rounded-lg font-bold text-lg uppercase tracking-wider hover:bg-[#1a2e45] transition-colors shadow-md mt-4">
                 <i class="fas fa-magic mr-2"></i> Generate Prediction
             </button>
 
-            <!-- Results Container (Hidden by default) -->
             <div id="results" class="mt-8 hidden border-t border-slate-100 pt-8">
                 <h3 class="text-xl mb-6 serif-font text-center font-bold">Top Predicted Results</h3>
                 <div id="result-list" class="space-y-4"></div>
                 
-                <div class="bg-[#C5A880]/10 p-6 text-center rounded-xl mt-8 border border-[#C5A880]/40 border-dashed">
+                <div class="bg-[#D4AF37]/10 p-6 text-center rounded-xl mt-8 border border-[#D4AF37]/40 border-dashed">
                     <h4 class="text-lg font-bold mb-2 text-[#0D1B2A]">Want the full, customized choice-filling list?</h4>
                     <p class="text-sm text-slate-600 mb-5">Our AI is a great starting point, but expert human counselling secures the seat.</p>
-                    <a href="login.html" class="inline-block bg-[#C5A880] text-[#0D1B2A] px-6 py-3 rounded-md font-bold uppercase tracking-wider text-sm hover:bg-[#b5966c] transition-colors shadow-sm">
+                    <a href="login.html" class="inline-block bg-[#D4AF37] text-[#0D1B2A] px-6 py-3 rounded-md font-bold uppercase tracking-wider text-sm hover:bg-[#B8952B] transition-colors shadow-sm">
                         Register for Premium Counselling
                     </a>
                 </div>
             </div>
         </div>
 
-        <!-- ========================================== -->
-        <!-- SECTION 2: AI RANK PREDICTOR (Hidden by Default) -->
-        <!-- ========================================== -->
         <div id="sectionRank" class="p-6 sm:p-8 space-y-8 hidden fade-in">
             <h2 class="text-2xl text-center mb-2 serif-font">Expected Rank Interpolation Engine</h2>
             
-            <!-- Input Section -->
             <div class="space-y-4 pt-4">
                 <div class="flex justify-between items-center">
                     <label for="scoreNumber" class="text-[#0D1B2A] font-bold text-lg">Test Score Generator:</label>
                     <div class="relative rounded-md shadow-sm">
                         <input type="number" id="scoreNumber" min="0" max="720" value="600" 
-                            class="w-28 text-center font-black text-xl text-[#0D1B2A] border-2 border-slate-200 rounded-lg p-2 focus:outline-none focus:border-[#C5A880] transition-colors">
+                            class="w-28 text-center font-black text-xl text-[#0D1B2A] border-2 border-slate-200 rounded-lg p-2 focus:outline-none focus:border-[#D4AF37] transition-colors">
                         <span class="absolute right-3 top-3 text-xs text-slate-400 font-semibold">/720</span>
                     </div>
                 </div>
@@ -147,7 +135,6 @@
 
             <hr class="border-slate-100">
 
-            <!-- Metrics Matrix Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-[#0D1B2A]/5 rounded-xl p-4 border border-[#0D1B2A]/10 text-center transition-all">
                     <span class="text-xs font-bold uppercase tracking-wider text-[#0D1B2A] block mb-1">Expected 2026 Rank</span>
@@ -165,7 +152,6 @@
                 </div>
             </div>
 
-            <!-- Dynamic Admission Prospects Badge Card -->
             <div id="prospectCard" class="rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300">
                 <div class="space-y-1">
                     <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Admission Prospects</span>
@@ -178,7 +164,6 @@
             </div>
         </div>
         
-        <!-- Footer Info -->
         <div class="bg-slate-50 px-6 py-4 text-center border-t border-slate-100">
             <p class="text-xs text-slate-500">
                 Disclaimer: Projections are indicative predictions modeled dynamically on historical metrics. Powered by <strong>AyuMed Premium Counselling Services</strong>.
@@ -186,7 +171,6 @@
         </div>
     </div>
 
-    <!-- Application Scripts -->
     <script>
         // ==========================================
         // TAB SWITCHING LOGIC
@@ -197,8 +181,8 @@
             const sectionRank = document.getElementById('sectionRank');
             const sectionCollege = document.getElementById('sectionCollege');
 
-            // Tailwind classes for active and inactive states
-            const activeClasses = "flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#C5A880] bg-[#0D1B2A] transition-colors focus:outline-none";
+            // Tailwind classes for active and inactive states (Updated to vibrant yellow)
+            const activeClasses = "flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#D4AF37] bg-[#0D1B2A] transition-colors focus:outline-none";
             const inactiveClasses = "flex-1 py-4 text-sm font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-200 transition-colors focus:outline-none";
 
             if (tabName === 'college') {
@@ -320,7 +304,7 @@
 
             let tier = {};
             if (score >= 680) {
-                tier = { title: "Elite National Tier AIIMS", desc: "Assured conversion under All India Quota.", badge: "Tier 1 Govt", styles: "bg-amber-50/70 border-amber-200 text-amber-900", badgeStyles: "bg-[#C5A880] text-[#0D1B2A]" };
+                tier = { title: "Elite National Tier AIIMS", desc: "Assured conversion under All India Quota.", badge: "Tier 1 Govt", styles: "bg-amber-50/70 border-amber-200 text-amber-900", badgeStyles: "bg-[#D4AF37] text-[#0D1B2A]" };
             } else if (score >= 610) {
                 tier = { title: "Premier Government MBBS", desc: "Highly safe zone for core government MBBS.", badge: "Govt MBBS", styles: "bg-emerald-50/60 border-emerald-200 text-emerald-900", badgeStyles: "bg-[#04AF37] text-white" };
             } else if (score >= 560) {
