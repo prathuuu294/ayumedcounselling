@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AyuMed | AI Prediction Portal</title>
     
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
@@ -53,11 +55,13 @@
 
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden border-t-4 border-t-[#0D1B2A]">
         
+        <!-- Header -->
         <div class="bg-[#0D1B2A] p-6 text-center border-b-4 border-[#D4AF37]">
             <h1 class="text-3xl font-bold tracking-tight text-[#D4AF37] m-0">AyuMed AI Predictor</h1>
             <p class="text-white text-sm mt-2 font-light">Data-Driven Admission Probabilities & Rank Analytics</p>
         </div>
 
+        <!-- Tab Navigation -->
         <div class="flex border-b border-slate-200 bg-slate-50">
             <button id="tabCollege" onclick="switchTab('college')" class="flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#D4AF37] bg-[#0D1B2A] transition-colors focus:outline-none">
                 <i class="fas fa-university mr-2"></i> College Predictor
@@ -67,6 +71,9 @@
             </button>
         </div>
 
+        <!-- ========================================== -->
+        <!-- SECTION 1: COLLEGE PREDICTOR (Default Active) -->
+        <!-- ========================================== -->
         <div id="sectionCollege" class="p-6 sm:p-8 space-y-6 block fade-in">
             <h2 class="text-2xl text-center mb-6 serif-font">Find Your Probable Colleges</h2>
             
@@ -101,6 +108,7 @@
                 <i class="fas fa-magic mr-2"></i> Generate Prediction
             </button>
 
+            <!-- Results Container -->
             <div id="results" class="mt-8 hidden border-t border-slate-100 pt-8">
                 <h3 class="text-xl mb-6 serif-font text-center font-bold">Top Predicted Results</h3>
                 <div id="result-list" class="space-y-4"></div>
@@ -115,13 +123,18 @@
             </div>
         </div>
 
+        <!-- ========================================== -->
+        <!-- SECTION 2: AI RANK & DIFFERENTIAL PREDICTOR -->
+        <!-- ========================================== -->
         <div id="sectionRank" class="p-6 sm:p-8 space-y-8 hidden fade-in">
             <div class="text-center">
                 <h2 class="text-2xl mb-2 serif-font font-bold">Unified Rank & Category Analyzer</h2>
-                <p class="text-sm text-slate-500">Calculate your expected rank and analyze seat gaps across categories instantly.</p>
+                <p class="text-sm text-slate-500">Calculate your expected rank and analyze seat gaps across categories and states instantly.</p>
             </div>
             
+            <!-- Unified Inputs -->
             <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                <!-- Score Slider -->
                 <div class="space-y-4">
                     <div class="flex justify-between items-center">
                         <label for="scoreSlider" class="text-[#0D1B2A] font-bold text-lg uppercase tracking-wide text-sm">Expected Test Score</label>
@@ -135,30 +148,43 @@
                         class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-[#0D1B2A] focus:outline-none">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-200">
+                <!-- Differential Parameters (3 Columns) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 pt-4 border-t border-slate-200">
                     <div>
-                        <label class="block font-bold mb-2 text-xs uppercase tracking-wide text-slate-600">Your Counseling Category</label>
+                        <label class="block font-bold mb-2 text-[11px] uppercase tracking-wide text-slate-600">Counseling Scope / State</label>
+                        <select id="counselingScope" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm">
+                            <option value="AIQ" selected>All India Quota (15%)</option>
+                            <option value="MH">Maharashtra State (85%)</option>
+                            <option value="MP">Madhya Pradesh State (85%)</option>
+                            <option value="UP">Uttar Pradesh State (85%)</option>
+                            <option value="RJ">Rajasthan State (85%)</option>
+                            <option value="KA">Karnataka State (85%)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-2 text-[11px] uppercase tracking-wide text-slate-600">Your Counseling Category</label>
                         <select id="userCategory" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm">
                             <option value="GEN" selected>General / Unreserved (UR)</option>
                             <option value="OBC">OBC-NCL</option>
-                            <option value="EWS">Economically Weaker Section (EWS)</option>
+                            <option value="EWS">EWS</option>
                             <option value="SC">Scheduled Caste (SC)</option>
                             <option value="ST">Scheduled Tribe (ST)</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block font-bold mb-2 text-xs uppercase tracking-wide text-slate-600">Target Institutional Tier</label>
+                        <label class="block font-bold mb-2 text-[11px] uppercase tracking-wide text-slate-600">Target Institutional Tier</label>
                         <select id="collegeTier" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm text-slate-800">
-                            <option value="top_aiims">Top Tier AIIMS (e.g., Delhi/Bhubaneswar)</option>
-                            <option value="premier_gmc">Premier State GMCs (e.g., KEM/MAMC)</option>
-                            <option value="mid_gmc" selected>Core State GMCs (MBBS)</option>
-                            <option value="top_gdc">Top Govt Dental Colleges (BDS)</option>
-                            <option value="peripheral_gmc">Peripheral/New State GMCs</option>
+                            <option value="top_aiims" id="aiimsOption">Top Tier AIIMS</option>
+                            <option value="premier_gmc">Premier GMCs (e.g., KEM/MGM)</option>
+                            <option value="mid_gmc" selected>Core GMCs (MBBS)</option>
+                            <option value="top_gdc">Top Govt Dental (BDS)</option>
+                            <option value="peripheral_gmc">Peripheral/New GMCs</option>
                         </select>
                     </div>
                 </div>
             </div>
 
+            <!-- Rank Metrics Matrix -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-[#0D1B2A]/5 rounded-xl p-4 border border-[#0D1B2A]/10 text-center shadow-sm">
                     <span class="text-[10px] font-bold uppercase tracking-wider text-[#0D1B2A] block mb-1">Expected 2026 Rank</span>
@@ -174,26 +200,30 @@
                 </div>
             </div>
 
+            <!-- Admission Prospects Badge Card -->
             <div id="prospectCard" class="rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300">
                 <div class="space-y-1">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">General AIQ Prospects</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">General Admission Prospects</span>
                     <h3 id="prospectTitle" class="text-lg font-bold text-slate-800">Calculating...</h3>
                     <p id="prospectDesc" class="text-sm text-slate-600">Adjust the score to see target options.</p>
                 </div>
                 <span id="prospectBadge" class="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm">—</span>
             </div>
 
+            <!-- Category Differential Matrix -->
             <div class="mt-8 border-t border-slate-200 pt-8">
                 <div class="flex justify-between items-end mb-4">
                     <h3 class="text-xl serif-font font-bold text-[#0D1B2A]">Category Differential Matrix</h3>
                     <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider hidden sm:block">Real-time Cushion/Gap</span>
                 </div>
                 <div id="matrixContainer" class="space-y-3">
-                    </div>
+                    <!-- Dynamic Rows Injected Here -->
+                </div>
             </div>
             
         </div>
         
+        <!-- Footer Info -->
         <div class="bg-[#0D1B2A] px-6 py-4 text-center">
             <p class="text-xs text-slate-400">
                 Disclaimer: Projections and cutoffs are indicative predictions modeled dynamically on historical metrics. Powered by <strong>AyuMed Premium Counselling</strong>.
@@ -201,6 +231,7 @@
         </div>
     </div>
 
+    <!-- Application Scripts -->
     <script>
         // ==========================================
         // TAB SWITCHING LOGIC
@@ -292,14 +323,47 @@
             { score: 400, rank: 300000 }, { score: 300, rank: 580000 }, { score: 0, rank: 2209000 }
         ];
 
-        // Differential Cutoff Database
-        const cutoffData = {
-            top_aiims: { GEN: 100, OBC: 350, EWS: 300, SC: 2500, ST: 4800 },
-            premier_gmc: { GEN: 1200, OBC: 2400, EWS: 2100, SC: 14000, ST: 26000 },
-            mid_gmc: { GEN: 14500, OBC: 17000, EWS: 16500, SC: 78000, ST: 98000 },
-            top_gdc: { GEN: 26000, OBC: 29500, EWS: 31000, SC: 115000, ST: 140000 },
-            peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 }
+        // Multi-State Differential Cutoff Database (Estimated Projections)
+        const cutoffDatabase = {
+            AIQ: {
+                top_aiims: { GEN: 100, OBC: 350, EWS: 300, SC: 2500, ST: 4800 },
+                premier_gmc: { GEN: 1200, OBC: 2400, EWS: 2100, SC: 14000, ST: 26000 },
+                mid_gmc: { GEN: 14500, OBC: 17000, EWS: 16500, SC: 78000, ST: 98000 },
+                top_gdc: { GEN: 26000, OBC: 29500, EWS: 31000, SC: 115000, ST: 140000 },
+                peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 }
+            },
+            MH: { // Maharashtra (85%)
+                premier_gmc: { GEN: 5000, OBC: 7000, EWS: 6000, SC: 40000, ST: 90000 },
+                mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 110000, ST: 250000 },
+                top_gdc: { GEN: 65000, OBC: 75000, EWS: 70000, SC: 160000, ST: 300000 },
+                peripheral_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 130000, ST: 280000 }
+            },
+            MP: { // Madhya Pradesh (85%)
+                premier_gmc: { GEN: 15000, OBC: 18000, EWS: 17000, SC: 85000, ST: 150000 },
+                mid_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 140000, ST: 300000 },
+                top_gdc: { GEN: 70000, OBC: 80000, EWS: 75000, SC: 180000, ST: 350000 },
+                peripheral_gmc: { GEN: 55000, OBC: 60000, EWS: 58000, SC: 160000, ST: 320000 }
+            },
+            UP: { // Uttar Pradesh (85%)
+                premier_gmc: { GEN: 3000, OBC: 4000, EWS: 3500, SC: 35000, ST: 80000 },
+                mid_gmc: { GEN: 20000, OBC: 22000, EWS: 21000, SC: 110000, ST: 200000 },
+                top_gdc: { GEN: 35000, OBC: 38000, EWS: 36000, SC: 140000, ST: 250000 },
+                peripheral_gmc: { GEN: 25000, OBC: 28000, EWS: 26000, SC: 130000, ST: 230000 }
+            },
+            RJ: { // Rajasthan (85%)
+                premier_gmc: { GEN: 2500, OBC: 3000, EWS: 2800, SC: 30000, ST: 40000 },
+                mid_gmc: { GEN: 15000, OBC: 16000, EWS: 15500, SC: 90000, ST: 120000 },
+                top_gdc: { GEN: 28000, OBC: 30000, EWS: 29000, SC: 110000, ST: 150000 },
+                peripheral_gmc: { GEN: 18000, OBC: 19000, EWS: 18500, SC: 100000, ST: 130000 }
+            },
+            KA: { // Karnataka (85%)
+                premier_gmc: { GEN: 6000, OBC: 8000, EWS: 7500, SC: 50000, ST: 80000 },
+                mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 120000, ST: 180000 },
+                top_gdc: { GEN: 60000, OBC: 65000, EWS: 62000, SC: 160000, ST: 220000 },
+                peripheral_gmc: { GEN: 48000, OBC: 52000, EWS: 50000, SC: 140000, ST: 200000 }
+            }
         };
+
         const categoryNames = { GEN: "General (UR)", OBC: "OBC-NCL Group", EWS: "EWS Category", SC: "Scheduled Caste (SC)", ST: "Scheduled Tribe (ST)" };
 
         function interpolateRank(score, dataset) {
@@ -318,17 +382,32 @@
         // Core UI Updaters
         const scoreSlider = document.getElementById('scoreSlider');
         const scoreNumber = document.getElementById('scoreNumber');
+        const scopeSelect = document.getElementById('counselingScope');
         const catSelect = document.getElementById('userCategory');
         const tierSelect = document.getElementById('collegeTier');
+        const aiimsOption = document.getElementById('aiimsOption');
         const matrixContainer = document.getElementById('matrixContainer');
         
+        // Handle dropdown logic for State vs AIQ
+        function updateScopeOptions() {
+            if (scopeSelect.value === 'AIQ') {
+                aiimsOption.style.display = 'block';
+            } else {
+                aiimsOption.style.display = 'none';
+                if (tierSelect.value === 'top_aiims') {
+                    tierSelect.value = 'premier_gmc'; // Fallback if AIIMS was selected
+                }
+            }
+        }
+
         // 1. Updates Rank & High-Level Prospects
         function updatePredictions(score) {
             const r2026 = interpolateRank(score, data2026);
             const r2025 = interpolateRank(score, data2025);
             const delta = r2025 - r2026;
 
-            document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');            document.getElementById('rank2025').textContent = r2025.toLocaleString('en-IN');
+            document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');
+            document.getElementById('rank2025').textContent = r2025.toLocaleString('en-IN');
             
             const deltaEl = document.getElementById('rankDelta');
             if (delta > 0) {
@@ -362,15 +441,19 @@
             pBadge.textContent = tier.badge;
             pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
 
-            // Trigger Matrix with newly calculated rank
+            // Ensure dropdown validity before running matrix
+            updateScopeOptions();
             runDifferentialMatrix(r2026);
         }
 
         // 2. Builds Differential Matrix Rows
         function runDifferentialMatrix(calculatedRank) {
+            const currentScope = scopeSelect.value;
             const selectedTier = tierSelect.value;
             const userCat = catSelect.value;
-            const tierCutoffs = cutoffData[selectedTier];
+            
+            // Pull data specifically for the selected state/AIQ and selected tier
+            const tierCutoffs = cutoffDatabase[currentScope][selectedTier];
             
             matrixContainer.innerHTML = '';
 
@@ -435,6 +518,7 @@
             updatePredictions(val);
         });
 
+        scopeSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
         catSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
         tierSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
 
