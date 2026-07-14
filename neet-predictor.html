@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEET 2026 Rank & College Predictor | AyuMed</title>
+    <!-- Tailwind CSS for modern, clean UI component styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom input range slider styling for a premium feel */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #0ea5e9;
+            cursor: pointer;
+            transition: background 0.15s ease-in-out;
+        }
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #0284c7;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans antialiased p-4 sm:p-8">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-sky-600 to-teal-600 p-6 text-white text-center">
+            <h2 class="text-2xl font-bold tracking-tight">NEET 2026 Rank & Admission Predictor</h2>
+            <p class="text-sky-100 text-sm mt-1">Data-backed analysis accounting for the 22,05,035 appeared candidates</p>
+        </div>
+
+        <!-- Main Body -->
+        <div class="p-6 sm:p-8 space-y-8">
+            
+            <!-- Input Section -->
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <label for="scoreNumber" class="text-slate-700 font-semibold text-lg">Enter Your NEET Score:</label>
+                    <div class="relative rounded-md shadow-sm">
+                        <input type="number" id="scoreNumber" min="0" max="720" value="600" 
+                            class="w-28 text-center font-bold text-xl text-sky-600 border-2 border-slate-200 rounded-lg p-2 focus:outline-none focus:border-sky-500 transition-colors">
+                        <span class="absolute right-3 top-3 text-xs text-slate-400 font-semibold">/720</span>
+                    </div>
+                </div>
+                
+                <input type="range" id="scoreSlider" min="0" max="720" value="600" 
+                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-sky-600 focus:outline-none">
+            </div>
+
+            <hr class="border-slate-100">
+
+            <!-- Metrics Matrix Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <!-- 2026 Projected Rank -->
+                <div class="bg-sky-50/60 rounded-xl p-4 border border-sky-100 text-center transition-all">
+                    <span class="text-xs font-bold uppercase tracking-wider text-sky-600 block mb-1">Expected 2026 Rank</span>
+                    <span id="rank2026" class="text-3xl font-black text-slate-800">—</span>
+                </div>
+
+                <!-- 2025 Historical Rank -->
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200/60 text-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">2025 Actual Rank</span>
+                    <span id="rank2025" class="text-2xl font-bold text-slate-600">—</span>
+                </div>
+
+                <!-- Compression Delta -->
+                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 text-center">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 block mb-1">Rank Relief Shift</span>
+                    <span id="rankDelta" class="text-2xl font-bold text-emerald-700">—</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Admission Prospects Badge Card -->
+            <div id="prospectCard" class="rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300">
+                <div class="space-y-1">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Admission Prospects</span>
+                    <h3 id="prospectTitle" class="text-xl font-bold text-slate-800">Calculating...</h3>
+                    <p id="prospectDesc" class="text-sm text-slate-600">Adjust the score to see target options.</p>
+                </div>
+                <span id="prospectBadge" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap shadow-sm">
+                    —
+                </span>
+            </div>
+            
+        </div>
+        
+        <!-- Footer Info -->
+        <div class="bg-slate-50 px-6 py-4 text-center border-t border-slate-100">
+            <p class="text-xs text-slate-500">
+                Disclaimer: Projections are indicative predictions modeled dynamically on the 2026 paper metric trends and actual candidate density. Powered by <strong>AyuMed</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Engine Logic -->
+    <script>
+        // High-fidelity anchor points for mapping Score vs Rank paths
+        const data2026 = [
+            { score: 720, rank: 1 },
+            { score: 700, rank: 50 },
+            { score: 650, rank: 800 },
+            { score: 600, rank: 6500 },
+            { score: 550, rank: 22000 },
+            { score: 500, rank: 87000 },
+            { score: 400, rank: 250000 },
+            { score: 300, rank: 500000 },
+            { score: 0, rank: 2205035 }
+        ];
+
+        const data2025 = [
+            { score: 720, rank: 1 },
+            { score: 700, rank: 1500 },
+            { score: 650, rank: 10000 },
+            { score: 600, rank: 23000 },
+            { score: 550, rank: 55000 },
+            { score: 500, rank: 120000 },
+            { score: 400, rank: 300000 },
+            { score: 300, rank: 580000 },
+            { score: 0, rank: 2209000 }
+        ];
+
+        // Linear interpolation calculation engine
+        function interpolateRank(score, dataset) {
+            if (score >= 720) return 1;
+            if (score <= 0) return dataset[dataset.length - 1].rank;
+
+            for (let i = 0; i < dataset.length - 1; i++) {
+                if (score <= dataset[i].score && score >= dataset[i+1].score) {
+                    const x0 = dataset[i].score;
+                    const x1 = dataset[i+1].score;
+                    const y0 = dataset[i].rank;
+                    const y1 = dataset[i+1].rank;
+                    
+                    // Linear formula calculation
+                    const rank = y0 + ((score - x0) * (y1 - y0)) / (x1 - x0);
+                    return Math.round(rank);
+                }
+            }
+            return dataset[dataset.length - 1].rank;
+        }
+
+        // DOM elements mapping
+        const scoreSlider = document.getElementById('scoreSlider');
+        const scoreNumber = document.getElementById('scoreNumber');
+        const rank2026El = document.getElementById('rank2026');
+        const rank2025El = document.getElementById('rank2025');
+        const rankDeltaEl = document.getElementById('rankDelta');
+        
+        const prospectCard = document.getElementById('prospectCard');
+        const prospectTitle = document.getElementById('prospectTitle');
+        const prospectDesc = document.getElementById('prospectDesc');
+        const prospectBadge = document.getElementById('prospectBadge');
+
+        // Dynamic update runner
+        function updatePredictions(score) {
+            const r2026 = interpolateRank(score, data2026);
+            const r2025 = interpolateRank(score, data2025);
+            const delta = r2025 - r2026;
+
+            // Render numeric metrics
+            rank2026El.textContent = r2026.toLocaleString('en-IN');
+            rank2025El.textContent = r2025.toLocaleString('en-IN');
+            
+            if (delta > 0) {
+                rankDeltaEl.textContent = `+${delta.toLocaleString('en-IN')}`;
+                rankDeltaEl.className = "text-2xl font-bold text-emerald-700";
+            } else {
+                rankDeltaEl.textContent = delta.toLocaleString('en-IN');
+                rankDeltaEl.className = "text-2xl font-bold text-slate-600";
+            }
+
+            // Admission criteria evaluation matrix
+            let tier = {};
+            if (score >= 680) {
+                tier = {
+                    title: "Elite National Tier AIIMS / Top GMCs",
+                    desc: "Assured conversion under All India Quota (AIQ) for premium central colleges.",
+                    badge: "Tier 1 Govt",
+                    styles: "bg-amber-50 border-amber-200 text-amber-800",
+                    badgeStyles: "bg-amber-600 text-white"
+                };
+            } else if (score >= 610) {
+                tier = {
+                    title: "State/AIQ Premier Government MBBS",
+                    desc: "Highly safe zone for securing core institutional government MBBS allocations.",
+                    badge: "Govt MBBS",
+                    styles: "bg-sky-50 border-sky-200 text-sky-800",
+                    badgeStyles: "bg-sky-600 text-white"
+                };
+            } else if (score >= 560) {
+                tier = {
+                    title: "Borderline Government / Semi-Govt MBBS",
+                    desc: "Strong state quota matrix dependency. Excellent prospects for top institutional fields.",
+                    badge: "State Pool",
+                    styles: "bg-teal-50 border-teal-200 text-teal-800",
+                    badgeStyles: "bg-teal-600 text-white"
+                };
+            } else if (score >= 480) {
+                tier = {
+                    title: "Premium Private MBBS / Premium Govt BDS",
+                    desc: "Optimal scoring tier for premium dental tracks (BDS) or subsidized private medical structures.",
+                    badge: "BDS / Pvt MBBS",
+                    styles: "bg-indigo-50 border-indigo-200 text-indigo-800",
+                    badgeStyles: "bg-indigo-600 text-white"
+                };
+            } else if (score >= 150) {
+                tier = {
+                    title: "Private Dental / Qualified AYUSH tracks",
+                    desc: "Eligible for regular institutional counseling processes in private/deemed medical streams.",
+                    badge: "Qualified",
+                    styles: "bg-slate-50 border-slate-200 text-slate-700",
+                    badgeStyles: "bg-slate-600 text-white"
+                };
+            } else {
+                tier = {
+                    title: "Non-Qualified Zone",
+                    desc: "Score falls short of expected percentile cutoffs for institutional medical tracking fields.",
+                    badge: "Low Score",
+                    styles: "bg-rose-50 border-rose-200 text-rose-800",
+                    badgeStyles: "bg-rose-600 text-white"
+                };
+            }
+
+            // Apply calculated admission styles
+            prospectCard.className = `rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300 ${tier.styles}`;
+            prospectTitle.textContent = tier.title;
+            prospectDesc.textContent = tier.desc;
+            prospectBadge.textContent = tier.badge;
+            prospectBadge.className = `px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
+        }
+
+        // Bi-directional state listeners for matching inputs
+        scoreSlider.addEventListener('input', (e) => {
+            const val = parseInt(e.target.value);
+            scoreNumber.value = val;
+            updatePredictions(val);
+        });
+
+        scoreNumber.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            if (isNaN(val)) val = 0;
+            if (val > 720) { val = 720; scoreNumber.value = 720; }
+            if (val < 0) { val = 0; scoreNumber.value = 0; }
+            scoreSlider.value = val;
+            updatePredictions(val);
+        });
+
+        // Initialize execution on runtime loop
+        updatePredictions(parseInt(scoreSlider.value));
+    </script>
+</body>
+</html>
