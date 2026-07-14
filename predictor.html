@@ -15,25 +15,25 @@
         body { font-family: 'Montserrat', sans-serif; }
         h1, h2, h3, .serif-font { font-family: 'Playfair Display', serif; }
 
-        /* Custom input range slider styling for AyuMed's premium aesthetic */
+        /* Custom input range slider styling */
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: #D4AF37; /* Updated to Vibrant Brand Yellow */
+            background: #D4AF37;
             border: 2px solid #0D1B2A;
             cursor: pointer;
             transition: all 0.15s ease-in-out;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
         input[type="range"]::-webkit-slider-thumb:hover {
-            background: #B8952B; /* Darker vibrant yellow for hover */
+            background: #B8952B;
             transform: scale(1.1);
         }
         
-        /* Smooth fade transition for tab switching */
+        /* Smooth fade transition */
         .fade-in {
             animation: fadeIn 0.4s ease-in-out;
         }
@@ -42,7 +42,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Legacy styles required for the dynamically injected result cards */
+        /* Result Cards */
         .result-card { background: #fff; border-left: 5px solid; padding: 20px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; }
         .col-name { font-weight: 700; font-size: 1.1rem; color: #0D1B2A; margin-bottom: 5px; }
         .col-details { font-size: 0.85rem; color: #555; }
@@ -51,7 +51,7 @@
 </head>
 <body class="bg-[#F7F3E9] text-[#0D1B2A] antialiased p-4 sm:p-8">
 
-    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden border-t-4 border-t-[#0D1B2A]">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-2xl border border-slate-200/60 overflow-hidden border-t-4 border-t-[#0D1B2A]">
         
         <div class="bg-[#0D1B2A] p-6 text-center border-b-4 border-[#D4AF37]">
             <h1 class="text-3xl font-bold tracking-tight text-[#D4AF37] m-0">AyuMed AI Predictor</h1>
@@ -63,7 +63,7 @@
                 <i class="fas fa-university mr-2"></i> College Predictor
             </button>
             <button id="tabRank" onclick="switchTab('rank')" class="flex-1 py-4 text-sm font-bold uppercase tracking-wider text-slate-500 hover:bg-slate-200 transition-colors focus:outline-none">
-                <i class="fas fa-chart-line mr-2"></i> Rank Predictor
+                <i class="fas fa-chart-line mr-2"></i> Rank & Differential Analyzer
             </button>
         </div>
 
@@ -87,7 +87,6 @@
                             <option value="BHMS">BHMS</option>
                         </select>
                     </div>
-                    
                     <div>
                         <label class="block font-bold mb-2 text-sm uppercase tracking-wide text-slate-600">Target State</label>
                         <select id="state" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white">
@@ -117,56 +116,87 @@
         </div>
 
         <div id="sectionRank" class="p-6 sm:p-8 space-y-8 hidden fade-in">
-            <h2 class="text-2xl text-center mb-2 serif-font">Expected Rank Interpolation Engine</h2>
+            <div class="text-center">
+                <h2 class="text-2xl mb-2 serif-font font-bold">Unified Rank & Category Analyzer</h2>
+                <p class="text-sm text-slate-500">Calculate your expected rank and analyze seat gaps across categories instantly.</p>
+            </div>
             
-            <div class="space-y-4 pt-4">
-                <div class="flex justify-between items-center">
-                    <label for="scoreNumber" class="text-[#0D1B2A] font-bold text-lg">Test Score Generator:</label>
-                    <div class="relative rounded-md shadow-sm">
-                        <input type="number" id="scoreNumber" min="0" max="720" value="600" 
-                            class="w-28 text-center font-black text-xl text-[#0D1B2A] border-2 border-slate-200 rounded-lg p-2 focus:outline-none focus:border-[#D4AF37] transition-colors">
-                        <span class="absolute right-3 top-3 text-xs text-slate-400 font-semibold">/720</span>
+            <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-6">
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label for="scoreSlider" class="text-[#0D1B2A] font-bold text-lg uppercase tracking-wide text-sm">Expected Test Score</label>
+                        <div class="relative rounded-md shadow-sm w-28">
+                            <input type="number" id="scoreNumber" min="0" max="720" value="600" 
+                                class="w-full text-center font-black text-xl text-[#0D1B2A] border-2 border-slate-300 rounded-lg p-2 focus:outline-none focus:border-[#D4AF37] transition-colors bg-white">
+                            <span class="absolute right-2 top-3 text-xs text-slate-400 font-semibold">/720</span>
+                        </div>
+                    </div>
+                    <input type="range" id="scoreSlider" min="0" max="720" value="600" 
+                        class="w-full h-2 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-[#0D1B2A] focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-slate-200">
+                    <div>
+                        <label class="block font-bold mb-2 text-xs uppercase tracking-wide text-slate-600">Your Counseling Category</label>
+                        <select id="userCategory" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm">
+                            <option value="GEN" selected>General / Unreserved (UR)</option>
+                            <option value="OBC">OBC-NCL</option>
+                            <option value="EWS">Economically Weaker Section (EWS)</option>
+                            <option value="SC">Scheduled Caste (SC)</option>
+                            <option value="ST">Scheduled Tribe (ST)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-2 text-xs uppercase tracking-wide text-slate-600">Target Institutional Tier</label>
+                        <select id="collegeTier" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm text-slate-800">
+                            <option value="top_aiims">Top Tier AIIMS (e.g., Delhi/Bhubaneswar)</option>
+                            <option value="premier_gmc">Premier State GMCs (e.g., KEM/MAMC)</option>
+                            <option value="mid_gmc" selected>Core State GMCs (MBBS)</option>
+                            <option value="top_gdc">Top Govt Dental Colleges (BDS)</option>
+                            <option value="peripheral_gmc">Peripheral/New State GMCs</option>
+                        </select>
                     </div>
                 </div>
-                
-                <input type="range" id="scoreSlider" min="0" max="720" value="600" 
-                    class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0D1B2A] focus:outline-none">
             </div>
 
-            <hr class="border-slate-100">
-
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-[#0D1B2A]/5 rounded-xl p-4 border border-[#0D1B2A]/10 text-center transition-all">
-                    <span class="text-xs font-bold uppercase tracking-wider text-[#0D1B2A] block mb-1">Expected 2026 Rank</span>
+                <div class="bg-[#0D1B2A]/5 rounded-xl p-4 border border-[#0D1B2A]/10 text-center shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#0D1B2A] block mb-1">Expected 2026 Rank</span>
                     <span id="rank2026" class="text-3xl font-black text-[#0D1B2A]">—</span>
                 </div>
-
-                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 text-center">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-500 block mb-1">2025 Actual Rank</span>
+                <div class="bg-white rounded-xl p-4 border border-slate-200 text-center shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block mb-1">2025 Actual Rank</span>
                     <span id="rank2025" class="text-2xl font-bold text-slate-600">—</span>
                 </div>
-
-                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 text-center">
-                    <span class="text-xs font-bold uppercase tracking-wider text-[#04AF37] block mb-1">Rank Relief Shift</span>
+                <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-100 text-center shadow-sm">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#04AF37] block mb-1">Rank Relief Shift</span>
                     <span id="rankDelta" class="text-2xl font-bold text-emerald-700">—</span>
                 </div>
             </div>
 
             <div id="prospectCard" class="rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300">
                 <div class="space-y-1">
-                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 block">Admission Prospects</span>
-                    <h3 id="prospectTitle" class="text-xl font-bold text-slate-800">Calculating...</h3>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">General AIQ Prospects</span>
+                    <h3 id="prospectTitle" class="text-lg font-bold text-slate-800">Calculating...</h3>
                     <p id="prospectDesc" class="text-sm text-slate-600">Adjust the score to see target options.</p>
                 </div>
-                <span id="prospectBadge" class="px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap shadow-sm">
-                    —
-                </span>
+                <span id="prospectBadge" class="px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm">—</span>
             </div>
+
+            <div class="mt-8 border-t border-slate-200 pt-8">
+                <div class="flex justify-between items-end mb-4">
+                    <h3 class="text-xl serif-font font-bold text-[#0D1B2A]">Category Differential Matrix</h3>
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider hidden sm:block">Real-time Cushion/Gap</span>
+                </div>
+                <div id="matrixContainer" class="space-y-3">
+                    </div>
+            </div>
+            
         </div>
         
-        <div class="bg-slate-50 px-6 py-4 text-center border-t border-slate-100">
-            <p class="text-xs text-slate-500">
-                Disclaimer: Projections are indicative predictions modeled dynamically on historical metrics. Powered by <strong>AyuMed Premium Counselling Services</strong>.
+        <div class="bg-[#0D1B2A] px-6 py-4 text-center">
+            <p class="text-xs text-slate-400">
+                Disclaimer: Projections and cutoffs are indicative predictions modeled dynamically on historical metrics. Powered by <strong>AyuMed Premium Counselling</strong>.
             </p>
         </div>
     </div>
@@ -181,7 +211,6 @@
             const sectionRank = document.getElementById('sectionRank');
             const sectionCollege = document.getElementById('sectionCollege');
 
-            // Tailwind classes for active and inactive states (Updated to vibrant yellow)
             const activeClasses = "flex-1 py-4 text-sm font-bold uppercase tracking-wider text-[#D4AF37] bg-[#0D1B2A] transition-colors focus:outline-none";
             const inactiveClasses = "flex-1 py-4 text-sm font-bold uppercase tracking-wider text-slate-500 bg-slate-50 hover:bg-slate-200 transition-colors focus:outline-none";
 
@@ -210,7 +239,6 @@
             const resultsContainer = document.getElementById('results');
 
             if(!marks) { alert("Please enter your expected score."); return; }
-
             btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Analyzing Data...';
             
             try {
@@ -224,12 +252,10 @@
                 
                 if(data.status === "success") {
                     resultList.innerHTML = "";
-                    
                     if(data.predictions.length === 0) {
-                        resultList.innerHTML = `<p class="text-center text-rose-600 font-bold p-4 bg-rose-50 rounded-lg">No colleges found within this score range. Consider lowering your target or exploring management quota options.</p>`;
+                        resultList.innerHTML = `<p class="text-center text-rose-600 font-bold p-4 bg-rose-50 rounded-lg">No colleges found within this score range. Consider lowering your target.</p>`;
                     } else {
                         data.predictions.forEach(col => {
-                            // Injecting the raw HTML structure exactly as previously designed
                             resultList.innerHTML += `
                                 <div class="result-card" style="border-left-color: ${col.color};">
                                     <div>
@@ -242,20 +268,17 @@
                             `;
                         });
                     }
-                    
                     resultsContainer.style.display = 'block';
-                    // Scroll to results slightly
                     resultsContainer.scrollIntoView({ behavior: "smooth", block: "nearest" });
                 }
             } catch (error) {
-                alert("Error connecting to predictor engine. Please try again later.");
+                alert("Error connecting to predictor engine.");
             }
-            
             btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Prediction';
         }
 
         // ==========================================
-        // RANK PREDICTOR ENGINE LOGIC (Interactive)
+        // UNIFIED RANK & DIFFERENTIAL ENGINE
         // ==========================================
         const data2026 = [
             { score: 720, rank: 1 }, { score: 700, rank: 50 }, { score: 650, rank: 800 },
@@ -268,6 +291,16 @@
             { score: 600, rank: 23000 }, { score: 550, rank: 55000 }, { score: 500, rank: 120000 },
             { score: 400, rank: 300000 }, { score: 300, rank: 580000 }, { score: 0, rank: 2209000 }
         ];
+
+        // Differential Cutoff Database
+        const cutoffData = {
+            top_aiims: { GEN: 100, OBC: 350, EWS: 300, SC: 2500, ST: 4800 },
+            premier_gmc: { GEN: 1200, OBC: 2400, EWS: 2100, SC: 14000, ST: 26000 },
+            mid_gmc: { GEN: 14500, OBC: 17000, EWS: 16500, SC: 78000, ST: 98000 },
+            top_gdc: { GEN: 26000, OBC: 29500, EWS: 31000, SC: 115000, ST: 140000 },
+            peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 }
+        };
+        const categoryNames = { GEN: "General (UR)", OBC: "OBC-NCL Group", EWS: "EWS Category", SC: "Scheduled Caste (SC)", ST: "Scheduled Tribe (ST)" };
 
         function interpolateRank(score, dataset) {
             if (score >= 720) return 1;
@@ -282,16 +315,20 @@
             return dataset[dataset.length - 1].rank;
         }
 
+        // Core UI Updaters
         const scoreSlider = document.getElementById('scoreSlider');
         const scoreNumber = document.getElementById('scoreNumber');
+        const catSelect = document.getElementById('userCategory');
+        const tierSelect = document.getElementById('collegeTier');
+        const matrixContainer = document.getElementById('matrixContainer');
         
+        // 1. Updates Rank & High-Level Prospects
         function updatePredictions(score) {
             const r2026 = interpolateRank(score, data2026);
             const r2025 = interpolateRank(score, data2025);
             const delta = r2025 - r2026;
 
-            document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');
-            document.getElementById('rank2025').textContent = r2025.toLocaleString('en-IN');
+            document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');            document.getElementById('rank2025').textContent = r2025.toLocaleString('en-IN');
             
             const deltaEl = document.getElementById('rankDelta');
             if (delta > 0) {
@@ -323,9 +360,66 @@
             document.getElementById('prospectTitle').textContent = tier.title;
             document.getElementById('prospectDesc').textContent = tier.desc;
             pBadge.textContent = tier.badge;
-            pBadge.className = `px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
+            pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
+
+            // Trigger Matrix with newly calculated rank
+            runDifferentialMatrix(r2026);
         }
 
+        // 2. Builds Differential Matrix Rows
+        function runDifferentialMatrix(calculatedRank) {
+            const selectedTier = tierSelect.value;
+            const userCat = catSelect.value;
+            const tierCutoffs = cutoffData[selectedTier];
+            
+            matrixContainer.innerHTML = '';
+
+            Object.keys(tierCutoffs).forEach(cat => {
+                const cutoff = tierCutoffs[cat];
+                const differential = cutoff - calculatedRank; 
+                const isUserCat = (cat === userCat);
+                
+                let statusLabel = '';
+                let badgeClass = '';
+                // AyuMed Premium Highlighting for user's category
+                let borderHighlight = isUserCat ? 'border-l-4 border-l-[#0D1B2A] shadow-md bg-[#D4AF37]/10' : 'border-slate-200 bg-white';
+                
+                if (differential >= 0) {
+                    statusLabel = `Cushion: +${differential.toLocaleString('en-IN')}`;
+                    badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                } else {
+                    statusLabel = `Gap: ${Math.abs(differential).toLocaleString('en-IN')}`;
+                    badgeClass = 'bg-rose-50 text-rose-700 border-rose-200';
+                }
+
+                const row = document.createElement('div');
+                row.className = `p-4 border rounded-xl transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${borderHighlight}`;
+                
+                row.innerHTML = `
+                    <div class="space-y-1 flex-1 w-full">
+                        <div class="flex justify-between sm:justify-start items-center gap-3">
+                            <h4 class="font-bold text-slate-800 text-sm sm:text-base">${categoryNames[cat]}</h4>
+                            ${isUserCat ? '<span class="bg-[#0D1B2A] text-[#D4AF37] text-[10px] font-extrabold uppercase px-2 py-0.5 rounded tracking-wider shadow-sm">Your Cat</span>' : ''}
+                        </div>
+                        <div class="flex items-center gap-2 text-xs text-slate-500">
+                            <span>Projected Closing Cutoff Rank:</span>
+                            <span class="font-bold text-[#0D1B2A] text-sm">${cutoff.toLocaleString('en-IN')}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full sm:w-auto text-right flex sm:block items-center justify-between mt-2 sm:mt-0">
+                        <span class="text-xs text-slate-400 sm:hidden">Differential Status</span>
+                        <span class="px-4 py-2 border rounded-full text-xs font-bold whitespace-nowrap tracking-wide ${badgeClass}">
+                            ${statusLabel}
+                        </span>
+                    </div>
+                `;
+                
+                matrixContainer.appendChild(row);
+            });
+        }
+
+        // Event Listeners for unified interaction
         scoreSlider.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             scoreNumber.value = val;
@@ -341,7 +435,10 @@
             updatePredictions(val);
         });
 
-        // Initialize engine on load
+        catSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
+        tierSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
+
+        // Initial Boot
         updatePredictions(parseInt(scoreSlider.value));
     </script>
 </body>
