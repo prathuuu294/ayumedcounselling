@@ -409,7 +409,7 @@
             }
         }
 
-        // 1. Updates Rank & High-Level Prospects
+                // 1. Updates Rank & High-Level Prospects
         function updatePredictions(score) {
             const r2026 = interpolateRank(score, data2026);
             const r2025 = interpolateRank(score, data2025);
@@ -427,6 +427,13 @@
                 deltaEl.className = "text-2xl font-bold text-slate-600";
             }
 
+            // DYNAMIC QUALIFYING CUTOFFS BASED ON DECLARED 2026 RESULTS
+            const currentCat = document.getElementById('userCategory').value;
+            let qualifyingCutoff = 177; // Default to Reserved Cutoff (OBC/SC/ST)
+            if (currentCat === 'GEN' || currentCat === 'EWS') {
+                qualifyingCutoff = 213; // General / EWS Cutoff
+            }
+
             let tier = {};
             if (score >= 680) {
                 tier = { title: "Elite National Tier AIIMS", desc: "Assured conversion under All India Quota.", badge: "Tier 1 Govt", styles: "bg-amber-50/70 border-amber-200 text-amber-900", badgeStyles: "bg-[#D4AF37] text-[#0D1B2A]" };
@@ -435,11 +442,11 @@
             } else if (score >= 560) {
                 tier = { title: "Borderline Semi-Govt MBBS", desc: "Strong state quota matrix dependency.", badge: "State Pool", styles: "bg-teal-50/70 border-teal-200 text-teal-900", badgeStyles: "bg-teal-700 text-white" };
             } else if (score >= 480) {
-                tier = { title: "Premium Private MBBS / BDS", desc: "Optimal scoring tier for premium dental or private medical.", badge: "BDS / Pvt MBBS", styles: "bg-indigo-50/70 border-indigo-200 text-indigo-900", badgeStyles: "bg-indigo-800 text-white" };
-            } else if (score >= 150) {
-                tier = { title: "Qualified AYUSH / Pvt Dental", desc: "Eligible for regular counseling processes.", badge: "Qualified", styles: "bg-slate-50 border-slate-200 text-slate-700", badgeStyles: "bg-slate-700 text-white" };
+                tier = { title: "Premium Private MBBS / Govt BDS", desc: "Optimal scoring tier for premium dental or private medical.", badge: "BDS / Pvt MBBS", styles: "bg-indigo-50/70 border-indigo-200 text-indigo-900", badgeStyles: "bg-indigo-800 text-white" };
+            } else if (score >= qualifyingCutoff) {
+                tier = { title: "Qualified for AYUSH / Pvt Dental", desc: `Score meets the ${currentCat} official cutoff (${qualifyingCutoff}). Eligible for counseling.`, badge: "Qualified", styles: "bg-slate-50 border-slate-200 text-slate-700", badgeStyles: "bg-slate-700 text-white" };
             } else {
-                tier = { title: "Non-Qualified Zone", desc: "Score falls short of expected cutoffs.", badge: "Low Score", styles: "bg-rose-50 border-rose-200 text-rose-800", badgeStyles: "bg-rose-600 text-white" };
+                tier = { title: "Non-Qualified Zone", desc: `Score falls below the official 2026 qualifying cutoff of ${qualifyingCutoff} for ${currentCat}. Not eligible for counseling.`, badge: "Not Eligible", styles: "bg-rose-50 border-rose-200 text-rose-800", badgeStyles: "bg-rose-600 text-white" };
             }
 
             const pCard = document.getElementById('prospectCard');
