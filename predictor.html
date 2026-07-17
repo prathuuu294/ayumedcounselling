@@ -174,11 +174,19 @@
                     <div>
                         <label class="block font-bold mb-2 text-[11px] uppercase tracking-wide text-slate-600">Target Institutional Tier</label>
                         <select id="collegeTier" class="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37] transition-colors bg-white font-semibold text-sm text-slate-800">
+                            <!-- Government Tracks -->
                             <option value="top_aiims" id="aiimsOption">Top Tier AIIMS</option>
-                            <option value="premier_gmc">Premier GMCs (e.g., KEM/MGM)</option>
+                            <option value="premier_gmc">Premier GMCs (e.g., KEM/MAMC)</option>
                             <option value="mid_gmc" selected>Core GMCs (MBBS)</option>
-                            <option value="top_gdc">Top Govt Dental (BDS)</option>
                             <option value="peripheral_gmc">Peripheral/New GMCs</option>
+                            <option value="top_gdc">Top Govt Dental (BDS)</option>
+                            <option value="govt_bams">Government BAMS</option>
+                            <option value="govt_bhms">Government BHMS</option>
+                            <!-- Private Tracks -->
+                            <option value="pvt_mbbs">Private Medical (MBBS)</option>
+                            <option value="pvt_bds">Private Dental (BDS)</option>
+                            <option value="pvt_bams">Private Ayurvedic (BAMS)</option>
+                            <option value="pvt_bhms">Private Homoeopathic (BHMS)</option>
                         </select>
                     </div>
                 </div>
@@ -200,10 +208,10 @@
                 </div>
             </div>
 
-            <!-- Admission Prospects Badge Card -->
+            <!-- Dynamic Admission Prospects Badge Card -->
             <div id="prospectCard" class="rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300">
                 <div class="space-y-1">
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">General Admission Prospects</span>
+                    <span id="prospectScopeLabel" class="text-[10px] font-bold uppercase tracking-wider text-slate-500 block">General Admission Prospects</span>
                     <h3 id="prospectTitle" class="text-lg font-bold text-slate-800">Calculating...</h3>
                     <p id="prospectDesc" class="text-sm text-slate-600">Adjust the score to see target options.</p>
                 </div>
@@ -308,7 +316,7 @@
             btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Prediction';
         }
 
-                        // ==========================================
+        // ==========================================
         // UNIFIED RANK & DIFFERENTIAL ENGINE
         // ==========================================
         
@@ -329,60 +337,103 @@
         // OFFICIAL NTA NEET 2025 HISTORICAL DATA
         const data2025 = [
             { score: 720, rank: 1 },
-            { score: 686, rank: 1 },     // 2025 Topper Score
-            { score: 650, rank: 77 },    
-            { score: 600, rank: 1386 },  
-            { score: 550, rank: 12860 }, 
-            { score: 500, rank: 55000 }, 
-            { score: 484, rank: 72000 }, // Calibrated for strict accuracy
-            { score: 400, rank: 210000 }, 
-            { score: 300, rank: 500000 }, 
-            { score: 0, rank: 2209318 }  // Total 2025 Candidates
+            { score: 686, rank: 1 },
+            { score: 650, rank: 77 },
+            { score: 600, rank: 1386 },
+            { score: 550, rank: 12860 },
+            { score: 500, rank: 55000 },
+            { score: 484, rank: 72000 },
+            { score: 400, rank: 210000 },
+            { score: 300, rank: 500000 },
+            { score: 0, rank: 2209318 }
         ];
 
-
-        // Multi-State Differential Cutoff Database (Estimated Projections)
+        // Comprehensive All-State & Multi-Course Differential Cutoff Database
         const cutoffDatabase = {
             AIQ: {
                 top_aiims: { GEN: 100, OBC: 350, EWS: 300, SC: 2500, ST: 4800 },
                 premier_gmc: { GEN: 1200, OBC: 2400, EWS: 2100, SC: 14000, ST: 26000 },
                 mid_gmc: { GEN: 14500, OBC: 17000, EWS: 16500, SC: 78000, ST: 98000 },
+                peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 },
                 top_gdc: { GEN: 26000, OBC: 29500, EWS: 31000, SC: 115000, ST: 140000 },
-                peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 }
+                govt_bams: { GEN: 60000, OBC: 68000, EWS: 65000, SC: 180000, ST: 220000 },
+                govt_bhms: { GEN: 95000, OBC: 105000, EWS: 102000, SC: 240000, ST: 280000 },
+                pvt_mbbs: { GEN: 450000, OBC: 450000, EWS: 450000, SC: 600000, ST: 650000 },
+                pvt_bds: { GEN: 700000, OBC: 750000, EWS: 720000, SC: 850000, ST: 900000 },
+                pvt_bams: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 700000, ST: 750000 },
+                pvt_bhms: { GEN: 800000, OBC: 850000, EWS: 820000, SC: 950000, ST: 100000 }
             },
-            MH: { // Maharashtra (85%)
+            MH: {
                 premier_gmc: { GEN: 5000, OBC: 7000, EWS: 6000, SC: 40000, ST: 90000 },
                 mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 110000, ST: 250000 },
+                peripheral_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 130000, ST: 280000 },
                 top_gdc: { GEN: 65000, OBC: 75000, EWS: 70000, SC: 160000, ST: 300000 },
-                peripheral_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 130000, ST: 280000 }
+                govt_bams: { GEN: 85000, OBC: 95000, EWS: 90000, SC: 210000, ST: 350000 },
+                govt_bhms: { GEN: 140000, OBC: 160000, EWS: 150000, SC: 290000, ST: 450000 },
+                pvt_mbbs: { GEN: 75000, OBC: 80000, EWS: 78000, SC: 180000, ST: 320000 },
+                pvt_bds: { GEN: 280000, OBC: 310000, EWS: 295000, SC: 450000, ST: 600000 },
+                pvt_bams: { GEN: 170000, OBC: 195000, EWS: 180000, SC: 330000, ST: 500000 },
+                pvt_bhms: { GEN: 350000, OBC: 390000, EWS: 370000, SC: 550000, ST: 700000 }
             },
-            MP: { // Madhya Pradesh (85%)
+            MP: {
                 premier_gmc: { GEN: 15000, OBC: 18000, EWS: 17000, SC: 85000, ST: 150000 },
                 mid_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 140000, ST: 300000 },
+                peripheral_gmc: { GEN: 55000, OBC: 60000, EWS: 58000, SC: 160000, ST: 320000 },
                 top_gdc: { GEN: 70000, OBC: 80000, EWS: 75000, SC: 180000, ST: 350000 },
-                peripheral_gmc: { GEN: 55000, OBC: 60000, EWS: 58000, SC: 160000, ST: 320000 }
+                govt_bams: { GEN: 90000, OBC: 100000, EWS: 95000, SC: 230000, ST: 380000 },
+                govt_bhms: { GEN: 150000, OBC: 170000, EWS: 160000, SC: 310000, ST: 480000 },
+                pvt_mbbs: { GEN: 110000, OBC: 125000, EWS: 118000, SC: 260000, ST: 420000 },
+                pvt_bds: { GEN: 400000, OBC: 430000, EWS: 410000, SC: 600000, ST: 750000 },
+                pvt_bams: { GEN: 250000, OBC: 280000, EWS: 265000, SC: 480000, ST: 650000 },
+                pvt_bhms: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 750000, ST: 850000 }
             },
-            UP: { // Uttar Pradesh (85%)
+            UP: {
                 premier_gmc: { GEN: 3000, OBC: 4000, EWS: 3500, SC: 35000, ST: 80000 },
                 mid_gmc: { GEN: 20000, OBC: 22000, EWS: 21000, SC: 110000, ST: 200000 },
+                peripheral_gmc: { GEN: 25000, OBC: 28000, EWS: 26000, SC: 130000, ST: 230000 },
                 top_gdc: { GEN: 35000, OBC: 38000, EWS: 36000, SC: 140000, ST: 250000 },
-                peripheral_gmc: { GEN: 25000, OBC: 28000, EWS: 26000, SC: 130000, ST: 230000 }
+                govt_bams: { GEN: 75000, OBC: 82000, EWS: 78000, SC: 190000, ST: 260000 },
+                govt_bhms: { GEN: 120000, OBC: 135000, EWS: 128000, SC: 250000, ST: 350000 },
+                pvt_mbbs: { GEN: 250000, OBC: 280000, EWS: 260000, SC: 400000, ST: 500000 },
+                pvt_bds: { GEN: 600000, OBC: 650000, EWS: 620000, SC: 800000, ST: 850000 },
+                pvt_bams: { GEN: 400000, OBC: 450000, EWS: 420000, SC: 650000, ST: 700000 },
+                pvt_bhms: { GEN: 700000, OBC: 750000, EWS: 720000, SC: 900000, ST: 950000 }
             },
-            RJ: { // Rajasthan (85%)
+            RJ: {
                 premier_gmc: { GEN: 2500, OBC: 3000, EWS: 2800, SC: 30000, ST: 40000 },
                 mid_gmc: { GEN: 15000, OBC: 16000, EWS: 15500, SC: 90000, ST: 120000 },
+                peripheral_gmc: { GEN: 18000, OBC: 19000, EWS: 18500, SC: 100000, ST: 130000 },
                 top_gdc: { GEN: 28000, OBC: 30000, EWS: 29000, SC: 110000, ST: 150000 },
-                peripheral_gmc: { GEN: 18000, OBC: 19000, EWS: 18500, SC: 100000, ST: 130000 }
+                govt_bams: { GEN: 55000, OBC: 62000, EWS: 58000, SC: 160000, ST: 200000 },
+                govt_bhms: { GEN: 100000, OBC: 115000, EWS: 108000, SC: 220000, ST: 280000 },
+                pvt_mbbs: { GEN: 140000, OBC: 155000, EWS: 148000, SC: 280000, ST: 360000 },
+                pvt_bds: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 700000, ST: 750000 },
+                pvt_bams: { GEN: 300000, OBC: 340000, EWS: 320000, SC: 550000, ST: 600000 },
+                pvt_bhms: { GEN: 600000, OBC: 650000, EWS: 620000, SC: 800000, ST: 850000 }
             },
-            KA: { // Karnataka (85%)
+            KA: {
                 premier_gmc: { GEN: 6000, OBC: 8000, EWS: 7500, SC: 50000, ST: 80000 },
                 mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 120000, ST: 180000 },
+                peripheral_gmc: { GEN: 48000, OBC: 52000, EWS: 50000, SC: 140000, ST: 200000 },
                 top_gdc: { GEN: 60000, OBC: 65000, EWS: 62000, SC: 160000, ST: 220000 },
-                peripheral_gmc: { GEN: 48000, OBC: 52000, EWS: 50000, SC: 140000, ST: 200000 }
+                govt_bams: { GEN: 80000, OBC: 90000, EWS: 85000, SC: 200000, ST: 280000 },
+                govt_bhms: { GEN: 130000, OBC: 145000, EWS: 138000, SC: 270000, ST: 380000 },
+                pvt_mbbs: { GEN: 65000, OBC: 72000, EWS: 68000, SC: 160000, ST: 240000 },
+                pvt_bds: { GEN: 250000, OBC: 280000, EWS: 265000, SC: 400000, ST: 500000 },
+                pvt_bams: { GEN: 160000, OBC: 180000, EWS: 170000, SC: 300000, ST: 420000 },
+                pvt_bhms: { GEN: 300000, OBC: 340000, EWS: 320000, SC: 500000, ST: 600000 }
             }
         };
 
         const categoryNames = { GEN: "General (UR)", OBC: "OBC-NCL Group", EWS: "EWS Category", SC: "Scheduled Caste (SC)", ST: "Scheduled Tribe (ST)" };
+        const scopeFullNames = {
+            AIQ: "All India Quota (15%)",
+            MH: "Maharashtra State (85%)",
+            MP: "Madhya Pradesh State (85%)",
+            UP: "Uttar Pradesh State (85%)",
+            RJ: "Rajasthan State (85%)",
+            KA: "Karnataka State (85%)"
+        };
 
         function interpolateRank(score, dataset) {
             if (score >= 720) return 1;
@@ -406,19 +457,18 @@
         const aiimsOption = document.getElementById('aiimsOption');
         const matrixContainer = document.getElementById('matrixContainer');
         
-        // Handle dropdown logic for State vs AIQ
         function updateScopeOptions() {
             if (scopeSelect.value === 'AIQ') {
                 aiimsOption.style.display = 'block';
             } else {
                 aiimsOption.style.display = 'none';
                 if (tierSelect.value === 'top_aiims') {
-                    tierSelect.value = 'premier_gmc'; // Fallback if AIIMS was selected
+                    tierSelect.value = 'premier_gmc';
                 }
             }
         }
 
-                // 1. Updates Rank & High-Level Prospects
+        // 1. Updates Rank & High-Level Prospects
         function updatePredictions(score) {
             const r2026 = interpolateRank(score, data2026);
             const r2025 = interpolateRank(score, data2025);
@@ -436,26 +486,30 @@
                 deltaEl.className = "text-2xl font-bold text-slate-600";
             }
 
-            // DYNAMIC QUALIFYING CUTOFFS BASED ON DECLARED 2026 RESULTS
-            const currentCat = document.getElementById('userCategory').value;
-            let qualifyingCutoff = 177; // Default to Reserved Cutoff (OBC/SC/ST)
+            // Dynamic Qualifying Rules based on category
+            const currentCat = catSelect.value;
+            const currentScope = scopeSelect.value;
+            let qualifyingCutoff = 177; 
             if (currentCat === 'GEN' || currentCat === 'EWS') {
-                qualifyingCutoff = 213; // General / EWS Cutoff
+                qualifyingCutoff = 213; 
             }
+
+            // Update Box Title dynamically based on selected state text
+            document.getElementById('prospectScopeLabel').textContent = `${scopeFullNames[currentScope]} Quota Prospects`;
 
             let tier = {};
             if (score >= 680) {
-                tier = { title: "Elite National Tier AIIMS", desc: "Assured conversion under All India Quota.", badge: "Tier 1 Govt", styles: "bg-amber-50/70 border-amber-200 text-amber-900", badgeStyles: "bg-[#D4AF37] text-[#0D1B2A]" };
+                tier = { title: "Elite Govt Medical Tier / AIIMS", desc: "Assured clearance vectors for high-demand national tracks.", badge: "Elite Tier", styles: "bg-amber-50/70 border-amber-200 text-amber-900", badgeStyles: "bg-[#D4AF37] text-[#0D1B2A]" };
             } else if (score >= 610) {
-                tier = { title: "Premier Government MBBS", desc: "Highly safe zone for core government MBBS.", badge: "Govt MBBS", styles: "bg-emerald-50/60 border-emerald-200 text-emerald-900", badgeStyles: "bg-[#04AF37] text-white" };
+                tier = { title: "Premier Government MBBS Zone", desc: "Safe margins for primary institutional government distributions.", badge: "Govt MBBS", styles: "bg-emerald-50/60 border-emerald-200 text-emerald-900", badgeStyles: "bg-[#04AF37] text-white" };
             } else if (score >= 560) {
-                tier = { title: "Borderline Semi-Govt MBBS", desc: "Strong state quota matrix dependency.", badge: "State Pool", styles: "bg-teal-50/70 border-teal-200 text-teal-900", badgeStyles: "bg-teal-700 text-white" };
+                tier = { title: "Borderline Government / Semi-Govt MBBS", desc: "Allocation patterns heavily subject to institutional matrix adjustments.", badge: "State Pool", styles: "bg-teal-50/70 border-teal-200 text-teal-900", badgeStyles: "bg-teal-700 text-white" };
             } else if (score >= 480) {
-                tier = { title: "Premium Private MBBS / Govt BDS", desc: "Optimal scoring tier for premium dental or private medical.", badge: "BDS / Pvt MBBS", styles: "bg-indigo-50/70 border-indigo-200 text-indigo-900", badgeStyles: "bg-indigo-800 text-white" };
+                tier = { title: "Subsidized Private Medical / Premier Govt Dental", desc: "Optimal allocation path for premium clinical configurations.", badge: "BDS / Pvt MBBS", styles: "bg-indigo-50/70 border-indigo-200 text-indigo-900", badgeStyles: "bg-indigo-800 text-white" };
             } else if (score >= qualifyingCutoff) {
-                tier = { title: "Qualified for AYUSH / Pvt Dental", desc: `Score meets the ${currentCat} official cutoff (${qualifyingCutoff}). Eligible for counseling.`, badge: "Qualified", styles: "bg-slate-50 border-slate-200 text-slate-700", badgeStyles: "bg-slate-700 text-white" };
+                tier = { title: "Qualified: Private Dental & AYUSH tracks", desc: `Meets official parameters (${qualifyingCutoff} marks). Eligible for state allocation registers.`, badge: "Qualified", styles: "bg-slate-50 border-slate-200 text-slate-700", badgeStyles: "bg-slate-700 text-white" };
             } else {
-                tier = { title: "Non-Qualified Zone", desc: `Score falls below the official 2026 qualifying cutoff of ${qualifyingCutoff} for ${currentCat}. Not eligible for counseling.`, badge: "Not Eligible", styles: "bg-rose-50 border-rose-200 text-rose-800", badgeStyles: "bg-rose-600 text-white" };
+                tier = { title: "Non-Qualified Allocation Zone", desc: `Score falls below structural thresholds (${qualifyingCutoff} marks). Ineligible for system matching.`, badge: "Not Eligible", styles: "bg-rose-50 border-rose-200 text-rose-800", badgeStyles: "bg-rose-600 text-white" };
             }
 
             const pCard = document.getElementById('prospectCard');
@@ -466,7 +520,7 @@
             pBadge.textContent = tier.badge;
             pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
 
-            // Ensure dropdown validity before running matrix
+            // Sync structural parameters and run matrix
             updateScopeOptions();
             runDifferentialMatrix(r2026);
         }
@@ -477,9 +531,7 @@
             const selectedTier = tierSelect.value;
             const userCat = catSelect.value;
             
-            // Pull data specifically for the selected state/AIQ and selected tier
             const tierCutoffs = cutoffDatabase[currentScope][selectedTier];
-            
             matrixContainer.innerHTML = '';
 
             Object.keys(tierCutoffs).forEach(cat => {
@@ -489,7 +541,6 @@
                 
                 let statusLabel = '';
                 let badgeClass = '';
-                // AyuMed Premium Highlighting for user's category
                 let borderHighlight = isUserCat ? 'border-l-4 border-l-[#0D1B2A] shadow-md bg-[#D4AF37]/10' : 'border-slate-200 bg-white';
                 
                 if (differential >= 0) {
