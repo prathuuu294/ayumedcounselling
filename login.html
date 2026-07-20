@@ -103,7 +103,7 @@
                 const result = await response.json();
                 if (response.ok) {
                     localStorage.setItem('studentEmail', document.getElementById('loginEmail').value);
-                    window.location.href = 'dashboard.html';
+                    window.location.replace('dashboard.html');
                 } else {
                     errorMsg.innerText = result.message || 'Invalid credentials.';
                     errorMsg.style.display = 'block';
