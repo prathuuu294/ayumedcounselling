@@ -316,151 +316,35 @@
             btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Prediction';
         }
 
+                // ==========================================
+        // UNIFIED RANK & DIFFERENTIAL ENGINE (API DRIVEN)
         // ==========================================
-        // UNIFIED RANK & DIFFERENTIAL ENGINE
-        // ==========================================
-        
-                                        // ==========================================
-        // UNIFIED RANK & DIFFERENTIAL ENGINE
-        // ==========================================
-        
-        // CALIBRATED WITH ACTUAL NEET 2026 DECLARED RESULTS, STATE BENCHMARKS & REAL LEAD DATA
-        const data2026 = [
-            { score: 720, rank: 1 },
-            { score: 715, rank: 2 },
-            { score: 700, rank: 19 },
-            { score: 650, rank: 1492 },
-            { score: 600, rank: 10000 },
-            { score: 561, rank: 28000 },    // Rajasthan OBC Benchmark
-            { score: 550, rank: 35000 },    // Adjusted for curve stability
-            { score: 520, rank: 65000 },    // Maharashtra EWS Benchmark
-            { score: 516, rank: 70444 },    // Real Lead Data
-            { score: 500, rank: 90780 },
-            { score: 400, rank: 260000 },
-            { score: 340, rank: 450472 },   // Maharashtra SC Benchmark
-            { score: 301, rank: 591120 },   // Real Lead Data / Rajasthan OBC Benchmark
-            { score: 210, rank: 1009684 },  // Real Lead Data (Gen Qualifying Boundary)
-            { score: 199, rank: 1068898 },  // Maharashtra OBC Benchmark
-            { score: 176, rank: 1196577 },  // Real Lead Data (Reserved Qualifying Boundary)
-            { score: 148, rank: 1366774 },  // Real Lead Data
-            { score: 0, rank: 2205035 }
-        ];
 
-        // OFFICIAL NTA NEET 2025 HISTORICAL DATA
+        // OFFICIAL NTA NEET 2025 HISTORICAL DATA (Kept local for instant reference)
         const data2025 = [
-            { score: 720, rank: 1 },
-            { score: 686, rank: 1 },
-            { score: 650, rank: 77 },
-            { score: 600, rank: 1386 },
-            { score: 550, rank: 12860 },
-            { score: 500, rank: 55000 },
-            { score: 484, rank: 72000 },
-            { score: 400, rank: 210000 },
-            { score: 300, rank: 500000 },
+            { score: 720, rank: 1 }, { score: 686, rank: 1 }, { score: 650, rank: 77 },
+            { score: 600, rank: 1386 }, { score: 550, rank: 12860 }, { score: 500, rank: 55000 },
+            { score: 484, rank: 72000 }, { score: 400, rank: 210000 }, { score: 300, rank: 500000 },
             { score: 0, rank: 2209318 }
         ];
 
-        // Comprehensive All-State & Multi-Course Differential Cutoff Database
-        const cutoffDatabase = {
-            AIQ: {
-                top_aiims: { GEN: 100, OBC: 350, EWS: 300, SC: 2500, ST: 4800 },
-                premier_gmc: { GEN: 1200, OBC: 2400, EWS: 2100, SC: 14000, ST: 26000 },
-                mid_gmc: { GEN: 14500, OBC: 17000, EWS: 16500, SC: 78000, ST: 98000 },
-                peripheral_gmc: { GEN: 22000, OBC: 24500, EWS: 24000, SC: 105000, ST: 128000 },
-                top_gdc: { GEN: 26000, OBC: 29500, EWS: 31000, SC: 115000, ST: 140000 },
-                govt_bams: { GEN: 60000, OBC: 68000, EWS: 65000, SC: 180000, ST: 220000 },
-                govt_bhms: { GEN: 95000, OBC: 105000, EWS: 102000, SC: 240000, ST: 280000 },
-                pvt_mbbs: { GEN: 450000, OBC: 450000, EWS: 450000, SC: 600000, ST: 650000 },
-                pvt_bds: { GEN: 700000, OBC: 750000, EWS: 720000, SC: 850000, ST: 900000 },
-                pvt_bams: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 700000, ST: 750000 },
-                pvt_bhms: { GEN: 800000, OBC: 850000, EWS: 820000, SC: 950000, ST: 100000 }
-            },
-            MH: {
-                premier_gmc: { GEN: 5000, OBC: 7000, EWS: 6000, SC: 40000, ST: 90000 },
-                mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 110000, ST: 250000 },
-                peripheral_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 130000, ST: 280000 },
-                top_gdc: { GEN: 65000, OBC: 75000, EWS: 70000, SC: 160000, ST: 300000 },
-                govt_bams: { GEN: 85000, OBC: 95000, EWS: 90000, SC: 210000, ST: 350000 },
-                govt_bhms: { GEN: 140000, OBC: 160000, EWS: 150000, SC: 290000, ST: 450000 },
-                pvt_mbbs: { GEN: 75000, OBC: 80000, EWS: 78000, SC: 180000, ST: 320000 },
-                pvt_bds: { GEN: 280000, OBC: 310000, EWS: 295000, SC: 450000, ST: 600000 },
-                pvt_bams: { GEN: 170000, OBC: 195000, EWS: 180000, SC: 330000, ST: 500000 },
-                pvt_bhms: { GEN: 350000, OBC: 390000, EWS: 370000, SC: 550000, ST: 700000 }
-            },
-            MP: {
-                premier_gmc: { GEN: 15000, OBC: 18000, EWS: 17000, SC: 85000, ST: 150000 },
-                mid_gmc: { GEN: 45000, OBC: 50000, EWS: 48000, SC: 140000, ST: 300000 },
-                peripheral_gmc: { GEN: 55000, OBC: 60000, EWS: 58000, SC: 160000, ST: 320000 },
-                top_gdc: { GEN: 70000, OBC: 80000, EWS: 75000, SC: 180000, ST: 350000 },
-                govt_bams: { GEN: 90000, OBC: 100000, EWS: 95000, SC: 230000, ST: 380000 },
-                govt_bhms: { GEN: 150000, OBC: 170000, EWS: 160000, SC: 310000, ST: 480000 },
-                pvt_mbbs: { GEN: 110000, OBC: 125000, EWS: 118000, SC: 260000, ST: 420000 },
-                pvt_bds: { GEN: 400000, OBC: 430000, EWS: 410000, SC: 600000, ST: 750000 },
-                pvt_bams: { GEN: 250000, OBC: 280000, EWS: 265000, SC: 480000, ST: 650000 },
-                pvt_bhms: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 750000, ST: 850000 }
-            },
-            UP: {
-                premier_gmc: { GEN: 3000, OBC: 4000, EWS: 3500, SC: 35000, ST: 80000 },
-                mid_gmc: { GEN: 20000, OBC: 22000, EWS: 21000, SC: 110000, ST: 200000 },
-                peripheral_gmc: { GEN: 25000, OBC: 28000, EWS: 26000, SC: 130000, ST: 230000 },
-                top_gdc: { GEN: 35000, OBC: 38000, EWS: 36000, SC: 140000, ST: 250000 },
-                govt_bams: { GEN: 75000, OBC: 82000, EWS: 78000, SC: 190000, ST: 260000 },
-                govt_bhms: { GEN: 120000, OBC: 135000, EWS: 128000, SC: 250000, ST: 350000 },
-                pvt_mbbs: { GEN: 250000, OBC: 280000, EWS: 260000, SC: 400000, ST: 500000 },
-                pvt_bds: { GEN: 600000, OBC: 650000, EWS: 620000, SC: 800000, ST: 850000 },
-                pvt_bams: { GEN: 400000, OBC: 450000, EWS: 420000, SC: 650000, ST: 700000 },
-                pvt_bhms: { GEN: 700000, OBC: 750000, EWS: 720000, SC: 900000, ST: 950000 }
-            },
-            RJ: {
-                premier_gmc: { GEN: 2500, OBC: 3000, EWS: 2800, SC: 30000, ST: 40000 },
-                mid_gmc: { GEN: 15000, OBC: 16000, EWS: 15500, SC: 90000, ST: 120000 },
-                peripheral_gmc: { GEN: 18000, OBC: 19000, EWS: 18500, SC: 100000, ST: 130000 },
-                top_gdc: { GEN: 28000, OBC: 30000, EWS: 29000, SC: 110000, ST: 150000 },
-                govt_bams: { GEN: 55000, OBC: 62000, EWS: 58000, SC: 160000, ST: 200000 },
-                govt_bhms: { GEN: 100000, OBC: 115000, EWS: 108000, SC: 220000, ST: 280000 },
-                pvt_mbbs: { GEN: 140000, OBC: 155000, EWS: 148000, SC: 280000, ST: 360000 },
-                pvt_bds: { GEN: 500000, OBC: 550000, EWS: 520000, SC: 700000, ST: 750000 },
-                pvt_bams: { GEN: 300000, OBC: 340000, EWS: 320000, SC: 550000, ST: 600000 },
-                pvt_bhms: { GEN: 600000, OBC: 650000, EWS: 620000, SC: 800000, ST: 850000 }
-            },
-            KA: {
-                premier_gmc: { GEN: 6000, OBC: 8000, EWS: 7500, SC: 50000, ST: 80000 },
-                mid_gmc: { GEN: 35000, OBC: 40000, EWS: 38000, SC: 120000, ST: 180000 },
-                peripheral_gmc: { GEN: 48000, OBC: 52000, EWS: 50000, SC: 140000, ST: 200000 },
-                top_gdc: { GEN: 60000, OBC: 65000, EWS: 62000, SC: 160000, ST: 220000 },
-                govt_bams: { GEN: 80000, OBC: 90000, EWS: 85000, SC: 200000, ST: 280000 },
-                govt_bhms: { GEN: 130000, OBC: 145000, EWS: 138000, SC: 270000, ST: 380000 },
-                pvt_mbbs: { GEN: 65000, OBC: 72000, EWS: 68000, SC: 160000, ST: 240000 },
-                pvt_bds: { GEN: 250000, OBC: 280000, EWS: 265000, SC: 400000, ST: 500000 },
-                pvt_bams: { GEN: 160000, OBC: 180000, EWS: 170000, SC: 300000, ST: 420000 },
-                pvt_bhms: { GEN: 300000, OBC: 340000, EWS: 320000, SC: 500000, ST: 600000 }
-            }
-        };
+        // Ensure your cutoffDatabase, categoryNames, and scopeFullNames variables remain exactly as they were here.
+        // ... (Keep your existing cutoffDatabase dictionary here) ...
 
-        const categoryNames = { GEN: "General (UR)", OBC: "OBC-NCL Group", EWS: "EWS Category", SC: "Scheduled Caste (SC)", ST: "Scheduled Tribe (ST)" };
-        const scopeFullNames = {
-            AIQ: "All India Quota (15%)",
-            MH: "Maharashtra State (85%)",
-            MP: "Madhya Pradesh State (85%)",
-            UP: "Uttar Pradesh State (85%)",
-            RJ: "Rajasthan State (85%)",
-            KA: "Karnataka State (85%)"
-        };
-
-        function interpolateRank(score, dataset) {
+        function interpolateRank2025(score) {
             if (score >= 720) return 1;
-            if (score <= 0) return dataset[dataset.length - 1].rank;
-            for (let i = 0; i < dataset.length - 1; i++) {
-                if (score <= dataset[i].score && score >= dataset[i+1].score) {
-                    const x0 = dataset[i].score, x1 = dataset[i+1].score;
-                    const y0 = dataset[i].rank, y1 = dataset[i+1].rank;
+            if (score <= 0) return data2025[data2025.length - 1].rank;
+            for (let i = 0; i < data2025.length - 1; i++) {
+                if (score <= data2025[i].score && score >= data2025[i+1].score) {
+                    const x0 = data2025[i].score, x1 = data2025[i+1].score;
+                    const y0 = data2025[i].rank, y1 = data2025[i+1].rank;
                     return Math.round(y0 + ((score - x0) * (y1 - y0)) / (x1 - x0));
                 }
             }
-            return dataset[dataset.length - 1].rank;
+            return data2025[data2025.length - 1].rank;
         }
 
-        // Core UI Updaters
+        // Core UI Elements
         const scoreSlider = document.getElementById('scoreSlider');
         const scoreNumber = document.getElementById('scoreNumber');
         const scopeSelect = document.getElementById('counselingScope');
@@ -469,21 +353,57 @@
         const aiimsOption = document.getElementById('aiimsOption');
         const matrixContainer = document.getElementById('matrixContainer');
         
+        let debounceTimer;
+        let lastCalculatedRank = 10000; // Fallback state
+
         function updateScopeOptions() {
             if (scopeSelect.value === 'AIQ') {
                 aiimsOption.style.display = 'block';
             } else {
                 aiimsOption.style.display = 'none';
-                if (tierSelect.value === 'top_aiims') {
-                    tierSelect.value = 'premier_gmc';
-                }
+                if (tierSelect.value === 'top_aiims') tierSelect.value = 'premier_gmc';
             }
         }
 
-        // 1. Updates Rank & High-Level Prospects
-        function updatePredictions(score) {
-            const r2026 = interpolateRank(score, data2026);
-            const r2025 = interpolateRank(score, data2025);
+        // 1. Debounced Input Handler
+        function handleInput(score) {
+            // Micro-loader UX while API computes
+            document.getElementById('rank2026').innerHTML = '<i class="fas fa-spinner fa-spin text-slate-400 text-2xl"></i>';
+            document.getElementById('rankDelta').innerHTML = '—';
+            
+            // Instantly update the static Prospect Labels
+            updateProspectLabels(score);
+            
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetchRankFromAI(score);
+            }, 300); // 300ms delay to prevent server spam while sliding
+        }
+
+        // 2. The Python Backend API Fetcher
+        async function fetchRankFromAI(score) {
+            try {
+                // Ensure the URL matches your PythonAnywhere domain exactly
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/predict_rank', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ score: score })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    lastCalculatedRank = data.predicted_rank;
+                    finalizePredictionUI(score, lastCalculatedRank);
+                }
+            } catch (error) {
+                document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-lg">Error</span>';
+            }
+        }
+
+        // 3. Finalize UI with the mathematically perfect rank
+        function finalizePredictionUI(score, r2026) {
+            const r2025 = interpolateRank2025(score);
             const delta = r2025 - r2026;
 
             document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');
@@ -497,16 +417,17 @@
                 deltaEl.textContent = delta.toLocaleString('en-IN');
                 deltaEl.className = "text-2xl font-bold text-slate-600";
             }
+            
+            updateScopeOptions();
+            runDifferentialMatrix(r2026);
+        }
 
-            // Dynamic Qualifying Rules based on category
+        // 4. Update purely visual prospect labels
+        function updateProspectLabels(score) {
             const currentCat = catSelect.value;
             const currentScope = scopeSelect.value;
-            let qualifyingCutoff = 177; 
-            if (currentCat === 'GEN' || currentCat === 'EWS') {
-                qualifyingCutoff = 213; 
-            }
+            let qualifyingCutoff = (currentCat === 'GEN' || currentCat === 'EWS') ? 213 : 177; 
 
-            // Update Box Title dynamically based on selected state text
             document.getElementById('prospectScopeLabel').textContent = `${scopeFullNames[currentScope]} Quota Prospects`;
 
             let tier = {};
@@ -531,18 +452,13 @@
             document.getElementById('prospectDesc').textContent = tier.desc;
             pBadge.textContent = tier.badge;
             pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
-
-            // Sync structural parameters and run matrix
-            updateScopeOptions();
-            runDifferentialMatrix(r2026);
         }
 
-        // 2. Builds Differential Matrix Rows
+        // 5. Build Differential Matrix Rows
         function runDifferentialMatrix(calculatedRank) {
             const currentScope = scopeSelect.value;
             const selectedTier = tierSelect.value;
             const userCat = catSelect.value;
-            
             const tierCutoffs = cutoffDatabase[currentScope][selectedTier];
             matrixContainer.innerHTML = '';
 
@@ -565,7 +481,6 @@
 
                 const row = document.createElement('div');
                 row.className = `p-4 border rounded-xl transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ${borderHighlight}`;
-                
                 row.innerHTML = `
                     <div class="space-y-1 flex-1 w-full">
                         <div class="flex justify-between sm:justify-start items-center gap-3">
@@ -577,7 +492,6 @@
                             <span class="font-bold text-[#0D1B2A] text-sm">${cutoff.toLocaleString('en-IN')}</span>
                         </div>
                     </div>
-                    
                     <div class="w-full sm:w-auto text-right flex sm:block items-center justify-between mt-2 sm:mt-0">
                         <span class="text-xs text-slate-400 sm:hidden">Differential Status</span>
                         <span class="px-4 py-2 border rounded-full text-xs font-bold whitespace-nowrap tracking-wide ${badgeClass}">
@@ -585,16 +499,15 @@
                         </span>
                     </div>
                 `;
-                
                 matrixContainer.appendChild(row);
             });
         }
 
-        // Event Listeners for unified interaction
+        // Event Listeners
         scoreSlider.addEventListener('input', (e) => {
             const val = parseInt(e.target.value);
             scoreNumber.value = val;
-            updatePredictions(val);
+            handleInput(val);
         });
 
         scoreNumber.addEventListener('input', (e) => {
@@ -603,15 +516,16 @@
             if (val > 720) val = 720;
             if (val < 0) val = 0;
             scoreSlider.value = val;
-            updatePredictions(val);
+            handleInput(val);
         });
 
-        scopeSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
-        catSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
-        tierSelect.addEventListener('change', () => updatePredictions(parseInt(scoreSlider.value)));
+        // Trigger updates when dropdowns change
+        scopeSelect.addEventListener('change', () => handleInput(parseInt(scoreSlider.value)));
+        catSelect.addEventListener('change', () => handleInput(parseInt(scoreSlider.value)));
+        tierSelect.addEventListener('change', () => handleInput(parseInt(scoreSlider.value)));
 
         // Initial Boot
-        updatePredictions(parseInt(scoreSlider.value));
+        handleInput(parseInt(scoreSlider.value));
     </script>
 </body>
 </html>
