@@ -380,24 +380,33 @@
             }, 300); // 300ms delay to prevent server spam while sliding
         }
 
-        // 2. The Python Backend API Fetcher
-        async function fetchRankFromAI(score) {
+        // 2. The Python Backend API Fetcher (NOW BULLETPROOF)
+                async function fetchRankFromAI(score) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+
             try {
-                // Ensure the URL matches your PythonAnywhere domain exactly
                 const response = await fetch('https://prathuuu294.pythonanywhere.com/api/predict_rank', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ score: score })
+                    body: JSON.stringify({ score: score }),
+                    signal: controller.signal
                 });
                 
+                clearTimeout(timeoutId);
                 const data = await response.json();
                 
                 if (data.status === 'success') {
                     lastCalculatedRank = data.predicted_rank;
                     finalizePredictionUI(score, lastCalculatedRank);
+                } else {
+                    document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-sm">Server Error</span>';
                 }
             } catch (error) {
-                document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-lg">Error</span>';
+                clearTimeout(timeoutId);
+                // If it fails, show the error instead of spinning forever
+                document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-sm">Check Connection</span>';
+                console.error("Fetch error:", error);
             }
         }
 
@@ -422,13 +431,17 @@
             runDifferentialMatrix(r2026);
         }
 
-        // 4. Update purely visual prospect labels
+        // 4. Update purely visual prospect labels (NOW CRASH-PROOF)
         function updateProspectLabels(score) {
             const currentCat = catSelect.value;
             const currentScope = scopeSelect.value;
             let qualifyingCutoff = (currentCat === 'GEN' || currentCat === 'EWS') ? 213 : 177; 
 
-            document.getElementById('prospectScopeLabel').textContent = `${scopeFullNames[currentScope]} Quota Prospects`;
+            // Safety check: Only update this label if it actually exists in your HTML!
+            const scopeLabelEl = document.getElementById('prospectScopeLabel');
+            if (scopeLabelEl && typeof scopeFullNames !== 'undefined') {
+                scopeLabelEl.textContent = `${scopeFullNames[currentScope]} Quota Prospects`;
+            }
 
             let tier = {};
             if (score >= 680) {
@@ -447,11 +460,14 @@
 
             const pCard = document.getElementById('prospectCard');
             const pBadge = document.getElementById('prospectBadge');
-            pCard.className = `rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300 ${tier.styles}`;
-            document.getElementById('prospectTitle').textContent = tier.title;
-            document.getElementById('prospectDesc').textContent = tier.desc;
-            pBadge.textContent = tier.badge;
-            pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
+            
+            if (pCard && pBadge) {
+                pCard.className = `rounded-xl p-5 border flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all duration-300 ${tier.styles}`;
+                document.getElementById('prospectTitle').textContent = tier.title;
+                document.getElementById('prospectDesc').textContent = tier.desc;
+                pBadge.textContent = tier.badge;
+                pBadge.className = `px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest whitespace-nowrap shadow-sm ${tier.badgeStyles}`;
+            }
         }
 
         // 5. Build Differential Matrix Rows
