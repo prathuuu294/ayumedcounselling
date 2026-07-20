@@ -519,7 +519,7 @@
                 if (response.status === 404 || data.error === "User not found") {
                     alert("🚨 Your Account has been Deleted by the Admin.");
                     localStorage.clear();
-                    window.location.href = 'login.html';
+                    window.location.replace('login.html');
                     return;
                 }
 
