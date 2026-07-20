@@ -368,8 +368,8 @@
     </div>
 
                     <script>
-        const studentEmail = localStorage.getItem('studentEmail');
-        if (!studentEmail) window.location.href = 'login.html';
+                const studentEmail = localStorage.getItem('studentEmail');
+        if (!studentEmail) window.location.replace('https://ayumedcounselling.online/index.html');
 
         let globalUserDocuments = null;
         let globalLeadStage = ""; // Tracks the student's stage to lock panels!
@@ -749,7 +749,7 @@
 
         function logout() {
             localStorage.removeItem('studentEmail');
-            window.location.href = 'login.html';
+            window.location.replace('login.html');
         }
 
         const universalDocs = [
