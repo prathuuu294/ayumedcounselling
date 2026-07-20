@@ -382,32 +382,32 @@
             }, 300); // 300ms delay to prevent server spam while sliding
         }
 
-        // 2. The Python Backend API Fetcher (NOW BULLETPROOF)
-                async function fetchRankFromAI(score) {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 15000); // 15-second timeout
-
+                // 2. The Python Backend API Fetcher (Diagnostic & Patient)
+        async function fetchRankFromAI(score) {
             try {
+                // We removed the aggressive 5-second abort controller so the sleeping server has time to wake up!
                 const response = await fetch('https://prathuuu294.pythonanywhere.com/api/predict_rank', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ score: score }),
-                    signal: controller.signal
+                    body: JSON.stringify({ score: score })
                 });
                 
-                clearTimeout(timeoutId);
+                // If the route is missing (404) or server crashes (500), catch it instantly
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: Server issue`);
+                }
+
                 const data = await response.json();
                 
                 if (data.status === 'success') {
                     lastCalculatedRank = data.predicted_rank;
                     finalizePredictionUI(score, lastCalculatedRank);
                 } else {
-                    document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-sm">Server Error</span>';
+                    document.getElementById('rank2026').innerHTML = `<span class="text-rose-500 text-sm">${data.error}</span>`;
                 }
             } catch (error) {
-                clearTimeout(timeoutId);
-                // If it fails, show the error instead of spinning forever
-                document.getElementById('rank2026').innerHTML = '<span class="text-rose-500 text-sm">Check Connection</span>';
+                // This will print the EXACT reason it failed directly into the rank box!
+                document.getElementById('rank2026').innerHTML = `<span class="text-rose-500 text-[12px] font-bold text-center block mt-2">${error.message}</span>`;
                 console.error("Fetch error:", error);
             }
         }
