@@ -367,6 +367,8 @@
 
         // 1. Debounced Input Handler
         function handleInput(score) {
+            console.log("Fetching for score:", score);
+
             // Micro-loader UX while API computes
             document.getElementById('rank2026').innerHTML = '<i class="fas fa-spinner fa-spin text-slate-400 text-2xl"></i>';
             document.getElementById('rankDelta').innerHTML = '—';
