@@ -239,7 +239,7 @@
         </div>
     </div>
 
-    <!-- Application Scripts -->
+        <!-- Application Scripts -->
     <script>
         // ==========================================
         // TAB SWITCHING LOGIC
@@ -316,11 +316,10 @@
             btn.innerHTML = '<i class="fas fa-magic mr-2"></i> Generate Prediction';
         }
 
-                // ==========================================
+        // ==========================================
         // UNIFIED RANK & DIFFERENTIAL ENGINE (API DRIVEN)
         // ==========================================
 
-        // OFFICIAL NTA NEET 2025 HISTORICAL DATA (Kept local for instant reference)
         const data2025 = [
             { score: 720, rank: 1 }, { score: 686, rank: 1 }, { score: 650, rank: 77 },
             { score: 600, rank: 1386 }, { score: 550, rank: 12860 }, { score: 500, rank: 55000 },
@@ -435,7 +434,8 @@
         const matrixContainer = document.getElementById('matrixContainer');
         
         let debounceTimer;
-        let lastCalculatedRank = 10000; // Fallback state
+        let currentAbortController = null;
+        let lastCalculatedRank = 10000;
 
         function updateScopeOptions() {
             if (scopeSelect.value === 'AIQ') {
@@ -446,30 +446,24 @@
             }
         }
 
-                let debounceTimer;
-        let currentAbortController = null;
-
         // 1. Debounced Input Handler
         function handleInput(score) {
             console.log("Fetching for score:", score);
 
-            // Micro-loader UX while API computes
             document.getElementById('rank2026').innerHTML = '<i class="fas fa-spinner fa-spin text-slate-400 text-2xl"></i>';
             document.getElementById('rankDelta').innerHTML = '-';
 
-            // Instantly update the static Prospect Labels
             updateProspectLabels(score);
 
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 fetchRankFromAI(score);
-            }, 300); // 300ms delay to prevent server spam while sliding/typing
+            }, 300);
         }
 
-        // 2. The Python Backend API Fetcher (Race-Condition Proof)
+        // 2. The Python Backend API Fetcher
         async function fetchRankFromAI(score) {
             try {
-                // Cancel any previous pending request before starting a new one
                 if (currentAbortController) {
                     currentAbortController.abort();
                 }
@@ -495,7 +489,6 @@
                     document.getElementById('rank2026').innerHTML = `<span class="text-rose-500 text-sm">${data.error}</span>`;
                 }
             } catch (error) {
-                // Ignore intentional aborts when typing fast
                 if (error.name === 'AbortError') return;
 
                 document.getElementById('rank2026').innerHTML = `<span class="text-rose-500 text-[12px] font-bold text-center block mt-2">${error.message}</span>`;
@@ -503,7 +496,7 @@
             }
         }
 
-        // 3. Finalize UI with the mathematically perfect rank
+        // 3. Finalize UI
         function finalizePredictionUI(score, r2026) {
             const r2025 = interpolateRank2025(score);
             const delta = r2025 - r2026;
@@ -524,13 +517,12 @@
             runDifferentialMatrix(r2026);
         }
 
-        // 4. Update purely visual prospect labels (NOW CRASH-PROOF)
+        // 4. Update Prospect Labels
         function updateProspectLabels(score) {
             const currentCat = catSelect.value;
             const currentScope = scopeSelect.value;
             let qualifyingCutoff = (currentCat === 'GEN' || currentCat === 'EWS') ? 213 : 177; 
 
-            // Safety check: Only update this label if it actually exists in your HTML!
             const scopeLabelEl = document.getElementById('prospectScopeLabel');
             if (scopeLabelEl && typeof scopeFullNames !== 'undefined') {
                 scopeLabelEl.textContent = `${scopeFullNames[currentScope]} Quota Prospects`;
@@ -636,5 +628,3 @@
         // Initial Boot
         handleInput(parseInt(scoreSlider.value));
     </script>
-</body>
-</html>
