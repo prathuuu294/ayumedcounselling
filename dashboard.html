@@ -672,12 +672,21 @@
             } catch (e) { alert("Network error."); }
         }
 
-        function setupUploads() {
+                function setupUploads() {
             const fileInputs = document.querySelectorAll('input[type="file"]');
             fileInputs.forEach(input => {
                 input.addEventListener('change', async function() {
                     if (this.files.length === 0) return;
                     const file = this.files[0];
+
+                    // --- NEW: Frontend File Size Check (10MB limit) ---
+                    const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+                    if (file.size > maxSizeInBytes) {
+                        alert(`⚠️ File is too large! Your file is ${(file.size / 1024 / 1024).toFixed(1)}MB. Please compress it to under 10MB before uploading.`);
+                        this.value = ""; // Reset the input so they can try again
+                        return;
+                    }
+
                     const docKey = this.closest('.doc-slot').querySelector('.doc-name').getAttribute('data-id');
                     const statusText = this.closest('.doc-slot').querySelector('.doc-status');
                     statusText.innerText = "UPLOADING...";
@@ -686,21 +695,35 @@
                     formData.append('email', studentEmail);
                     formData.append('doc_type', docKey);
                     formData.append('file', file);
+                    
                     try {
                         const response = await fetch('https://prathuuu294.pythonanywhere.com/api/upload', {
                             method: 'POST',
                             body: formData
                         });
+
                         if (response.ok) {
                             setTimeout(loadDashboard, 300); 
+                        } else if (response.status === 413) {
+                            alert("⚠️ Server rejected the file because it is too large. Please upload a smaller file.");
+                            statusText.innerText = "FAILED (TOO LARGE)";
+                            statusText.style.color = "red";
                         } else {
-                            alert("Upload failed.");
+                            // Attempt to parse the exact Python error
+                            let errorMsg = "Upload failed.";
+                            try {
+                                const errData = await response.json();
+                                errorMsg = errData.message || errorMsg;
+                            } catch(e) {}
+                            
+                            alert(`❌ ${errorMsg}`);
                             statusText.innerText = "FAILED";
                             statusText.style.color = "red";
                         }
                     } catch (error) {
-                        alert("Network error.");
+                        alert("⚠️ Network disconnected or upload timed out. Please ensure you have a strong connection and try again.");
                         statusText.innerText = "PENDING";
+                        statusText.style.color = "var(--warning)";
                     }
                 });
             });
