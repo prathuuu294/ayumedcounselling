@@ -499,12 +499,25 @@
             }
         }
 
-        // 3. Finalize UI
-        function finalizePredictionUI(score, r2026) {
+                // 3. Finalize UI with Category Rank Display
+        function finalizePredictionUI(score, r2026, catRank) {
             const r2025 = interpolateRank2025(score);
             const delta = r2025 - r2026;
+            
+            const currentCat = document.getElementById('userCategory').value;
 
-            document.getElementById('rank2026').textContent = r2026.toLocaleString('en-IN');
+            // Display AIR. If they are reserved, display their specific Category Rank below it!
+            if (currentCat === 'GEN' || currentCat === 'EWS' || !catRank) {
+                document.getElementById('rank2026').innerHTML = `${r2026.toLocaleString('en-IN')}`;
+            } else {
+                document.getElementById('rank2026').innerHTML = `
+                    ${r2026.toLocaleString('en-IN')}
+                    <span class="text-xs font-bold text-slate-500 mt-2 block tracking-wide uppercase">
+                        Cat Rank: ${catRank.toLocaleString('en-IN')}
+                    </span>
+                `;
+            }
+
             document.getElementById('rank2025').textContent = r2025.toLocaleString('en-IN');
             
             const deltaEl = document.getElementById('rankDelta');
