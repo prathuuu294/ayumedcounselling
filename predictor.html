@@ -253,6 +253,37 @@
             
         </div>
         
+        <!-- ========================================== -->
+        <!-- PDF LEAD-CAPTURE MODAL -->
+        <!-- ========================================== -->
+        <div id="leadModal" class="fixed inset-0 bg-slate-900/80 hidden z-50 flex items-center justify-center fade-in">
+            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4 border-t-4 border-t-[#D4AF37]">
+                <div class="text-center mb-6">
+                    <i class="fas fa-file-pdf text-4xl text-rose-500 mb-3"></i>
+                    <h3 class="text-2xl font-bold serif-font text-[#0D1B2A]">Unlock Your Full Report</h3>
+                    <p class="text-sm text-slate-500 mt-2">Enter your details to instantly generate and download your personalized AI Admission Prospectus.</p>
+                </div>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block font-bold mb-1 text-xs uppercase tracking-wide text-slate-600">Student Name</label>
+                        <input type="text" id="leadName" placeholder="e.g. Rahul Sharma" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37]">
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-xs uppercase tracking-wide text-slate-600">WhatsApp Number</label>
+                        <input type="tel" id="leadPhone" placeholder="+91 9876543210" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-[#D4AF37]">
+                    </div>
+                    
+                    <button onclick="submitLeadAndDownload()" id="unlockPdfBtn" class="w-full bg-[#D4AF37] text-[#0D1B2A] py-3 rounded-lg font-bold uppercase tracking-wider hover:bg-[#B8952B] transition-colors mt-2 shadow-md">
+                        <i class="fas fa-unlock mr-2"></i> Unlock & Download PDF
+                    </button>
+                    <button onclick="closeLeadModal()" class="w-full text-slate-400 text-xs font-bold uppercase tracking-wider mt-3 hover:text-slate-600 transition-colors">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer Info -->
         <div class="bg-[#0D1B2A] px-6 py-4 text-center">
             <p class="text-xs text-slate-400">
@@ -672,47 +703,93 @@
         // Initial Boot
         handleInput(parseInt(scoreSlider.value));
 
-async function downloadPDFReport() {
-    const marks = document.getElementById('marks').value;
-    const course = document.getElementById('course').value;
-    const category = document.getElementById('category').value;
-    const state = document.getElementById('state').value;
+        // ==========================================
+        // PDF GENERATION & LEAD CAPTURE ENGINE
+        // ==========================================
+        
+        function downloadPDFReport() {
+            const marks = document.getElementById('marks').value;
+            if (!marks) {
+                alert("Please enter your expected score first.");
+                return;
+            }
+            // Show the modal instead of downloading immediately
+            document.getElementById('leadModal').classList.remove('hidden');
+        }
 
-    if (!marks) {
-        alert("Please enter your expected score first.");
-        return;
-    }
+        function closeLeadModal() {
+            document.getElementById('leadModal').classList.add('hidden');
+        }
 
-    const btn = document.getElementById('downloadPdfBtn');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Generating PDF...';
-    btn.disabled = true;
+        async function submitLeadAndDownload() {
+            const name = document.getElementById('leadName').value.trim();
+            const phone = document.getElementById('leadPhone').value.trim();
+            const marks = document.getElementById('marks').value;
+            const course = document.getElementById('course').value;
+            const category = document.getElementById('category').value;
+            const state = document.getElementById('state').value;
+            
+            // Try to grab the calculated rank from the UI if available
+            const rankEl = document.getElementById('rank2026');
+            const rank = rankEl ? parseInt(rankEl.innerText.replace(/,/g, '')) || 0 : 0;
 
-    try {
-        const response = await fetch('https://prathuuu294.pythonanywhere.com/api/generate_report_pdf', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ marks, course, category, state })
-        });
+            if (!name || !phone) {
+                alert("Please provide your name and WhatsApp number.");
+                return;
+            }
 
-        if (!response.ok) throw new Error("Server error generating PDF");
+            const btn = document.getElementById('unlockPdfBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing...';
+            btn.disabled = true;
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `AyuMed_Prospectus_${marks}_${category}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-    } catch (error) {
-        alert("Could not generate PDF report. Please try again.");
-    } finally {
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    }
-}
+            try {
+                // 1. Silently save the lead to the AyuMed Database
+                await fetch('https://prathuuu294.pythonanywhere.com/api/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        name: name, 
+                        phone: phone, 
+                        marks: parseInt(marks), 
+                        rank: rank,
+                        category: category,
+                        course: course,
+                        region: state + ' (PDF Lead)'
+                    })
+                });
+
+                // 2. Generate and download the official PDF
+                const response = await fetch('https://prathuuu294.pythonanywhere.com/api/generate_report_pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ marks, course, category, state })
+                });
+
+                if (!response.ok) throw new Error("Server error generating PDF");
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `AyuMed_Prospectus_${marks}_${category}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                
+                // 3. Reset and close
+                closeLeadModal();
+                alert("Success! Your PDF is downloading. The AyuMed team will reach out to you shortly.");
+
+            } catch (error) {
+                console.error(error);
+                alert("Could not generate PDF report. Please try again.");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-unlock mr-2"></i> Unlock & Download PDF';
+                btn.disabled = false;
+            }
+        }
+
 
     </script>
 </body>
